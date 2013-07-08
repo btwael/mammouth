@@ -1,0 +1,1 @@
+Reserve "mammouth" name for the unfancy PHP
