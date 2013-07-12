@@ -10,5 +10,6 @@
 		"pegjs": "latest",
 		"commander": "latest"
 	},
-	"bin": "./bin/mammouth"
+	"bin": "./bin/mammouth",
+	"main": "extras/mammouth-nodejs.js",
 }
