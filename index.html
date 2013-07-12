@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Mammouth by btwael</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Mammouth</h1>
+        <h2>Unfancy PHP</h2>
+        <a href="https://github.com/btwael/mammouth" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="mammouth---unfancy-php" class="anchor" href="#mammouth---unfancy-php"><span class="octicon octicon-link"></span></a>Mammouth - Unfancy PHP</h1>
+
+<p>Mammouth is a small language that compiles into PHP, inspired by CoffeeScript. It's compiled to PHP codes/files that you can run in your PHP server.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Via npm:</p>
+
+<pre><code>npm install mammouth
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Once installed, you should have access to the coffee command, which can execute scripts, compile <code>.mammouth</code> files into <code>.php</code>. The coffee command takes the following options: </p>
+
+<pre><code>Usage: mammouth [options] [dir|file ...]
+
+Options:
+  -c, --compile        Compile a ".mammouth"  or  into a .php file of the same name(can compiles a folder).
+  -o, --output [DIR]   Write out all compiled PHP files into the specified directory. Use in conjunction with --compile
+
+Examples:
+
+  # Compile 'codes.mammouth' to 'codes.php' in the same folder
+  $ mammouth --compile codes.mammouth
+
+  # Compile all mammouth files in 'codes' folder to 'result' folder
+  $ mammouth --compile --output /result /codes
+</code></pre>
+
+<p>You can compile mammouth script from browser by adding <code>mammouth.js</code> in <code>/extras</code> to your html page, and call compile function:</p>
+
+<div class="highlight"><pre><span class="nx">mammouth</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="s2">"&lt;your mammouth code as string&gt;"</span><span class="p">);</span> <span class="c1">//return PHP result</span>
+</pre></div>
+
+<p>As node module, you can use the following code:</p>
+
+<div class="highlight"><pre><span class="nx">mammouth</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'mammouth'</span><span class="p">);</span>
+<span class="nx">mammouth</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="s2">"&lt;your mammouth code as string&gt;"</span><span class="p">);</span> <span class="c1">//return PHP result</span>
+</pre></div>
+
+<h2>
+<a name="syntax" class="anchor" href="#syntax"><span class="octicon octicon-link"></span></a>Syntax</h2>
+
+<h3>
+<a name="basic-mammouth-syntax" class="anchor" href="#basic-mammouth-syntax"><span class="octicon octicon-link"></span></a>Basic Mammouth Syntax</h3>
+
+<p>A mammouth script can be placed anywhere in the document.
+A mammouth script starts with <code>{{</code> and ends with <code>}}</code>:</p>
+
+<pre><code>{{
+// Mammouth script
+}}
+</code></pre>
+
+<p>for example is converted to <code>&lt;?php ?&gt;</code>
+The default file extension for PHP files is <code>.mammouth</code>, but you can use <code>.mmt</code>.
+A mammouth file normally contains HTML tags, and some mammouth scripting code.</p>
+
+<p>Below, we have an example of a simple mammouth file, with a mammouth script that sends the text "Hello World!" back to the browser:</p>
+
+<div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;h1&gt;</span>My first mammouth page<span class="nt">&lt;/h1&gt;</span>
+
+{{
+echo("Hello World!")
+}}
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span> 
+</pre></div>
+
+<p>This example is compiled to:</p>
+
+<div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>My first mammouth page<span class="nt">&lt;/h1&gt;</span>
+<span class="cp">&lt;?php</span>
+<span class="cp">echo("Hello World!");</span>
+<span class="cp">?&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span> 
+</pre></div>
+
+<h3>
+<a name="variables" class="anchor" href="#variables"><span class="octicon octicon-link"></span></a>Variables</h3>
+
+<p>In PHP, a variable starts with the $ sign, followed by the name of the variable, but in mammouth variable is like Javascript:</p>
+
+<pre><code>{{
+variable1 = true
+number1 = 10
+number2 = 1
+variable2 = (number2-15)/number1
+}}
+</code></pre>
+
+<p>The result will be:</p>
+
+<div class="highlight"><pre><span class="cp">&lt;?php </span>
+<span class="cp">$variable1 = true;</span>
+<span class="cp">$number1 = 10;</span>
+<span class="cp">$number2 = 1;</span>
+<span class="cp">$variable2 = ($number2 - 15) / $number1;</span>
+<span class="cp">?&gt;</span>
+</pre></div>
+
+<p>Variable can not take the current name: <code>and</code>, <code>breal</code>, <code>case</code>, <code>else</code>, <code>false</code>, <code>true</code>, <code>for</code>, <code>if</code>, <code>in</code>, <code>new</code>, <code>null</code>, <code>of</code>, <code>or</code>, <code>switch</code>, <code>then</code>, <code>this</code> and <code>while</code>.</p>
+
+<h2>
+<a name="change-log" class="anchor" href="#change-log"><span class="octicon octicon-link"></span></a>Change Log</h2>
+
+<p><strong>0.1.0</strong> -12/08/2013
+The initial version of Mammouth</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/btwael/mammouth/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/btwael/mammouth/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/btwael/mammouth"></a> is maintained by <a href="https://github.com/btwael">btwael</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
