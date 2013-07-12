@@ -1,0 +1,14 @@
+{
+	"name": "Mammouth",
+	"version": "0.1.0",
+	"description": "Unfancy PHP",
+	"author": {
+		"name": "Wael Amine Boutglay",
+		"email": "btwael@gmail.com"
+	},
+	"dependencies": {
+		"pegjs": "latest",
+		"commander": "latest"
+	},
+	"bin": "./bin/mammouth"
+}
