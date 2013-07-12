@@ -100,4 +100,4 @@ Variable can not take the current name: `and`, `breal`, `case`, `else`, `false`,
 
 ##Change Log##
 **0.1.0** -12/08/2013
-The intial version of Mammouth
+The initial version of Mammouth
