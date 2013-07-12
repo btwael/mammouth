@@ -97,3 +97,7 @@ $variable2 = ($number2 - 15) / $number1;
 ?>
 ```
 Variable can not take the current name: `and`, `breal`, `case`, `else`, `false`, `true`, `for`, `if`, `in`, `new`, `null`, `of`, `or`, `switch`, `then`, `this` and `while`.
+
+##Change Log##
+**0.1.0** -12/08/2013
+The intial version of Mammouth
