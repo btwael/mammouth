@@ -5197,6 +5197,7 @@ mammouth.parser = (function(){
                 result4 = result4 !== null ? result4 : "";
                 if (result4 !== null) {
                   result5 = parse___();
+                  result5 = result5 !== null ? result5 : "";
                   if (result5 !== null) {
                     pos2 = pos;
                     if (input.charCodeAt(pos) === 59) {
@@ -5287,7 +5288,6 @@ mammouth.parser = (function(){
                       result6 = null;
                       pos = pos2;
                     }
-                    result6 = result6 !== null ? result6 : "";
                     if (result6 !== null) {
                       pos2 = pos;
                       pos3 = pos;
@@ -5367,7 +5367,7 @@ mammouth.parser = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, initializer, statement) {
+          result0 = (function(offset, initializer, test, counter, statement) {
         			if(typeof test == 'undefined') {
         				test = '';
         			}
@@ -5381,7 +5381,7 @@ mammouth.parser = (function(){
         				counter:     counter !== "" ? counter : null,
         				statement:   statement
         			};
-        	})(pos0, result0[4], result0[7]);
+        	})(pos0, result0[4], result0[6][2], result0[6][6], result0[7]);
         }
         if (result0 === null) {
           pos = pos0;

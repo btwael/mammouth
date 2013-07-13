@@ -566,11 +566,11 @@ ForStatement
 	= ForToken __
 		"("? __
 		initializer:Expression? __
-		(";" __
+		?(";" __
 		test:Expression? __
 		";" __
 		counter:Expression? __
-		")"? __)?
+		")"? __)
 		statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) {
 			if(typeof test == 'undefined') {
 				test = '';
