@@ -4,7 +4,7 @@ Mammouth is a small language that compiles into PHP, inspired by CoffeeScript. I
 ## Installation ##
 Via npm:
 ```
-npm install mammouth
+npm install -g mammouth
 ```
 
 ## Usage ##
