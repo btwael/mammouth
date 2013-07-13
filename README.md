@@ -137,6 +137,48 @@ $date = $friday ? $sue : $jill;
 ?>
 ```
 
+###Switch statements###
+Switch statements in PHP are a bit awkward. You need to remember to break at the end of every case statement to avoid accidentally falling through to the default case. Mammouth prevents accidental fall-through, and can convert the switch into a returnable, assignable expression. The format is: `switch` condition, `case` clauses, `else` the default case.
+```
+{{
+switch day
+  case "Mon" 
+    go(work)
+  case "Tue" 
+    go(relax)
+  case "Thu" 
+    go(iceFishing)
+  case "Fri"
+    go("girlfriend ;)")
+  case "Sun" then 
+    go(church)
+  else 
+    go(work)
+}}
+```
+This example is compiled to:
+```html
+<?php 
+switch($day) {
+  case 'Mon': 
+    go($work);
+    break;
+  case 'Tue': 
+    go($relax);
+    break;
+  case 'Thu': 
+    go($iceFishing);
+    break;
+  case 'Fri': 
+    go('girlfriend ;)');
+    break;
+  case 'Sun': 
+    go($church);
+    break;
+  default:  
+    go($work);
+}
+```
 ##Change Log##
 **0.1.0** -12/08/2013
 The initial version of Mammouth
