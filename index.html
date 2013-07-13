@@ -1,173 +1,425 @@
+
+
+
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>Mammouth</title>
+  <link rel="stylesheet" type="text/css" href="stylesheets/docs.css" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/idle.css" />
+  <link rel="shortcut icon" href="documentation/images/favicon.ico" />
+</head>
+<body>
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+  <div id="fadeout"></div>
 
-    <title>Mammouth by btwael</title>
-  </head>
-
-  <body>
-    <header>
-      <div class="inner">
-        <h1>Mammouth</h1>
-        <h2>Unfancy PHP</h2>
-        <a href="https://github.com/btwael/mammouth" class="button"><small>View project on</small>GitHub</a>
+  <div id="flybar">
+    <a id="logo" href="#top"><img src="documentation/images/logo.png" width="225" height="39" alt="CoffeeScript" /></a>
+    <div class="navigation toc">
+      <div class="button">
+        Table of Contents
       </div>
-    </header>
-
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a name="mammouth---unfancy-php" class="anchor" href="#mammouth---unfancy-php"><span class="octicon octicon-link"></span></a>Mammouth - Unfancy PHP</h1>
-
-<p>Mammouth is a small language that compiles into PHP, inspired by CoffeeScript. It's compiled to PHP codes/files that you can run in your PHP server.</p>
-
-<h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
-
-<p>Via npm:</p>
-
-<pre><code>npm install mammouth
-</code></pre>
-
-<h2>
-<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
-
-<p>Once installed, you should have access to the coffee command, which can execute scripts, compile <code>.mammouth</code> files into <code>.php</code>. The coffee command takes the following options: </p>
-
-<pre><code>Usage: mammouth [options] [dir|file ...]
-
-Options:
-  -c, --compile        Compile a ".mammouth"  or  into a .php file of the same name(can compiles a folder).
-  -o, --output [DIR]   Write out all compiled PHP files into the specified directory. Use in conjunction with --compile
-
-Examples:
-
-  # Compile 'codes.mammouth' to 'codes.php' in the same folder
-  $ mammouth --compile codes.mammouth
-
-  # Compile all mammouth files in 'codes' folder to 'result' folder
-  $ mammouth --compile --output /result /codes
-</code></pre>
-
-<p>You can compile mammouth script from browser by adding <code>mammouth.js</code> in <code>/extras</code> to your html page, and call compile function:</p>
-
-<div class="highlight"><pre><span class="nx">mammouth</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="s2">"&lt;your mammouth code as string&gt;"</span><span class="p">);</span> <span class="c1">//return PHP result</span>
-</pre></div>
-
-<p>As node module, you can use the following code:</p>
-
-<div class="highlight"><pre><span class="nx">mammouth</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'mammouth'</span><span class="p">);</span>
-<span class="nx">mammouth</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="s2">"&lt;your mammouth code as string&gt;"</span><span class="p">);</span> <span class="c1">//return PHP result</span>
-</pre></div>
-
-<h2>
-<a name="syntax" class="anchor" href="#syntax"><span class="octicon octicon-link"></span></a>Syntax</h2>
-
-<h3>
-<a name="basic-mammouth-syntax" class="anchor" href="#basic-mammouth-syntax"><span class="octicon octicon-link"></span></a>Basic Mammouth Syntax</h3>
-
-<p>A mammouth script can be placed anywhere in the document.
-A mammouth script starts with <code>{{</code> and ends with <code>}}</code>:</p>
-
-<pre><code>{{
-// Mammouth script
-}}
-</code></pre>
-
-<p>for example is converted to <code>&lt;?php ?&gt;</code>
-The default file extension for PHP files is <code>.mammouth</code>, but you can use <code>.mmt</code>.
-A mammouth file normally contains HTML tags, and some mammouth scripting code.</p>
-
-<p>Below, we have an example of a simple mammouth file, with a mammouth script that sends the text "Hello World!" back to the browser:</p>
-
-<div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
-<span class="nt">&lt;html&gt;</span>
-<span class="nt">&lt;body&gt;</span>
-
-<span class="nt">&lt;h1&gt;</span>My first mammouth page<span class="nt">&lt;/h1&gt;</span>
-
-{{
-echo("Hello World!")
-}}
-
-<span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span> 
-</pre></div>
-
-<p>This example is compiled to:</p>
-
-<div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
-<span class="nt">&lt;html&gt;</span>
-  <span class="nt">&lt;body&gt;</span>
-    <span class="nt">&lt;h1&gt;</span>My first mammouth page<span class="nt">&lt;/h1&gt;</span>
-<span class="cp">&lt;?php</span>
-<span class="cp">echo("Hello World!");</span>
-<span class="cp">?&gt;</span>
-  <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span> 
-</pre></div>
-
-<h3>
-<a name="variables" class="anchor" href="#variables"><span class="octicon octicon-link"></span></a>Variables</h3>
-
-<p>In PHP, a variable starts with the $ sign, followed by the name of the variable, but in mammouth variable is like Javascript:</p>
-
-<pre><code>{{
-variable1 = true
-number1 = 10
-number2 = 1
-variable2 = (number2-15)/number1
-}}
-</code></pre>
-
-<p>The result will be:</p>
-
-<div class="highlight"><pre><span class="cp">&lt;?php </span>
-<span class="cp">$variable1 = true;</span>
-<span class="cp">$number1 = 10;</span>
-<span class="cp">$number2 = 1;</span>
-<span class="cp">$variable2 = ($number2 - 15) / $number1;</span>
-<span class="cp">?&gt;</span>
-</pre></div>
-
-<p>Variable can not take the current name: <code>and</code>, <code>breal</code>, <code>case</code>, <code>else</code>, <code>false</code>, <code>true</code>, <code>for</code>, <code>if</code>, <code>in</code>, <code>new</code>, <code>null</code>, <code>of</code>, <code>or</code>, <code>switch</code>, <code>then</code>, <code>this</code> and <code>while</code>.</p>
-
-<h2>
-<a name="change-log" class="anchor" href="#change-log"><span class="octicon octicon-link"></span></a>Change Log</h2>
-
-<p><strong>0.1.0</strong> -12/08/2013
-The initial version of Mammouth</p>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/btwael/mammouth/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/btwael/mammouth/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/btwael/mammouth"></a> is maintained by <a href="https://github.com/btwael">btwael</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
+      <div class="contents menu">
+        <a href="#overview">Overview</a>
+        <a href="#installation">Installation</a>
+        <a href="#usage">Usage</a>
+        <a href="#literate">Literate CoffeeScript</a>
+        <a href="#language">Language Reference</a>
+        <a href="#literals">Literals: Functions, Objects and Arrays</a>
+        <a href="#lexical-scope">Lexical Scoping and Variable Safety</a>
+        <a href="#conditionals">If, Else, Unless, and Conditional Assignment</a>
+        <a href="#splats">Splats...</a>
+        <a href="#loops">Loops and Comprehensions</a>
+        <a href="#slices">Array Slicing and Splicing</a>
+        <a href="#expressions">Everything is an Expression</a>
+        <a href="#operators">Operators and Aliases</a>
+        <a href="#classes">Classes, Inheritance, and Super</a>
+        <a href="#destructuring">Destructuring Assignment</a>
+        <a href="#fat-arrow">Function Binding</a>
+        <a href="#embedded">Embedded JavaScript</a>
+        <a href="#switch">Switch and Try/Catch</a>
+        <a href="#comparisons">Chained Comparisons</a>
+        <a href="#strings">String Interpolation, Block Strings, and Block Comments</a>
+        <a href="#regexes">Block Regular Expressions</a>
+        <a href="#cake">Cake, and Cakefiles</a>
+        <a href="#source-maps">Source Maps</a>
+        <a href="#scripts">"text/coffeescript" Script Tags</a>
+        <a href="#resources">Books, Screencasts, Examples and Resources</a>
+        <a href="#changelog">Change Log</a>
       </div>
     </div>
+    <div class="navigation try">
+      <div class="button">
+        Try Mammouth
+        <div class="repl_bridge"></div>
+      </div>
+      <div class="contents repl_wrapper">
+        <div class="code">
+          <div class="screenshadow tl"></div>
+          <div class="screenshadow tr"></div>
+          <div class="screenshadow bl"></div>
+          <div class="screenshadow br"></div>
+          <div id="repl_source_wrap">
+            <textarea id="repl_source" rows="100" spellcheck="false">
+{{
+hello = 'Hello Mammouth'
+echo(hello)
+}}</textarea>
+          </div>
+          <div id="repl_results_wrap"><pre id="repl_results"></pre></div>
+          <div class="minibutton dark run permalink" id="repl_permalink">Link</div>
+          <br class="clear" />
+        </div>
+      </div>
+    </div>
+    <div class="navigation annotated">
+      <div class="button">
+        Annotated Source
+      </div>
+      <div class="contents menu">
+        <a href="documentation/docs/grammar.html">Grammar Rules &mdash; src/grammar</a>
+        <a href="documentation/docs/lexer.html">Lexing Tokens &mdash; src/lexer</a>
+        <a href="documentation/docs/rewriter.html">The Rewriter &mdash; src/rewriter</a>
+        <a href="documentation/docs/nodes.html">The Syntax Tree &mdash; src/nodes</a>
+        <a href="documentation/docs/scope.html">Lexical Scope &mdash; src/scope</a>
+        <a href="documentation/docs/helpers.html">Helpers &amp; Utility Functions &mdash; src/helpers</a>
+        <a href="documentation/docs/coffee-script.html">The CoffeeScript Module &mdash; src/coffee-script</a>
+        <a href="documentation/docs/cake.html">Cake &amp; Cakefiles &mdash; src/cake</a>
+        <a href="documentation/docs/command.html">"coffee" Command-Line Utility &mdash; src/command</a>
+        <a href="documentation/docs/optparse.html">Option Parsing &mdash; src/optparse</a>
+        <a href="documentation/docs/repl.html">Interactive REPL &mdash; src/repl</a>
+        <a href="documentation/docs/sourcemap.html">Source Maps &mdash; src/sourcemap</a>
+      </div>
+    </div>
+    <div id="error" style="display:none;"></div>
+  </div>
 
-  
-  </body>
+  <div class="container">
+    <span class="bookmark" id="top"></span>
+
+    <p>
+      <b>Mammouth is a small language that compiles into PHP</b>, inspired by CoffeeScript. It's compiled to PHP codes/files that you can run in your PHP server.
+    </p>
+
+    <p>
+      <b>Latest Version:</b>
+      <a href="https://github.com/btwael/mammouth/archive/v0.1.1.zip">0.1.1</a>
+    </p>
+
+    <pre>
+sudo npm install -g mammouth</pre>
+
+    <h2>
+      <span id="overview" class="bookmark"></span>
+      Overview
+    </h2>
+
+    <p><i>Mammouth on the left, compiled PHP output on the right.</i></p>
+
+    <div class='code'><pre class="idle">
+{{
+number   <span class="Keyword">=</span> 42
+opposite <span class="Keyword">=</span> <span class="BuiltInConstant">true</span>
+
+<span class="FunctionName">square</span> <span class="Keyword">=</span> <span class="FunctionArgument">(x)</span> <span class="Keyword">-></span>
+ <span class="Keyword">return</span>(x <span class="Keyword">*</span> x)
+
+list <span class="Keyword">=</span> [1, 2, 3, 4, 5]
+
+<span class="Keyword">if</span> elvis
+ alert(<span class="String">"I knew it!"</span>) 
+
+<span class="FunctionName">Hello</span> <span class="Keyword">=</span> <span class="Keyword">-></span>
+ echo(<span class="String">'Hello Mammouth'</span>)
+}}
+</pre><pre class="idle">
+&lt;?php 
+$number <span class="Keyword">=</span> 42;
+$opposite <span class="Keyword">=</span> true;
+
+<span class="Keyword">function</span> <span class="FunctionName">square</span>(<span class="FunctionArgument">$x</span>) { 
+  <span class="Keyword">return</span>($x <span class="Keyword">*</span> $x);
+};
+$list <span class="Keyword">=</span> array(1, 2, 3, 4, 5);
+
+<span class="Keyword">if</span>($elvis) {  
+  alert(<span class="String">'I knew it!'</span>);
+}
+<span class="Keyword">function</span> <span class="FunctionName">Hello</span>() {  
+  echo(<span class="String">'Hello Mammouth'</span>);
+};
+?&gt;
+</pre><br class='clear' /></div>
+
+    <h2>
+      <span id="installation" class="bookmark"></span>
+      Installation
+    </h2>
+
+    <p>
+      The Mammouth compiler is written in JavaScript,
+      using the <a href="http://pegjs.majda.cz/">PEG.js</a>. The
+      command-line version of <tt>mammouth</tt> is available as a
+      <a href="http://nodejs.org/">Node.js</a> utility. The
+      <a href="extras/mammouth.js">core compiler</a> however, does not
+      depend on Node, and can be run in any JavaScript environment, or in the
+      browser (see "Try Mammouth", above).
+    </p>
+
+    <p>
+      To install, first make sure you have a working copy of the latest stable version of
+      <a href="http://nodejs.org/">Node.js</a>, and <a href="http://npmjs.org">npm</a>
+      (the Node Package Manager). You can then install Mammouth with npm:
+    </p>
+
+    <pre>
+npm install -g Mammouth</pre>
+
+    <p>
+      (Leave off the <tt>-g</tt> if you don't wish to install globally.)
+    </p>
+
+    <p>
+      If you'd prefer to install the latest <b>master</b> version of Mammouth, you
+      can clone the Mammouth
+      <a href="http://github.com/btwael/mammouth">source repository</a>
+      from GitHub, or download
+      <a href="http://github.com/btwael/mammouth/tarball/master">the source</a> directly.
+      To install the lastest master Mammouth compiler with npm:
+    </p>
+
+<pre>
+npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
+
+    <h2>
+      <span id="usage" class="bookmark"></span>
+      Usage
+    </h2>
+
+    <p>
+      Once installed, you should have access to the <tt>mammouth</tt> command,
+      which can execute scripts, compile <tt>.mammouth</tt> files into <tt>.php</tt>,
+      and provide an interactive REPL. The <tt>mammouth</tt> command takes the
+      following options:
+    </p>
+
+    <table>
+      <tr>
+        <td><code>-c, --compile</code></td>
+        <td>
+          Compile a <tt>.mammouth</tt> script into a <tt>.php</tt> PHP file
+          of the same name.
+        </td>
+      </tr>
+      <tr>
+        <td><code>-o, --output [DIR]</code></td>
+        <td>
+          Write out all compiled PHP files into the specified directory.
+          Use in conjunction with <tt>--compile</tt>.
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      <b>Examples:</b>
+    </p>
+
+    <ul>
+      <li>
+        Compile <tt>codes.mammouth</tt> to <tt>codes.php</tt> in the same folder<br />
+        <tt>coffee --compile --output lib/ src/</tt>
+      </li>
+      <li>
+        Compile all mammouth files in <tt>/codes</tt> folder to <tt>/result</tt> folder<br />
+        <tt>mammouth --compile --output /result /codes</tt>
+      </li>
+    </ul>
+
+    <h2>
+      <span id="language" class="bookmark"></span>
+      Language Reference
+    </h2>
+
+    <p>
+      <i>
+        This reference is structured so that it can be read from top to bottom,
+        if you like. Later sections use ideas and syntax previously introduced.
+        Familiarity with JavaScript is assumed.
+        In all of the following examples, the source Mammouth is provided on
+        the left, and the direct compilation into PHP is on the right.
+      </i>
+    </p>
+
+    <p>
+      First, the basics: Mammouth uses significant whitespace to delimit blocks of code.
+      You don't need to use semicolons <tt>;</tt> to terminate expressions,
+      ending the line will do just as well (although semicolons can still
+      be used to fit multiple expressions onto a single line).
+      Instead of using curly braces
+      <tt>{ }</tt> to surround blocks of code in <a href="#literals">functions</a>,
+      <a href="#conditionals">if-statements</a> and
+      <a href="#switch">switch</a>,
+      use indentation.
+    </p>
+
+    <p>
+      <span id="literals" class="bookmark"></span>
+      <b class="header">Functions</b>
+      Functions are defined by an optional list of parameters in parentheses,
+      an arrow, and the function body. The empty function looks like this:
+      <tt>-></tt>
+    </p>
+    <div class='code'><pre class="idle">
+{{
+<span class="FunctionName">square</span> <span class="Keyword">=</span> <span class="FunctionArgument">(x)</span> <span class="Keyword">-></span>
+ <span class="Keyword">return</span>(x <span class="Keyword">*</span> x)
+
+<span class="FunctionName">cube</span> <span class="">=</span> <span class="FunctionArgument">(x)</span> <span class="Keyword">-></span>
+ <span class="Keyword">return</span>(square(x) <span class="Keyword">*</span> x)
+}}
+</pre><pre class="idle">
+&lt;?php
+<span class="Keyword">function</span> <span class="FunctionName">square</span>(<span class="FunctionArgument">$x</span>) { 
+  <span class="Keyword">return</span>($x * $x);
+};
+<span class="Keyword">function</span> <span class="FunctionName">cube</span>(<span class="FunctionArgument">$x</span>) { 
+  <span class="Keyword">return</span>(square($x) * $x);
+};
+?&gt;
+</pre><br class='clear' /></div>
+    <p>
+      Functions may also have default values for arguments.
+    </p>
+
+    <div class='code'><pre class="idle">
+{{
+<span class="FunctionName">Say</span> <span class="">=</span> <span class="FunctionArgument">(text = <span class="String">"Hello World!"</span>)</span> <span class="Keyword">-></span>
+ echo(text)
+}}
+</pre><pre class="idle">
+&lt;?php
+<span class="Keyword">function</span> <span class="FunctionName">square</span>(<span class="FunctionArgument">$x</span>) { 
+  <span class="Keyword">return</span>($x * $x);
+};
+<span class="Keyword">function</span> <span class="FunctionName">cube</span>(<span class="FunctionArgument">$x</span>) { 
+  <span class="Keyword">return</span>(square($x) * $x);
+};
+?&gt;
+</pre><br class='clear' /></div>
+
+    <h2>
+      Resources
+    </h2>
+
+    <ul>
+      <li>
+        <a href="https://github.com/btwael/mammouth">Source Code</a><br />
+      </li>
+    </ul>
+
+    <h2>
+      <span id="changelog" class="bookmark"></span>
+      Change Log
+    </h2>
+
+    <p>
+      <b class="header" style="margin-top: 20px;">0.1.1
+        <span class="timestamp"> &ndash; <small>Jul 13, 2013</small></span>
+      </b>
+      Fix <tt>For</tt> loops.
+    </p>
+
+    <p>
+      <b class="header" style="margin-top: 20px;">0.1.0
+        <span class="timestamp"> &ndash; <small>Jul 12, 2013</small></span>
+      </b>
+      Initial Mammouth release.
+    </p>
+
+  </div>
+
+  <script type="text/coffeescript">
+    sourceFragment = "try:"
+
+    # Set up the compilation function, to run when you stop typing.
+    compileSource = ->
+      source = $('#repl_source').val()
+      window.compiledJS = ''
+      try
+        window.compiledJS = mammouth.compile source
+        el = $('#repl_results')[0]
+        if el.innerText
+          el.innerText = window.compiledJS
+        else
+          $(el).text window.compiledJS
+        $('#error').hide()
+      catch {location, message}
+        if location?
+          message = "Error on line #{location.first_line + 1}: #{message}"
+        $('#error').text(message).show()
+
+      # Update permalink
+      $('#repl_permalink').attr 'href', "##{sourceFragment}#{encodeURIComponent source}"
+
+    # Listen for keypresses and recompile.
+    $('#repl_source').keyup -> compileSource()
+
+    # Eval the compiled js.
+    evalJS = ->
+      try
+        eval window.compiledJS
+      catch error then alert error
+
+    # Load the console with a string of CoffeeScript.
+    window.loadConsole = (coffee) ->
+      $('#repl_source').val coffee
+      compileSource()
+      $('.navigation.try').addClass('active')
+      false
+
+    # Helper to hide the menus.
+    closeMenus = ->
+      $('.navigation.active').removeClass 'active'
+
+    # Bind navigation buttons to open the menus.
+    $('.navigation').click (e) ->
+      return if e.target.tagName.toLowerCase() is 'a'
+      return false if $(e.target).closest('.repl_wrapper').length
+      if $(this).hasClass('active')
+        closeMenus()
+      else
+        closeMenus()
+        $(this).addClass 'active'
+      false
+
+    # Dismiss console if Escape pressed or click falls outside console
+    # Trigger Run button on Ctrl-Enter
+    $(document.body)
+      .keydown (e) ->
+        closeMenus() if e.which == 27
+        evalJS() if e.which == 13 and (e.metaKey or e.ctrlKey) and $('.minibutton.run:visible').length
+      .click (e) ->
+        return false if $(e.target).hasClass('minibutton')
+        closeMenus()
+
+    $("#repl_permalink").click (e) ->
+        window.location = $(this).attr("href")
+        false
+
+    # If source code is included in location.hash, display it.
+    hash = decodeURIComponent location.hash.replace(/^#/, '')
+    if hash.indexOf(sourceFragment) == 0
+        src = hash.substr sourceFragment.length
+        loadConsole src
+
+    compileSource()
+
+  </script>
+
+  <script src="javascripts/jquery.js"></script>
+  <script src="javascripts/coffee-script.js"></script>
+  <script src="extras/mammouth.js"></script>
+
+</body>
 </html>
