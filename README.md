@@ -111,7 +111,54 @@ The result will be:
 $list = array(1,2,3,4,5,6,7,8,9);
 ?>
 ```
-###If/Else Assignment###
+###HEREDOC string###
+String spanning multiple lines using heredoc syntax is very quickly in Mammouth:
+```
+{{
+str = `Example of string
+spanning multiple lines
+using heredoc syntax.`
+}}
+```
+Compiled to:
+```html
+<?php 
+$str = <<<EOD
+Example of string
+spanning multiple lines
+using heredoc syntax.
+EOD;
+?>
+```
+You can add variables to HEREDOC string using `$` like `$Variable`.
+
+###Functions###
+Functions are defined in assignement, like in the example:
+```
+{{
+square = (x) -> 
+  return(x * x)
+Hello   = ->
+  echo('hello')
+square(3)
+Hello()
+}}
+```
+compiled to:
+```html
+<?php 
+function square($x) { 
+  return($x * $x);
+};
+function Hello() {  
+  echo('hello');
+};
+square(3);
+Hello();
+?>
+```
+
+###If/Else statement###
 If/else statements can be written without the use of parentheses and curly brackets. As with functions and other block expressions, multi-line conditionals are delimited by indentation.
 ```
 {{
