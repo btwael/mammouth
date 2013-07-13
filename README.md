@@ -178,7 +178,9 @@ switch($day) {
   default:  
     go($work);
 }
+?>
 ```
+
 ##Change Log##
 **0.1.0** -12/08/2013
 The initial version of Mammouth
