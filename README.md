@@ -184,6 +184,31 @@ $date = $friday ? $sue : $jill;
 ?>
 ```
 
+###For Loops###
+```
+{{
+for contact of contacts
+  echo(contact.name)
+  echo(contact.number)
+
+for i = 0; i<10; i++
+ echo(i)
+}}
+```
+Compiled to:
+```html
+<?php 
+for($_i = 0; $contact < count($contacts); $contact++) { 
+  $contact = $contacts[$_i];
+  echo($contact->name);
+  echo($contact->number);
+}
+for($i = 0; $i < 10; $i++) {  
+  echo($i);
+}
+?>
+```
+
 ###Switch statements###
 Switch statements in PHP are a bit awkward. You need to remember to break at the end of every case statement to avoid accidentally falling through to the default case. Mammouth prevents accidental fall-through, and can convert the switch into a returnable, assignable expression. The format is: `switch` condition, `case` clauses, `else` the default case.
 ```
