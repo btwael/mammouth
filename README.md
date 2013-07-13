@@ -254,5 +254,9 @@ switch($day) {
 ```
 
 ##Change Log##
-**0.1.0** -12/08/2013
+**0.1.1** -13/08/2013<br>
+-Update documentation 
+-Fix loops bug
+-Don't support class yet.
+**0.1.0** -12/08/2013<br>
 The initial version of Mammouth
