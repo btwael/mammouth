@@ -98,6 +98,20 @@ $variable2 = ($number2 - 15) / $number1;
 ```
 Variable can not take the current name: `and`, `breal`, `case`, `else`, `false`, `true`, `for`, `if`, `in`, `new`, `null`, `of`, `or`, `switch`, `then`, `this` and `while`.
 
+###Array###
+The mammouth literals for arrays look very similar to their JavaScript.
+```
+{{
+list = [1,2,3,4,5,6,7,8,9]
+}}
+```
+The result will be:
+```html
+<?php 
+$list = array(1,2,3,4,5,6,7,8,9);
+?>
+```
+
 ##Change Log##
 **0.1.0** -12/08/2013
 The initial version of Mammouth
