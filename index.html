@@ -8,7 +8,6 @@
   <title>Mammouth</title>
   <link rel="stylesheet" type="text/css" href="stylesheets/docs.css" />
   <link rel="stylesheet" type="text/css" href="stylesheets/idle.css" />
-  <link rel="shortcut icon" href="documentation/images/favicon.ico" />
 </head>
 <body>
 
@@ -288,23 +287,42 @@ npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
 };
 ?&gt;
 </pre><br class='clear' /></div>
+
     <p>
       Functions may also have default values for arguments.
     </p>
 
     <div class='code'><pre class="idle">
 {{
-<span class="FunctionName">Say</span> <span class="">=</span> <span class="FunctionArgument">(text = <span class="String">"Hello World!"</span>)</span> <span class="Keyword">-></span>
+<span class="FunctionName">Say</span> <span class="Keyword">=</span> <span class="FunctionArgument">(text = <span class="String">"Hello World!"</span>)</span> <span class="Keyword">-></span>
  echo(text)
 }}
 </pre><pre class="idle">
 &lt;?php
-<span class="Keyword">function</span> <span class="FunctionName">square</span>(<span class="FunctionArgument">$x</span>) { 
-  <span class="Keyword">return</span>($x * $x);
+<span class="Keyword">function</span> <span class="FunctionName">Say</span>(<span class="FunctionArgument">$x = "Hello World!"</span>) { 
+  echo($text);
 };
-<span class="Keyword">function</span> <span class="FunctionName">cube</span>(<span class="FunctionArgument">$x</span>) { 
-  <span class="Keyword">return</span>(square($x) * $x);
+?&gt;
+</pre><br class='clear' /></div>
+
+    <p>
+      You can pass a variable by reference to a function so the function can modify the variable. The syntax is as follows: (<tt>a</tt> get 6 at the end)
+    </p>
+
+    <div class='code'><pre class="idle">
+{{
+<span class="FunctionName">foo</span> <span class="Keyword">=</span> <span class="FunctionArgument">(&var)</span> <span class="Keyword">-></span>
+ var++
+a <span class="Keyword">=</span> 5
+foo(a)
+}}
+</pre><pre class="idle">
+&lt;?php
+<span class="Keyword">function</span> <span class="FunctionName">Say</span>(<span class="FunctionArgument">$text = "Hello World!"</span>) { 
+  echo($text);
 };
+a <span class="Keyword">=</span> 5;
+foo(a);
 ?&gt;
 </pre><br class='clear' /></div>
 
