@@ -318,8 +318,8 @@ foo(a)
 }}
 </pre><pre class="idle">
 &lt;?php
-<span class="Keyword">function</span> <span class="FunctionName">Say</span>(<span class="FunctionArgument">$text = "Hello World!"</span>) { 
-  echo($text);
+<span class="Keyword">function</span> <span class="FunctionName">foo</span>(<span class="FunctionArgument">&$var</span>) { 
+  $var++;
 };
 a <span class="Keyword">=</span> 5;
 foo(a);
