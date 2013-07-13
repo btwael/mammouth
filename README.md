@@ -257,6 +257,6 @@ switch($day) {
 **0.1.1** -13/08/2013<br>
 -Update documentation 
 -Fix loops bug
--Don't support class yet.
+-Don't support class yet.<br>
 **0.1.0** -12/08/2013<br>
 The initial version of Mammouth
