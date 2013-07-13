@@ -111,6 +111,31 @@ The result will be:
 $list = array(1,2,3,4,5,6,7,8,9);
 ?>
 ```
+###If/Else Assignment###
+If/else statements can be written without the use of parentheses and curly brackets. As with functions and other block expressions, multi-line conditionals are delimited by indentation.
+```
+{{
+if(happy and knowsIt)
+	clapsHands()
+	chaChaCha()
+else
+	showIt()
+
+date = friday ? sue : jill
+}}
+```
+This example is compiled to:
+```html
+<?php 
+if($happy && $knowsIt) {	
+	clapsHands();
+	chaChaCha();
+} else {	
+	showIt();
+}
+$date = $friday ? $sue : $jill;
+?>
+```
 
 ##Change Log##
 **0.1.0** -12/08/2013
