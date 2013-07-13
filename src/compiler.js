@@ -235,6 +235,16 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'AssignmentExpressionOfFunction':
+				var left = evalStatement(seq.left);
+				var right = evalStatement(seq.right);
+				var operator = ' ' + seq.operator + ' ';
+				var r = left + operator + right;
+				if(seq.Parentheses == true) {
+					r = '(' + r;
+					r += ')';
+				}
+				return r;
 			case 'ConditionalExpression':
 				if(seq.condition.type == 'BinaryExpression') {
 					seq.condition.Parentheses = true;
