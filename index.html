@@ -454,7 +454,7 @@ This should print a capital 'A': \x41</span>
   <span class="Keyword">case</span> <span class="String">"Thu"</span>
     go(iceFishing)
   <span class="Keyword">case</span> <span class="String">"Fri"</span>
-    if day == bingoDay
+    <span class="Keyword">if</span> day <span class="Keyword">==</span> bingoDay
       go(bingo)
       go(dancing)
   <span class="Keyword">case</span> <span class="String">"Sun"</span> <span class="Keyword">then</span>
@@ -465,22 +465,22 @@ This should print a capital 'A': \x41</span>
 </pre><pre class="idle">
 &lt;?php
 <span class="Keyword">switch</span>($day) {
-  <span class="Keyword">case</span> 'Mon': 
+  <span class="Keyword">case</span> <span class="String">'Mon'</span>: 
     go($work);
     <span class="Keyword">break</span>;
-  <span class="Keyword">case</span> 'Tue': 
+  <span class="Keyword">case</span> <span class="String">'Tue'</span>: 
     go($relax);
     <span class="Keyword">break</span>;
-  <span class="Keyword">case</span> 'Thu': 
+  <span class="Keyword">case</span> <span class="String">'Thu'</span>: 
     go($iceFishing);
     <span class="Keyword">break</span>;
-  <span class="Keyword">case</span> 'Fri': 
-    if($day == $bingoDay) { 
+  <span class="Keyword">case</span> <span class="String">'Fri'</span>: 
+    <span class="Keyword">if</span>($day <span class="Keyword">==</span> $bingoDay) { 
       go($bingo);
       go($dancing);
     }
     <span class="Keyword">break</span>;
-  <span class="Keyword">case</span> 'Sun': 
+  <span class="Keyword">case</span> <span class="String">'Sun'</span>: 
     go($church);
     <span class="Keyword">break</span>;
   <span class="Keyword">default</span>:  
