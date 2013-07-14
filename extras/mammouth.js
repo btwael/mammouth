@@ -9629,7 +9629,7 @@ mammouth.parser = (function(){
 	CaseToken: 'case',
 	DefaultToken: 'default'
 };
-mammouth.VERSION = '0.1.1';
+mammouth.VERSION = '0.1.2';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
@@ -9864,6 +9864,16 @@ mammouth.compile = function(code) {
 				}
 				if(seq.only == true) {
 					r += ';';
+				}
+				return r;
+			case 'AssignmentExpressionOfFunction':
+				var left = evalStatement(seq.left);
+				var right = evalStatement(seq.right);
+				var operator = ' ' + seq.operator + ' ';
+				var r = left + operator + right;
+				if(seq.Parentheses == true) {
+					r = '(' + r;
+					r += ')';
 				}
 				return r;
 			case 'ConditionalExpression':

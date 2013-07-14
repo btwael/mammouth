@@ -19,7 +19,7 @@ try {
 	fs.unlinkSync('extras/mammouth.js');
 	fs.unlinkSync('extras/mammouth-nodejs.js');
 } catch(e) {
-
+	console.log(err);
 }
 try {
 	var data = '';
