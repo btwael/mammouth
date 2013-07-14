@@ -326,6 +326,119 @@ foo(a);
 ?&gt;
 </pre><br class='clear' /></div>
 
+    <p>
+      <span id="arrays" class="bookmark"></span>
+      <b class="header">Arrays</b>
+      The Mammouth literals for arrays look very similar to their JavaScript cousins.
+    </p>
+    <div class='code'><pre class="idle">
+{{
+song <span class="Keyword">=</span> [<span class="String">"do"</span>, <span class="String">"re"</span>, <span class="String">"mi"</span>, <span class="String">"fa"</span>, <span class="String">"so"</span>]
+}}
+</pre><pre class="idle">
+&lt;?php
+$song <span class="Keyword">=</span> array(<span class="String">'do'</span>, <span class="String">'re'</span>, <span class="String">'mi'</span>, <span class="String">'fa'</span>, <span class="String">'so'</span>);
+?&gt;
+</pre><br class='clear' /></div>
+
+    <p>
+      <span id="If" class="bookmark"></span>
+      <b class="header">If/else</b>
+      If/else statements can be written without the use of parentheses and curly brackets. As with functions and other block expressions, conditionals are delimited by indentation.
+    </p>
+    <div class='code'><pre class="idle">
+{{
+<span class="Keyword">if</span> happy <span class="Keyword">and</span> knowsIt
+  clapsHands()
+  chaChaCha()
+<span class="Keyword">else</span>
+  showIt()
+}}
+</pre><pre class="idle">
+&lt;?php
+<span class="Keyword">if</span>($happy <span class="Keyword">&&</span> $knowsIt) {  
+  clapsHands();
+  chaChaCha();
+} <span class="Keyword">else</span> {  
+  showIt();
+}
+?&gt;
+</pre><br class='clear' /></div>
+
+    <p>
+      <span id="for" class="bookmark"></span>
+      <b class="header">For Loops</b>
+      For statements can be written without the use of parentheses and curly brackets. As with functions and other block expressions. There are two examples of <tt>For</tt> usage:
+    </p>
+    <div class='code'><pre class="idle">
+{{
+<span class="Keyword">for</span> i <span class="Keyword">=</span> 0; i <span class="Keyword">&gt;</span> 10; i<span class="Keyword">++</span>
+  echo(i)
+
+<span class="Keyword">for</span> contat <span class="Keyword">of</span> contacts
+  echo(contacts)
+}}
+</pre><pre class="idle">
+&lt;?php
+<span class="Keyword">for</span>($i <span class="Keyword">=</span> 0; $i <span class="Keyword">&lt;</span> 10; $i<span class="Keyword">++</span>) {  
+  echo($i);
+}
+<span class="Keyword">for</span>($_i <span class="Keyword">=</span> 0; $contat <span class="Keyword">&gt;</span> count($contacts); $contat<span class="Keyword">++</span>) { 
+  $contat <span class="Keyword">=</span> $contacts[$_i];
+  echo($contacts);
+}
+?&gt;
+</pre><br class='clear' /></div>
+
+    <p>
+      <span id="operetor" class="bookmark"></span>
+      <b class="header">Operators and Aliases</b>
+      For logic, <tt>and</tt> compiles to <tt>&&</tt>, <tt>and</tt> or into <tt>||</tt>. 
+    </p>
+    <p>
+      Instead of a newline or semicolon, <tt>then</tt> can be used to separate conditions from expressions, in if/else and switch/when statements. 
+    </p>
+    <p>
+      All other PHP operators are supported by Mammouth like <tt>+=</tt>, <tt>?+</tt>, <tt>>>>=</tt>, <tt>^</tt>, <tt>~</tt>...
+    </p>
+
+    <p>
+      <span id="classes" class="bookmark"></span>
+      <b class="header">Classes</b>
+      Classes are not by Mammouth yet :(, we will add it soon :)
+    </p>
+
+    <p>
+      <span id="heredoc" class="bookmark"></span>
+      <b class="header">Heredoc strings</b>
+      You can use a multi-line string using the syntax of mammouth heredoc.
+    </p>
+    <div class='code'><pre class="idle">
+{{
+str <span class="Keyword">=</span> <span class="String">`Example of string
+spanning multiple lines
+using heredoc syntax.`</span>
+
+echo(<span class="String">`My name is "$name". I am printing some $foo->foo.
+Now, I am printing some {$foo->bar[1]}.
+This should print a capital 'A': \x41`</span>)
+}}
+</pre><pre class="idle">
+&lt;?php
+$str <span class="Keyword">=</span> <span class="Keyword">&lt;&lt;&lt;EOD</span>
+<span class="String">Example of string
+spanning multiple lines
+using heredoc syntax.</span>
+<span class="Keyword">EOD</span>;
+
+echo(<span class="Keyword">&lt;&lt;&lt;EOT</span>
+<span class="String">My name is "$name". I am printing some $foo->foo.
+Now, I am printing some {$foo->bar[1]}.
+This should print a capital 'A': \x41</span>
+<span class="Keyword">EOT</span>);
+?&gt;
+</pre><br class='clear' /></div>
+
     <h2>
       Resources
     </h2>
