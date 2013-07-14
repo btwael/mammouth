@@ -9629,7 +9629,7 @@ mammouth.parser = (function(){
 	CaseToken: 'case',
 	DefaultToken: 'default'
 };
-mammouth.VERSION = '0.1.2';
+mammouth.VERSION = '0.1.3';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
