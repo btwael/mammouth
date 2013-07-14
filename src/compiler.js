@@ -1,4 +1,4 @@
-mammouth.VERSION = '0.1.3';
+mammouth.VERSION = '0.1.4';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
@@ -422,7 +422,10 @@ mammouth.compile = function(code) {
 						seq.counter = {
 							"type": "PostfixExpression",
 							"operator": "++",
-							"expression": seq.initializer.left
+							"expression": {
+								"type": "Variable",
+								"name": "_i"
+							}
 						};
 						seq.statement.splice(1, 0, {
 							"type": "AssignmentExpression",
@@ -434,7 +437,7 @@ mammouth.compile = function(code) {
 								"name": {
 									"type": "Variable",
 									"name": "_i"
-					            }
+								}
 					         }
 						});
 						seq.initializer = {
