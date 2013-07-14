@@ -887,10 +887,10 @@ EOTLiteral
 	}
 
 EODString
-	= !("`" / "\\" / '$') char_:SourceCharacter { return char_;     }
+	= !("`" / '$') char_:SourceCharacter { return char_;     }
 
 EOTString
-	= !("`" / "\\") char_:SourceCharacter { return char_;     }
+	= !("`") char_:SourceCharacter { return char_;     }
 
 ArrayLiteral
 	= "[" __ elements:ElementList? __ (Elision __)? "]" {

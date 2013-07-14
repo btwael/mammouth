@@ -8134,24 +8134,13 @@ mammouth.parser = (function(){
           }
         }
         if (result0 === null) {
-          if (input.charCodeAt(pos) === 92) {
-            result0 = "\\";
+          if (input.charCodeAt(pos) === 36) {
+            result0 = "$";
             pos++;
           } else {
             result0 = null;
             if (reportFailures === 0) {
-              matchFailed("\"\\\\\"");
-            }
-          }
-          if (result0 === null) {
-            if (input.charCodeAt(pos) === 36) {
-              result0 = "$";
-              pos++;
-            } else {
-              result0 = null;
-              if (reportFailures === 0) {
-                matchFailed("\"$\"");
-              }
+              matchFailed("\"$\"");
             }
           }
         }
@@ -8198,17 +8187,6 @@ mammouth.parser = (function(){
           result0 = null;
           if (reportFailures === 0) {
             matchFailed("\"`\"");
-          }
-        }
-        if (result0 === null) {
-          if (input.charCodeAt(pos) === 92) {
-            result0 = "\\";
-            pos++;
-          } else {
-            result0 = null;
-            if (reportFailures === 0) {
-              matchFailed("\"\\\\\"");
-            }
           }
         }
         reportFailures--;

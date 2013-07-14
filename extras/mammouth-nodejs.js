@@ -8135,24 +8135,13 @@ mammouth.parser = (function(){
           }
         }
         if (result0 === null) {
-          if (input.charCodeAt(pos) === 92) {
-            result0 = "\\";
+          if (input.charCodeAt(pos) === 36) {
+            result0 = "$";
             pos++;
           } else {
             result0 = null;
             if (reportFailures === 0) {
-              matchFailed("\"\\\\\"");
-            }
-          }
-          if (result0 === null) {
-            if (input.charCodeAt(pos) === 36) {
-              result0 = "$";
-              pos++;
-            } else {
-              result0 = null;
-              if (reportFailures === 0) {
-                matchFailed("\"$\"");
-              }
+              matchFailed("\"$\"");
             }
           }
         }
@@ -8199,17 +8188,6 @@ mammouth.parser = (function(){
           result0 = null;
           if (reportFailures === 0) {
             matchFailed("\"`\"");
-          }
-        }
-        if (result0 === null) {
-          if (input.charCodeAt(pos) === 92) {
-            result0 = "\\";
-            pos++;
-          } else {
-            result0 = null;
-            if (reportFailures === 0) {
-              matchFailed("\"\\\\\"");
-            }
           }
         }
         reportFailures--;
@@ -9651,7 +9629,7 @@ mammouth.parser = (function(){
 	CaseToken: 'case',
 	DefaultToken: 'default'
 };
-mammouth.VERSION = '0.0.1';
+mammouth.VERSION = '0.1.1';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
@@ -9886,16 +9864,6 @@ mammouth.compile = function(code) {
 				}
 				if(seq.only == true) {
 					r += ';';
-				}
-				return r;
-			case 'AssignmentExpressionOfFunction':
-				var left = evalStatement(seq.left);
-				var right = evalStatement(seq.right);
-				var operator = ' ' + seq.operator + ' ';
-				var r = left + operator + right;
-				if(seq.Parentheses == true) {
-					r = '(' + r;
-					r += ')';
 				}
 				return r;
 			case 'ConditionalExpression':
