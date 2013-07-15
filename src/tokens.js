@@ -7,5 +7,8 @@ mammouth.Tokens = {
 	WhileToken: 'while',
 	SwitchToken: 'switch',
 	CaseToken: 'case',
-	DefaultToken: 'default'
+	DefaultToken: 'default',
+	TryToken: 'try',
+	CatchToken: 'catch',
+	FinallyToken: 'finally'
 };

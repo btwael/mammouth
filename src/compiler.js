@@ -635,6 +635,124 @@ mammouth.compile = function(code) {
 				}
 				r += '}';
 				return r;
+			case 'TryStatement':
+				var r = Tokens.TryToken;
+				r += ' {\n';
+				if(seq.TryStatement != null) {
+					var body = '';
+					for(var j = 0; j < seq.TryStatement.length; j++) {
+						if(typeof seq.TryStatement[j] == 'undefined') {
+							body += '\n';
+						} else {
+							seq.TryStatement[j].only = true;
+							if(typeof seq.TryStatement[j] == 'string') {
+								body += evalStatement(seq.TryStatement[j]);
+							} else {
+								body += evalStatement(seq.TryStatement[j]) + '\n';
+							}
+						}
+					}
+					var pars = mammouth.LineTerminatorParser.parse(body);
+					for(var x = 0; x < pars.length; x++) {
+						if(pars[x] != '' || x == 0) {
+							if(x == (pars.length - 1)) {
+								r += '\t' + pars[x];
+							} else {
+								if(seq.TryStatement.length == 1) {
+									r += '\t' + pars[x];
+								} else {
+									r += '\t' + pars[x] + '\n';
+								}
+							}
+						} else if(typeof pars[x] == 'undefined') {
+							r += '\n';
+						} else {
+							if(x == 1) {
+								r += '\n';
+							}
+						}
+					}
+				}
+				r += '}'
+				r += ' ' + Tokens.CatchToken + '(';
+				r += seq.CatchErrVar.vtype + ' ' + evalStatement(seq.CatchErrVar.name);
+				r += ')';
+				r += ' {\n';
+				if(seq.CatchStatement != null) {
+					body = '';
+					for(var j = 0; j < seq.CatchStatement.length; j++) {
+						if(typeof seq.CatchStatement[j] == 'undefined') {
+							body += '\n';
+						} else {
+							seq.CatchStatement[j].only = true;
+							if(typeof seq.CatchStatement[j] == 'string') {
+								body += evalStatement(seq.CatchStatement[j]);
+							} else {
+								body += evalStatement(seq.CatchStatement[j]) + '\n';
+							}
+						}
+					}
+					pars = mammouth.LineTerminatorParser.parse(body);
+					for(var x = 0; x < pars.length; x++) {
+						if(pars[x] != '' || x == 0) {
+							if(x == (pars.length - 1)) {
+								r += '\t' + pars[x];
+							} else {
+								if(seq.CatchStatement.length == 1) {
+									r += '\t' + pars[x];
+								} else {
+									r += '\t' + pars[x] + '\n';
+								}
+							}
+						} else if(typeof pars[x] == 'undefined') {
+							r += '\n';
+						} else {
+							if(x == 1) {
+								r += '\n';
+							}
+						}
+					}
+				}
+				r += '}'
+				if(seq.FinallyStatemnt != null) {
+					r += ' ' + Tokens.FinallyToken;
+					r += ' {\n';
+					body = '';
+					for(var j = 0; j < seq.FinallyStatemnt.length; j++) {
+						if(typeof seq.FinallyStatemnt[j] == 'undefined') {
+							body += '\n';
+						} else {
+							seq.FinallyStatemnt[j].only = true;
+							if(typeof seq.FinallyStatemnt[j] == 'string') {
+								body += evalStatement(seq.FinallyStatemnt[j]);
+							} else {
+								body += evalStatement(seq.FinallyStatemnt[j]) + '\n';
+							}
+						}
+					}
+					pars = mammouth.LineTerminatorParser.parse(body);
+					for(var x = 0; x < pars.length; x++) {
+						if(pars[x] != '' || x == 0) {
+							if(x == (pars.length - 1)) {
+								r += '\t' + pars[x];
+							} else {
+								if(seq.FinallyStatemnt.length == 1) {
+									r += '\t' + pars[x];
+								} else {
+									r += '\t' + pars[x] + '\n';
+								}
+							}
+						} else if(typeof pars[x] == 'undefined') {
+							r += '\n';
+						} else {
+							if(x == 1) {
+								r += '\n';
+							}
+						}
+					}
+					r += '}'
+				}
+				return r;
 		}
 	};
 	var interprete = function(code){

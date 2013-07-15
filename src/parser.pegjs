@@ -463,6 +463,8 @@ statement
 		{ return m; }
 	/ SAMEDENT m:WhileStatement EOL?
 		{ return m; }
+	/ SAMEDENT m:TryStatement EOL?
+		{ return m; }
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -657,13 +659,53 @@ BreakStatement
 			type: 'break'
 		};
 	}
+
+TryStatement
+	= SAMEDENT TryToken __ EOL?
+	TryStatement:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })?
+	CatchStatemnt:(SAMEDENT CatchToken __ CatchErrVar:CatchErrVar __ EOL?
+		( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })?
+	)
+	FinallyStatemnt:(SAMEDENT finallyToken __ EOL? (b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? )? {
+		return {
+			type:          "TryStatement",
+			TryStatement:   TryStatement !== "" ? TryStatement : null,
+			CatchStatement: CatchStatemnt[6] !== "" ? CatchStatemnt[6] : null,
+			CatchErrVar: CatchStatemnt[3],
+			FinallyStatemnt: FinallyStatemnt[4] !== "" ? FinallyStatemnt[4] : null
+		};
+	}
+
+CatchErrVar
+	= Type:Identifier WhiteSpace+ name:Identifier { 
+		return { 
+			type: "VariableWithType", 
+			name: {
+				type:"Variable",
+				name:name
+			},
+			vtype: Type
+		}; 
+	}
+	/ name:Identifier { 
+		return { 
+			type: "VariableWithType", 
+			name: {
+				type:"Variable",
+				name:name
+			},
+			vtype: "Exception"
+		}; 
+	}
 /* ===== Tokens ===== */
 AndToken = 'and'
 BreakToken = 'break'
 CaseToken = 'case'
+CatchToken = 'catch'
 ElseToken = 'else'
 ElseIfToken = 'else' __ 'if'
 FalseToken = 'false'
+finallyToken = 'finally'
 ForToken = 'for'
 IfToken = 'if'
 InToken = 'in'
@@ -677,14 +719,17 @@ SwitchToken = 'switch'
 ThenToken = 'then'
 ThisToken = 'this'
 TrueToken = 'true'
+TryToken = 'try'
 WhileToken = 'while'
 
 ReservedWord
 	= AndToken
 	/ BreakToken
 	/ CaseToken
+	/ CatchToken
 	/ ElseToken
 	/ FalseToken
+	/ finallyToken
 	/ ForToken
 	/ IfToken
 	/ InToken
@@ -698,6 +743,7 @@ ReservedWord
 	/ ThenToken
 	/ ThisToken
 	/ TrueToken
+	/ TryToken
 	/ 'function'
 	/ WhileToken
 
@@ -741,7 +787,6 @@ IdentifierName "identifier"
 
 IdentifierStart
 	= UnicodeLetter
-	/ "$"
 	/ "_"
 
 IdentifierPart
