@@ -539,9 +539,8 @@ mammouth.compile = function(code) {
 				for(var i = 0; i < seq.cases.length; i++) {
 					if(typeof seq.cases[i] != 'undefined') {
 						if(seq.cases[i].type == 'case') {
-							CasesBlock += Tokens.CaseToken + ' ' + evalStatement(seq.cases[i].value) + ':';
+							CasesBlock += Tokens.CaseToken + ' ' + evalStatement(seq.cases[i].value) + ':\n';
 							if(seq.cases[i].statement != '') {
-								seq.cases[i].statement.unshift(undefined);
 								seq.cases[i].statement.push({
 									type: 'break'
 								})
