@@ -293,34 +293,42 @@ mammouth.compile = function(code) {
 				r += condition;
 				r += ' {';
 				var body = '';
-				for(var j = 0; j < seq.ifStatement.length; j++) {
-					if(typeof seq.ifStatement[j] == 'undefined') {
-						body += '\n';
-					} else {
-						seq.ifStatement[j].only = true;
-						if(typeof seq.ifStatement[j] == 'string') {
-							body += evalStatement(seq.ifStatement[j]);
+				if(seq.ifStatement != null) {
+					for(var j = 0; j < seq.ifStatement.length; j++) {
+						if(typeof seq.ifStatement[j] == 'undefined') {
+							body += '\n';
 						} else {
-							body += evalStatement(seq.ifStatement[j]) + '\n';
-						}
-					}
-				}
-				var pars = mammouth.LineTerminatorParser.parse(body);
-				for(var x = 0; x < pars.length; x++) {
-					if(pars[x] != '' || x == 0) {
-						if(x == (pars.length - 1)) {
-							r += '\t' + pars[x];
-						} else {
-							if(seq.ifStatement.length == 1) {
-								r += '\t' + pars[x];
+							seq.ifStatement[j].only = true;
+							if(typeof seq.ifStatement[j] == 'string') {
+								body += evalStatement(seq.ifStatement[j]);
 							} else {
-								r += '\t' + pars[x] + '\n';
+								body += evalStatement(seq.ifStatement[j]) + '\n';
 							}
 						}
-					} else if(typeof pars[x] == 'undefined') {
+					}
+					if(seq.ifStatement.length!==1) {
 						r += '\n';
+						var pars = mammouth.LineTerminatorParser.parse(body);
+						for(var x = 0; x < pars.length; x++) {
+							if(pars[x] != '' || x == 0) {
+								if(x == (pars.length - 1)) {
+									r += '\t' + pars[x];
+								} else {
+									if(seq.ifStatement.length == 1) {
+										r += '\t' + pars[x];
+									} else {
+										r += '\t' + pars[x] + '\n';
+									}
+								}
+							} else if(typeof pars[x] == 'undefined') {
+								r += '\n';
+							} else {
+								r += pars[x];
+							}
+						}
 					} else {
-						r += pars[x];
+						var pars = mammouth.LineTerminatorParser.parse(body);
+						r += pars[0];
 					}
 				}
 				r += '}';
@@ -345,29 +353,34 @@ mammouth.compile = function(code) {
 								}
 							}
 						}
-						var pars = mammouth.LineTerminatorParser.parse(body);
-						for(var x = 0; x < pars.length; x++) {
-							if(pars[x] != '' || x == 0) {
-								if(x == (pars.length - 1)) {
-									r += '\t' + pars[x];
-								} else {
-									if(seq.elseifStatement[i].statement.length == 1) {
+						if(seq.elseifStatement[i].statement.length>1) {
+							r += '\n';
+							var pars = mammouth.LineTerminatorParser.parse(body);
+							for(var x = 0; x < pars.length; x++) {
+								if(pars[x] != '' || x == 0) {
+									if(x == (pars.length - 1)) {
 										r += '\t' + pars[x];
 									} else {
-										r += '\t' + pars[x] + '\n';
+										if(seq.elseifStatement[i].statement.length == 1) {
+											r += '\t' + pars[x];
+										} else {
+											r += '\t' + pars[x] + '\n';
+										}
 									}
+								} else if(typeof pars[x] == 'undefined') {
+									r += '\n';
+								} else {
+									r += pars[x];
 								}
-							} else if(typeof pars[x] == 'undefined') {
-								r += '\n';
-							} else {
-								r += pars[x];
 							}
+						} else {
+							var pars = mammouth.LineTerminatorParser.parse(body);
+							r += pars[0];
 						}
 						r += '}';
 					};
 				}
 				if(seq.elseStatement != null) {
-					r += ' else {';
 					body = '';
 					for(var j = 0; j < seq.elseStatement.length; j++) {
 						if(typeof seq.elseStatement[j] == 'undefined') {
@@ -381,23 +394,31 @@ mammouth.compile = function(code) {
 							}
 						}
 					}
-					var pars = mammouth.LineTerminatorParser.parse(body);
-					for(var x = 0; x < pars.length; x++) {
-						if(pars[x] != '' || x == 0) {
-							if(x == (pars.length - 1)) {
-								r += '\t' + pars[x];
-							} else {
-								if(seq.elseStatement.length == 1) {
+					r += ' ' + Tokens.ElseToken;
+					r += ' {';
+					if(seq.elseStatement.length!==1) {
+						r += '\n';
+						var pars = mammouth.LineTerminatorParser.parse(body);
+						for(var x = 0; x < pars.length; x++) {
+							if(pars[x] != '' || x == 0) {
+								if(x == (pars.length - 1)) {
 									r += '\t' + pars[x];
 								} else {
-									r += '\t' + pars[x] + '\n';
+									if(seq.elseStatement.length == 1) {
+										r += '\t' + pars[x];
+									} else {
+										r += '\t' + pars[x] + '\n';
+									}
 								}
+							} else if(typeof pars[x] == 'undefined') {
+								r += '\n';
+							} else {
+								r += pars[x];
 							}
-						} else if(typeof pars[x] == 'undefined') {
-							r += '\n';
-						} else {
-							r += pars[x];
 						}
+					} else {
+						var pars = mammouth.LineTerminatorParser.parse(body);
+						r += pars[0];
 					}
 					r += '}';
 				}

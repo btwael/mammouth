@@ -544,22 +544,22 @@ ArgumentsForInline
 
 
 IfStatement
-	= IfToken __ "("? __ condition:Expression __ ")"? __
-	ifStatement:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })
+	= SAMEDENT IfToken __ "("? __ condition:Expression __ ")"? __ EOL?
+	ifStatement:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })?
 	elseifStatement:(
-		( __ ElseIfToken __ "("? __ condition:Expression __ ")"? __
-		statement:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) {return {
+		(SAMEDENT ElseIfToken __ "("? __ condition:Expression __ ")"? __ EOL?
+		statement:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {return {
 				condition: condition,
 				statement: statement,
 			}
 		})+
 	)?
-	elseStatement:( __ ElseToken __ (b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) )? {
+	elseStatement:(SAMEDENT ElseToken __ EOL? (b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) )? {
 		return {
 			type:          "IfStatement",
 			condition:     condition,
-			ifStatement:   ifStatement,
-			elseStatement: elseStatement !== "" ? elseStatement[3] : null,
+			ifStatement:   ifStatement !== "" ? ifStatement : null,
+			elseStatement: elseStatement !== "" ? elseStatement[4] : null,
 			elseifStatement: elseifStatement !== "" ? elseifStatement : null
 		};
 	}
