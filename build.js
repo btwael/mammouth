@@ -18,7 +18,7 @@ try {
 	fs.unlinkSync('src/LineTerminator.js');
 	fs.unlinkSync('extras/mammouth.js');
 	fs.unlinkSync('extras/mammouth-nodejs.js');
-} catch(e) {
+} catch(err) {
 	console.log(err);
 }
 try {
