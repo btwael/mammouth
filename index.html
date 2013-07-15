@@ -64,7 +64,7 @@ echo(hello)
     <span class="bookmark" id="top"></span>
 
     <p>
-      <b>Mammouth is a small language that compiles into PHP</b>, inspired by CoffeeScript. It's compiled to PHP codes/files that you can run in your PHP server.
+      <b>Mammouth is a small language that compiles into PHP</b>, inspired by CoffeeScript. It's compiled to PHP code/files that you can run on your PHP server.
     </p>
 
     <p>
@@ -128,10 +128,10 @@ $list <span class="Keyword">=</span> array(1, 2, 3, 4, 5);
 
     <p>
       The Mammouth compiler is written in JavaScript,
-      using the <a href="http://pegjs.majda.cz/">PEG.js</a>. The
+      using <a href="http://pegjs.majda.cz/">PEG.js</a>. The
       command-line version of <tt>mammouth</tt> is available as a
       <a href="http://nodejs.org/">Node.js</a> utility. The
-      <a href="extras/mammouth.js">core compiler</a> however, does not
+      <a href="extras/mammouth.js">core compiler</a>, however, does not
       depend on Node, and can be run in any JavaScript environment, or in the
       browser (see "Try Mammouth", above).
     </p>
@@ -227,8 +227,8 @@ npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
       be used to fit multiple expressions onto a single line).
       Instead of using curly braces
       <tt>{ }</tt> to surround blocks of code in <a href="#literals">functions</a>,
-      <a href="#conditionals">if-statements</a> and
-      <a href="#switch">switch</a>,
+      <a href="#conditionals">if statements</a> and
+      <a href="#switch">switch statements</a>,
       use indentation.
     </p>
 
@@ -276,7 +276,7 @@ npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
 </pre><br class='clear' /></div>
 
     <p>
-      You can pass a variable by reference to a function so the function can modify the variable. The syntax is as follows: (<tt>a</tt> get 6 at the end)
+      You can pass a variable by reference to a function so the function can modify the variable. The syntax is as follows: (<tt>a</tt> is 6 after the function call)
     </p>
 
     <div class='code'><pre class="idle">
@@ -338,24 +338,24 @@ $song <span class="Keyword">=</span> array(<span class="String">'do'</span>, <sp
     <p>
       <span id="for" class="bookmark"></span>
       <b class="header">For Loops</b>
-      For statements can be written without the use of parentheses and curly brackets. As with functions and other block expressions. There are two examples of <tt>For</tt> usage:
+      For statements can be written without the use of parentheses and curly brackets as with functions and other block expressions. Here are two examples of <tt>for</tt> usage:
     </p>
     <div class='code'><pre class="idle">
 {{
-<span class="Keyword">for</span> i <span class="Keyword">=</span> 0; i <span class="Keyword">&gt;</span> 10; i<span class="Keyword">++</span>
+<span class="Keyword">for</span> i <span class="Keyword">=</span> 0; i <span class="Keyword">&lt;</span> 10; i<span class="Keyword">++</span>
   echo(i)
 
-<span class="Keyword">for</span> contat <span class="Keyword">of</span> contacts
-  echo(contacts)
+<span class="Keyword">for</span> contact <span class="Keyword">of</span> contacts
+  echo(contact)
 }}
 </pre><pre class="idle">
 &lt;?php
 <span class="Keyword">for</span>($i <span class="Keyword">=</span> 0; $i <span class="Keyword">&lt;</span> 10; $i<span class="Keyword">++</span>) {  
   echo($i);
 }
-<span class="Keyword">for</span>($_i <span class="Keyword">=</span> 0; $contat <span class="Keyword">&gt;</span> count($contacts); $contat<span class="Keyword">++</span>) { 
-  $contat <span class="Keyword">=</span> $contacts[$_i];
-  echo($contacts);
+<span class="Keyword">for</span>($_i <span class="Keyword">=</span> 0; $_i <span class="Keyword">&lt;</span> count($contacts); $_i<span class="Keyword">++</span>) { 
+  $contact <span class="Keyword">=</span> $contacts[$_i];
+  echo($contact);
 }
 ?&gt;
 </pre><br class='clear' /></div>
@@ -363,29 +363,29 @@ $song <span class="Keyword">=</span> array(<span class="String">'do'</span>, <sp
     <p>
       <span id="operetor" class="bookmark"></span>
       <b class="header">Operators and Aliases</b>
-      For logic, <tt>and</tt> compiles to <tt>&&</tt>, <tt>and</tt> or into <tt>||</tt>. 
+      For logic, <tt>and</tt> compiles to <tt>&&</tt>, and <tt>or</tt> into <tt>||</tt>. 
     </p>
     <p>
       Instead of a newline or semicolon, <tt>then</tt> can be used to separate conditions from expressions, in if/else and switch/when statements. 
     </p>
     <p>
-      All other PHP operators are supported by Mammouth like <tt>+=</tt>, <tt>?+</tt>, <tt>>>>=</tt>, <tt>^</tt>, <tt>~</tt>...
+      All other PHP operators are supported by Mammouth like <tt>+=</tt>, <tt>?+</tt>, <tt>&gt;&gt;=</tt>, <tt>^</tt>, <tt>~</tt>...
     </p>
 
     <p>
       <span id="classes" class="bookmark"></span>
       <b class="header">Classes</b>
-      Classes are not by Mammouth yet :(, we will add it soon :)
+      Classes are not supported by Mammouth yet :(, but we will add support soon. :)
     </p>
 
     <p>
       <span id="heredoc" class="bookmark"></span>
       <b class="header">Heredoc strings</b>
-      You can use a multi-line string using the syntax of mammouth heredoc.
+      You can use a multi-line string using the syntax of mammouth heredocs.
     </p>
     <div class='code'><pre class="idle">
 {{
-str <span class="Keyword">=</span> <span class="String">`Example of string
+str <span class="Keyword">=</span> <span class="String">`Example of a string
 spanning multiple lines
 using heredoc syntax.`</span>
 
@@ -396,7 +396,7 @@ This should print a capital 'A': \x41`</span>)
 </pre><pre class="idle">
 &lt;?php
 $str <span class="Keyword">=</span> <span class="Keyword">&lt;&lt;&lt;EOD</span>
-<span class="String">Example of string
+<span class="String">Example of a string
 spanning multiple lines
 using heredoc syntax.</span>
 <span class="Keyword">EOD</span>;
@@ -412,7 +412,7 @@ This should print a capital 'A': \x41</span>
     <p>
       <span id="switch" class="bookmark"></span>
       <b class="header">Switch/Case/Else</b>
-      Switch statements in PHP are a bit awkward. You need to remember to break at the end of every case statement to avoid accidentally falling through to the default case. The format is: <tt>switch</tt> condition, <tt>case</tt> clauses, <tt>else</tt> the default case. 
+      Switch statements in PHP are a bit awkward. You need to remember to break at the end of every case statement to avoid accidentally falling through to the default case. Mammouth switch statements have automatic breaks at the end of each case. The format is: <tt>switch</tt> condition, <tt>case</tt> clauses, <tt>else</tt> the default case. 
     </p>
     <div class='code'><pre class="idle">
 {{
