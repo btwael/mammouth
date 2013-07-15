@@ -656,6 +656,7 @@ mammouth.parser = (function(){
           result1 = parse___();
           if (result1 !== null) {
             result2 = parse_FormalParameterList();
+            result2 = result2 !== null ? result2 : "";
             if (result2 !== null) {
               result3 = parse___();
               if (result3 !== null) {
@@ -755,6 +756,7 @@ mammouth.parser = (function(){
                 if (result4 === null) {
                   pos = pos2;
                 }
+                result4 = result4 !== null ? result4 : "";
                 if (result4 !== null) {
                   result0 = [result0, result1, result2, result3, result4];
                 } else {
@@ -785,7 +787,7 @@ mammouth.parser = (function(){
         		return {
         			type: "Function",
         			params: params,
-        			body: body
+        			body: body !== '' ? body:null 
         		}
         	})(pos0, result0[0], result0[4]);
         }

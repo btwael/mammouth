@@ -657,6 +657,7 @@ mammouth.parser = (function(){
           result1 = parse___();
           if (result1 !== null) {
             result2 = parse_FormalParameterList();
+            result2 = result2 !== null ? result2 : "";
             if (result2 !== null) {
               result3 = parse___();
               if (result3 !== null) {
@@ -756,6 +757,7 @@ mammouth.parser = (function(){
                 if (result4 === null) {
                   pos = pos2;
                 }
+                result4 = result4 !== null ? result4 : "";
                 if (result4 !== null) {
                   result0 = [result0, result1, result2, result3, result4];
                 } else {
@@ -786,7 +788,7 @@ mammouth.parser = (function(){
         		return {
         			type: "Function",
         			params: params,
-        			body: body
+        			body: body !== '' ? body:null 
         		}
         	})(pos0, result0[0], result0[4]);
         }
@@ -10070,35 +10072,37 @@ mammouth.compile = function(code) {
 		arguments += ')';
 		r += arguments;
 		r += ' {';
-		var body = '';
-		for(var j = 0; j < seq.right.body.length; j++) {
-			if(typeof seq.right.body[j] == 'undefined') {
-				body += '\n';
-			} else {
-				seq.right.body[j].only = true;
-				if(typeof seq.right.body[j] == 'string') {
-					body += evalStatement(seq.right.body[j]);
+		if(seq.right.body != null) {
+			var body = '';
+			for(var j = 0; j < seq.right.body.length; j++) {
+				if(typeof seq.right.body[j] == 'undefined') {
+					body += '\n';
 				} else {
-					body += evalStatement(seq.right.body[j]) + '\n';
-				}
-			}
-		}
-		var pars = mammouth.LineTerminatorParser.parse(body);
-		for(var x = 0; x < pars.length; x++) {
-			if(pars[x] != '' || x == 0) {
-				if(x == (pars.length - 1)) {
-					r += '\t' + pars[x];
-				} else {
-					if(seq.right.body.length == 1) {
-						r += '\t' + pars[x];
+					seq.right.body[j].only = true;
+					if(typeof seq.right.body[j] == 'string') {
+						body += evalStatement(seq.right.body[j]);
 					} else {
-						r += '\t' + pars[x] + '\n';
+						body += evalStatement(seq.right.body[j]) + '\n';
 					}
 				}
-			} else if(typeof pars[x] == 'undefined') {
-				r += '\n';
-			} else {
-				r += pars[x];
+			}
+			var pars = mammouth.LineTerminatorParser.parse(body);
+			for(var x = 0; x < pars.length; x++) {
+				if(pars[x] != '' || x == 0) {
+					if(x == (pars.length - 1)) {
+						r += '\t' + pars[x];
+					} else {
+						if(seq.right.body.length == 1) {
+							r += '\t' + pars[x];
+						} else {
+							r += '\t' + pars[x] + '\n';
+						}
+					}
+				} else if(typeof pars[x] == 'undefined') {
+					r += '\n';
+				} else {
+					r += pars[x];
+				}
 			}
 		}
 		r += '}';

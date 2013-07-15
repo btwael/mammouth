@@ -50,15 +50,15 @@ AssignmentExpression
 	/ FunctionExpression
 
 FunctionExpression
-	= params:( "(" __ prm:FormalParameterList __ ")" {return prm;})? __ "->" __
-	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) {
+	= params:( "(" __ prm:FormalParameterList? __ ")" {return prm;})? __ "->" __
+	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
 		if(params == '') {
 			params = []
 		}
 		return {
 			type: "Function",
 			params: params,
-			body: body
+			body: body !== '' ? body:null 
 		}
 	}
 	/ ConditionalExpression
