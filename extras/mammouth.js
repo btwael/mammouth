@@ -95,12 +95,16 @@ mammouth.parser = (function(){
         "SwitchCase": parse_SwitchCase,
         "SwitchElse": parse_SwitchElse,
         "BreakStatement": parse_BreakStatement,
+        "TryStatement": parse_TryStatement,
+        "CatchErrVar": parse_CatchErrVar,
         "AndToken": parse_AndToken,
         "BreakToken": parse_BreakToken,
         "CaseToken": parse_CaseToken,
+        "CatchToken": parse_CatchToken,
         "ElseToken": parse_ElseToken,
         "ElseIfToken": parse_ElseIfToken,
         "FalseToken": parse_FalseToken,
+        "finallyToken": parse_finallyToken,
         "ForToken": parse_ForToken,
         "IfToken": parse_IfToken,
         "InToken": parse_InToken,
@@ -114,6 +118,7 @@ mammouth.parser = (function(){
         "ThenToken": parse_ThenToken,
         "ThisToken": parse_ThisToken,
         "TrueToken": parse_TrueToken,
+        "TryToken": parse_TryToken,
         "WhileToken": parse_WhileToken,
         "ReservedWord": parse_ReservedWord,
         "SourceCharacter": parse_SourceCharacter,
@@ -557,17 +562,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -614,13 +619,13 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, left, operator, right) {
-        		return {
-        			type:     "AssignmentExpression",
-        			operator: operator,
-        			left:     left,
-        			right:    right
-        		};
-        	})(pos0, result0[0], result0[2], result0[4]);
+            return {
+              type:     "AssignmentExpression",
+              operator: operator,
+              left:     left,
+              right:    right
+            };
+          })(pos0, result0[0], result0[2], result0[4]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -775,15 +780,15 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, params, body) {
-        		if(params == '') {
-        			params = []
-        		}
-        		return {
-        			type: "Function",
-        			params: params,
-        			body: body
-        		}
-        	})(pos0, result0[0], result0[4]);
+            if(params == '') {
+              params = []
+            }
+            return {
+              type: "Function",
+              params: params,
+              body: body
+            }
+          })(pos0, result0[0], result0[4]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -886,12 +891,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = [head];
-        		for (var i = 0; i < tail.length; i++) {
-        			result.push(tail[i][3]);
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = [head];
+            for (var i = 0; i < tail.length; i++) {
+              result.push(tail[i][3]);
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -983,13 +988,13 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, left, operator, right) {
-        		return {
-        			type:     "AssignmentExpressionOfFunction",
-        			operator: operator,
-        			left:     left,
-        			right:    right
-        		};
-        	})(pos0, result0[0], result0[2], result0[4]);
+            return {
+              type:     "AssignmentExpressionOfFunction",
+              operator: operator,
+              left:     left,
+              right:    right
+            };
+          })(pos0, result0[0], result0[2], result0[4]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -1270,12 +1275,12 @@ mammouth.parser = (function(){
           }
           if (result0 !== null) {
             result0 = (function(offset, constructor) {
-          		return {
-          			type:        "NewOperator",
-          			constructor: constructor,
-          			arguments:   []
-          		};
-          	})(pos0, result0[2]);
+              return {
+                type:        "NewOperator",
+                constructor: constructor,
+                arguments:   []
+              };
+            })(pos0, result0[2]);
           }
           if (result0 === null) {
             pos = pos0;
@@ -1327,12 +1332,12 @@ mammouth.parser = (function(){
           }
           if (result0 !== null) {
             result0 = (function(offset, constructor, arguments) {
-          			return {
-          				type:        "NewOperator",
-          				constructor: constructor,
-          				arguments:   arguments
-          			};
-          		})(pos2, result0[2], result0[4]);
+                return {
+                  type:        "NewOperator",
+                  constructor: constructor,
+                  arguments:   arguments
+                };
+              })(pos2, result0[2], result0[4]);
           }
           if (result0 === null) {
             pos = pos2;
@@ -1563,16 +1568,16 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, base, accessors) {
-        		var result = base;
-        		for (var i = 0; i < accessors.length; i++) {
-        			result = {
-        				type: "PropertyAccess",
-        				base: result,
-        				name: accessors[i]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = base;
+            for (var i = 0; i < accessors.length; i++) {
+              result = {
+                type: "PropertyAccess",
+                base: result,
+                name: accessors[i]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -1609,12 +1614,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, name, arguments) {
-        			return {
-        				type:      "FunctionCall",
-        				name:      name,
-        				arguments: arguments
-        			};
-        		})(pos2, result0[0], result0[2]);
+              return {
+                type:      "FunctionCall",
+                name:      name,
+                arguments: arguments
+              };
+            })(pos2, result0[0], result0[2]);
         }
         if (result0 === null) {
           pos = pos2;
@@ -1638,11 +1643,11 @@ mammouth.parser = (function(){
           }
           if (result2 !== null) {
             result2 = (function(offset, arguments) {
-          			return {
-          				type:      "FunctionCallArguments",
-          				arguments: arguments
-          			};
-          		})(pos2, result2[1]);
+                return {
+                  type:      "FunctionCallArguments",
+                  arguments: arguments
+                };
+              })(pos2, result2[1]);
           }
           if (result2 === null) {
             pos = pos2;
@@ -1705,11 +1710,11 @@ mammouth.parser = (function(){
             }
             if (result2 !== null) {
               result2 = (function(offset, name) {
-            			return {
-            				type: "PropertyAccessProperty",
-            				name: name
-            			};
-            		})(pos2, result2[3]);
+                  return {
+                    type: "PropertyAccessProperty",
+                    name: name
+                  };
+                })(pos2, result2[3]);
             }
             if (result2 === null) {
               pos = pos2;
@@ -1752,11 +1757,11 @@ mammouth.parser = (function(){
               }
               if (result2 !== null) {
                 result2 = (function(offset, name) {
-              			return {
-              				type: "PropertyAccessProperty",
-              				name: name
-              			};
-              		})(pos2, result2[3]);
+                    return {
+                      type: "PropertyAccessProperty",
+                      name: name
+                    };
+                  })(pos2, result2[3]);
               }
               if (result2 === null) {
                 pos = pos2;
@@ -1782,11 +1787,11 @@ mammouth.parser = (function(){
             }
             if (result2 !== null) {
               result2 = (function(offset, arguments) {
-            			return {
-            				type:      "FunctionCallArguments",
-            				arguments: arguments
-            			};
-            		})(pos2, result2[1]);
+                  return {
+                    type:      "FunctionCallArguments",
+                    arguments: arguments
+                  };
+                })(pos2, result2[1]);
             }
             if (result2 === null) {
               pos = pos2;
@@ -1849,11 +1854,11 @@ mammouth.parser = (function(){
               }
               if (result2 !== null) {
                 result2 = (function(offset, name) {
-              			return {
-              				type: "PropertyAccessProperty",
-              				name: name
-              			};
-              		})(pos2, result2[3]);
+                    return {
+                      type: "PropertyAccessProperty",
+                      name: name
+                    };
+                  })(pos2, result2[3]);
               }
               if (result2 === null) {
                 pos = pos2;
@@ -1896,11 +1901,11 @@ mammouth.parser = (function(){
                 }
                 if (result2 !== null) {
                   result2 = (function(offset, name) {
-                			return {
-                				type: "PropertyAccessProperty",
-                				name: name
-                			};
-                		})(pos2, result2[3]);
+                      return {
+                        type: "PropertyAccessProperty",
+                        name: name
+                      };
+                    })(pos2, result2[3]);
                 }
                 if (result2 === null) {
                   pos = pos2;
@@ -1920,31 +1925,31 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, base, argumentsOrAccessors) {
-        		var result = base;
-        		for (var i = 0; i < argumentsOrAccessors.length; i++) {
-        			switch (argumentsOrAccessors[i].type) {
-        				case "FunctionCallArguments":
-        					result = {
-        						type:      "FunctionCall",
-        						name:      result,
-        						arguments: argumentsOrAccessors[i].arguments
-        					};
-        					break;
-        				case "PropertyAccessProperty":
-        					result = {
-        						type: "PropertyAccess",
-        						base: result,
-        						name: argumentsOrAccessors[i].name
-        					};
-        					break;
-        				default:
-        					throw new Error(
-        						"Invalid expression type: " + argumentsOrAccessors[i].type
-        					);
-        			}
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = base;
+            for (var i = 0; i < argumentsOrAccessors.length; i++) {
+              switch (argumentsOrAccessors[i].type) {
+                case "FunctionCallArguments":
+                  result = {
+                    type:      "FunctionCall",
+                    name:      result,
+                    arguments: argumentsOrAccessors[i].arguments
+                  };
+                  break;
+                case "PropertyAccessProperty":
+                  result = {
+                    type: "PropertyAccess",
+                    base: result,
+                    name: argumentsOrAccessors[i].name
+                  };
+                  break;
+                default:
+                  throw new Error(
+                    "Invalid expression type: " + argumentsOrAccessors[i].type
+                  );
+              }
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2008,8 +2013,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, arguments) {
-        		return arguments !== "" ? arguments : [];
-        	})(pos0, result0[2]);
+            return arguments !== "" ? arguments : [];
+          })(pos0, result0[2]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2109,12 +2114,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = [head];
-        		for (var i = 0; i < tail.length; i++) {
-        			result.push(tail[i][3]);
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = [head];
+            for (var i = 0; i < tail.length; i++) {
+              result.push(tail[i][3]);
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2201,13 +2206,13 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, condition, trueExpression, falseExpression) {
-        		return {
-        			type:            "ConditionalExpression",
-        			condition:       condition,
-        			trueExpression:  trueExpression,
-        			falseExpression: falseExpression
-        		};
-        	})(pos0, result0[0], result0[4], result0[8]);
+            return {
+              type:            "ConditionalExpression",
+              condition:       condition,
+              trueExpression:  trueExpression,
+              falseExpression: falseExpression
+            };
+          })(pos0, result0[0], result0[4], result0[8]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2294,17 +2299,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2452,17 +2457,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2610,17 +2615,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2768,17 +2773,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2926,17 +2931,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -3084,17 +3089,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -3357,17 +3362,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -3453,12 +3458,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, expression, operator) {
-        		return {
-        			type:       "PostfixExpression",
-        			operator:   operator,
-        			expression: expression
-        		};
-        	})(pos0, result0[0], result0[2]);
+            return {
+              type:       "PostfixExpression",
+              operator:   operator,
+              expression: expression
+            };
+          })(pos0, result0[0], result0[2]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -3524,12 +3529,12 @@ mammouth.parser = (function(){
           }
           if (result0 !== null) {
             result0 = (function(offset, operator, expression) {
-          		return {
-          			type:       "UnaryExpression",
-          			operator:   operator,
-          			expression: expression
-          		};
-          	})(pos0, result0[0], result0[2]);
+              return {
+                type:       "UnaryExpression",
+                operator:   operator,
+                expression: expression
+              };
+            })(pos0, result0[0], result0[2]);
           }
           if (result0 === null) {
             pos = pos0;
@@ -3684,17 +3689,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -3853,17 +3858,17 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = head;
-        		for (var i = 0; i < tail.length; i++) {
-        			result = {
-        				type:     "BinaryExpression",
-        				operator: tail[i][1],
-        				left:     result,
-        				right:    tail[i][3]
-        			};
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = head;
+            for (var i = 0; i < tail.length; i++) {
+              result = {
+                type:     "BinaryExpression",
+                operator: tail[i][1],
+                left:     result,
+                right:    tail[i][3]
+              };
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -4148,11 +4153,41 @@ mammouth.parser = (function(){
                 pos = pos0;
               }
               if (result0 === null) {
-                result0 = parse_FunctionInLineCall();
+                pos0 = pos;
+                pos1 = pos;
+                result0 = parse_SAMEDENT();
+                if (result0 !== null) {
+                  result1 = parse_TryStatement();
+                  if (result1 !== null) {
+                    result2 = parse_EOL();
+                    result2 = result2 !== null ? result2 : "";
+                    if (result2 !== null) {
+                      result0 = [result0, result1, result2];
+                    } else {
+                      result0 = null;
+                      pos = pos1;
+                    }
+                  } else {
+                    result0 = null;
+                    pos = pos1;
+                  }
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+                if (result0 !== null) {
+                  result0 = (function(offset, m) { return m; })(pos0, result0[1]);
+                }
                 if (result0 === null) {
-                  result0 = parse_ExpressionStatement();
+                  pos = pos0;
+                }
+                if (result0 === null) {
+                  result0 = parse_FunctionInLineCall();
                   if (result0 === null) {
-                    result0 = parse_blank();
+                    result0 = parse_ExpressionStatement();
+                    if (result0 === null) {
+                      result0 = parse_blank();
+                    }
                   }
                 }
               }
@@ -4271,12 +4306,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, name, arguments) {
-        			return {
-        				type:      "FunctionCall",
-        				name:      name,
-        				arguments: arguments
-        			};
-        		})(pos2, result0[0], result0[2]);
+              return {
+                type:      "FunctionCall",
+                name:      name,
+                arguments: arguments
+              };
+            })(pos2, result0[0], result0[2]);
         }
         if (result0 === null) {
           pos = pos2;
@@ -4300,11 +4335,11 @@ mammouth.parser = (function(){
           }
           if (result2 !== null) {
             result2 = (function(offset, arguments) {
-          			return {
-          				type:      "FunctionCallArguments",
-          				arguments: arguments
-          			};
-          		})(pos2, result2[1]);
+                return {
+                  type:      "FunctionCallArguments",
+                  arguments: arguments
+                };
+              })(pos2, result2[1]);
           }
           if (result2 === null) {
             pos = pos2;
@@ -4367,11 +4402,11 @@ mammouth.parser = (function(){
             }
             if (result2 !== null) {
               result2 = (function(offset, name) {
-            			return {
-            				type: "PropertyAccessProperty",
-            				name: name
-            			};
-            		})(pos2, result2[3]);
+                  return {
+                    type: "PropertyAccessProperty",
+                    name: name
+                  };
+                })(pos2, result2[3]);
             }
             if (result2 === null) {
               pos = pos2;
@@ -4414,11 +4449,11 @@ mammouth.parser = (function(){
               }
               if (result2 !== null) {
                 result2 = (function(offset, name) {
-              			return {
-              				type: "PropertyAccessProperty",
-              				name: name
-              			};
-              		})(pos2, result2[3]);
+                    return {
+                      type: "PropertyAccessProperty",
+                      name: name
+                    };
+                  })(pos2, result2[3]);
               }
               if (result2 === null) {
                 pos = pos2;
@@ -4444,11 +4479,11 @@ mammouth.parser = (function(){
             }
             if (result2 !== null) {
               result2 = (function(offset, arguments) {
-            			return {
-            				type:      "FunctionCallArguments",
-            				arguments: arguments
-            			};
-            		})(pos2, result2[1]);
+                  return {
+                    type:      "FunctionCallArguments",
+                    arguments: arguments
+                  };
+                })(pos2, result2[1]);
             }
             if (result2 === null) {
               pos = pos2;
@@ -4511,11 +4546,11 @@ mammouth.parser = (function(){
               }
               if (result2 !== null) {
                 result2 = (function(offset, name) {
-              			return {
-              				type: "PropertyAccessProperty",
-              				name: name
-              			};
-              		})(pos2, result2[3]);
+                    return {
+                      type: "PropertyAccessProperty",
+                      name: name
+                    };
+                  })(pos2, result2[3]);
               }
               if (result2 === null) {
                 pos = pos2;
@@ -4558,11 +4593,11 @@ mammouth.parser = (function(){
                 }
                 if (result2 !== null) {
                   result2 = (function(offset, name) {
-                			return {
-                				type: "PropertyAccessProperty",
-                				name: name
-                			};
-                		})(pos2, result2[3]);
+                      return {
+                        type: "PropertyAccessProperty",
+                        name: name
+                      };
+                    })(pos2, result2[3]);
                 }
                 if (result2 === null) {
                   pos = pos2;
@@ -4582,31 +4617,31 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, base, argumentsOrAccessors) {
-        		var result = base;
-        		for (var i = 0; i < argumentsOrAccessors.length; i++) {
-        			switch (argumentsOrAccessors[i].type) {
-        				case "FunctionCallArguments":
-        					result = {
-        						type:      "FunctionCall",
-        						name:      result,
-        						arguments: argumentsOrAccessors[i].arguments
-        					};
-        					break;
-        				case "PropertyAccessProperty":
-        					result = {
-        						type: "PropertyAccess",
-        						base: result,
-        						name: argumentsOrAccessors[i].name
-        					};
-        					break;
-        				default:
-        					throw new Error(
-        						"Invalid expression type: " + argumentsOrAccessors[i].type
-        					);
-        			}
-        		}
-        		return result;
-        	})(pos0, result0[0], result0[1]);
+            var result = base;
+            for (var i = 0; i < argumentsOrAccessors.length; i++) {
+              switch (argumentsOrAccessors[i].type) {
+                case "FunctionCallArguments":
+                  result = {
+                    type:      "FunctionCall",
+                    name:      result,
+                    arguments: argumentsOrAccessors[i].arguments
+                  };
+                  break;
+                case "PropertyAccessProperty":
+                  result = {
+                    type: "PropertyAccess",
+                    base: result,
+                    name: argumentsOrAccessors[i].name
+                  };
+                  break;
+                default:
+                  throw new Error(
+                    "Invalid expression type: " + argumentsOrAccessors[i].type
+                  );
+              }
+            }
+            return result;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -4670,8 +4705,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, arguments) {
-        		return arguments !== "" ? arguments : [];
-        	})(pos0, result0[2]);
+            return arguments !== "" ? arguments : [];
+          })(pos0, result0[2]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -4888,10 +4923,10 @@ mammouth.parser = (function(){
                           }
                           if (result10 !== null) {
                             result10 = (function(offset, condition, statement) {return {
-                          				condition: condition,
-                          				statement: statement,
-                          			}
-                          		})(pos2, result10[5], result10[9]);
+                                  condition: condition,
+                                  statement: statement,
+                                }
+                              })(pos2, result10[5], result10[9]);
                           }
                           if (result10 === null) {
                             pos = pos2;
@@ -5025,10 +5060,10 @@ mammouth.parser = (function(){
                               }
                               if (result10 !== null) {
                                 result10 = (function(offset, condition, statement) {return {
-                              				condition: condition,
-                              				statement: statement,
-                              			}
-                              		})(pos2, result10[5], result10[9]);
+                                      condition: condition,
+                                      statement: statement,
+                                    }
+                                  })(pos2, result10[5], result10[9]);
                               }
                               if (result10 === null) {
                                 pos = pos2;
@@ -5156,14 +5191,14 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, condition, ifStatement, elseifStatement, elseStatement) {
-        		return {
-        			type:          "IfStatement",
-        			condition:     condition,
-        			ifStatement:   ifStatement,
-        			elseStatement: elseStatement !== "" ? elseStatement[3] : null,
-        			elseifStatement: elseifStatement !== "" ? elseifStatement : null
-        		};
-        	})(pos0, result0[4], result0[8], result0[9], result0[10]);
+            return {
+              type:          "IfStatement",
+              condition:     condition,
+              ifStatement:   ifStatement,
+              elseStatement: elseStatement !== "" ? elseStatement[3] : null,
+              elseifStatement: elseifStatement !== "" ? elseifStatement : null
+            };
+          })(pos0, result0[4], result0[8], result0[9], result0[10]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -5368,20 +5403,20 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, initializer, test, counter, statement) {
-        			if(typeof test == 'undefined') {
-        				test = '';
-        			}
-        			if(typeof counter == 'undefined') {
-        				counter = '';
-        			}
-        			return {
-        				type:        "ForStatement",
-        				initializer: initializer !== "" ? initializer : null,
-        				test:        test !== "" ? test : null,
-        				counter:     counter !== "" ? counter : null,
-        				statement:   statement
-        			};
-        	})(pos0, result0[4], result0[6][2], result0[6][6], result0[7]);
+              if(typeof test == 'undefined') {
+                test = '';
+              }
+              if(typeof counter == 'undefined') {
+                counter = '';
+              }
+              return {
+                type:        "ForStatement",
+                initializer: initializer !== "" ? initializer : null,
+                test:        test !== "" ? test : null,
+                counter:     counter !== "" ? counter : null,
+                statement:   statement
+              };
+          })(pos0, result0[4], result0[6][2], result0[6][6], result0[7]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -5581,20 +5616,20 @@ mammouth.parser = (function(){
           }
           if (result0 !== null) {
             result0 = (function(offset, initializer, statement) {
-          			if(typeof test == 'undefined') {
-          				test = '';
-          			}
-          			if(typeof counter == 'undefined') {
-          				counter = '';
-          			}
-          			return {
-          				type:        "ForStatement",
-          				initializer: initializer !== "" ? initializer : null,
-          				test:        test !== "" ? test : null,
-          				counter:     counter !== "" ? counter : null,
-          				statement:   statement
-          			};
-          	})(pos0, result0[4], result0[7]);
+                if(typeof test == 'undefined') {
+                  test = '';
+                }
+                if(typeof counter == 'undefined') {
+                  counter = '';
+                }
+                return {
+                  type:        "ForStatement",
+                  initializer: initializer !== "" ? initializer : null,
+                  test:        test !== "" ? test : null,
+                  counter:     counter !== "" ? counter : null,
+                  statement:   statement
+                };
+            })(pos0, result0[4], result0[7]);
           }
           if (result0 === null) {
             pos = pos0;
@@ -5726,12 +5761,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, condition, statement) {
-        		return {
-        			type: 'WhileStatement',
-        			condition: condition,
-        			statement: statement
-        		};
-        	})(pos0, result0[4], result0[8]);
+            return {
+              type: 'WhileStatement',
+              condition: condition,
+              statement: statement
+            };
+          })(pos0, result0[4], result0[8]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -5906,16 +5941,16 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, variable, cases, elsed) {
-        		if(typeof elsed == 'undefined') {
-        			elsed = '';
-        		}
-        		return {
-        			type: 'SwitchStatement',
-        			variable: variable,
-        			cases: cases,
-        			elsed: elsed
-        		};
-        	})(pos0, result0[4], result0[8], result0[9]);
+            if(typeof elsed == 'undefined') {
+              elsed = '';
+            }
+            return {
+              type: 'SwitchStatement',
+              variable: variable,
+              cases: cases,
+              elsed: elsed
+            };
+          })(pos0, result0[4], result0[8], result0[9]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -6031,12 +6066,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, value, statement) {
-        		return {
-        			type: 'case',
-        			value: value,
-        			statement: statement
-        		};
-        	})(pos0, result0[3], result0[8]);
+            return {
+              type: 'case',
+              value: value,
+              statement: statement
+            };
+          })(pos0, result0[3], result0[8]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -6127,8 +6162,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, statement) {
-        		return statement;
-        	})(pos0, result0[4]);
+            return statement;
+          })(pos0, result0[4]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -6144,13 +6179,357 @@ mammouth.parser = (function(){
         result0 = parse_BreakToken();
         if (result0 !== null) {
           result0 = (function(offset) {
-        		return {
-        			type: 'break'
-        		};
-        	})(pos0);
+            return {
+              type: 'break'
+            };
+          })(pos0);
         }
         if (result0 === null) {
           pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_TryStatement() {
+        var result0, result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14;
+        var pos0, pos1, pos2, pos3, pos4;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_SAMEDENT();
+        if (result0 !== null) {
+          result1 = parse_TryToken();
+          if (result1 !== null) {
+            result2 = parse___();
+            if (result2 !== null) {
+              result3 = parse_EOL();
+              result3 = result3 !== null ? result3 : "";
+              if (result3 !== null) {
+                pos2 = pos;
+                pos3 = pos;
+                result4 = [];
+                result5 = parse_blank();
+                while (result5 !== null) {
+                  result4.push(result5);
+                  result5 = parse_blank();
+                }
+                if (result4 !== null) {
+                  result5 = parse_INDENT();
+                  if (result5 !== null) {
+                    result6 = [];
+                    result7 = parse_statement();
+                    while (result7 !== null) {
+                      result6.push(result7);
+                      result7 = parse_statement();
+                    }
+                    if (result6 !== null) {
+                      result7 = parse_DEDENT();
+                      if (result7 !== null) {
+                        result4 = [result4, result5, result6, result7];
+                      } else {
+                        result4 = null;
+                        pos = pos3;
+                      }
+                    } else {
+                      result4 = null;
+                      pos = pos3;
+                    }
+                  } else {
+                    result4 = null;
+                    pos = pos3;
+                  }
+                } else {
+                  result4 = null;
+                  pos = pos3;
+                }
+                if (result4 !== null) {
+                  result4 = (function(offset, b, c) { return b.concat(c); })(pos2, result4[0], result4[2]);
+                }
+                if (result4 === null) {
+                  pos = pos2;
+                }
+                result4 = result4 !== null ? result4 : "";
+                if (result4 !== null) {
+                  pos2 = pos;
+                  result5 = parse_SAMEDENT();
+                  if (result5 !== null) {
+                    result6 = parse_CatchToken();
+                    if (result6 !== null) {
+                      result7 = parse___();
+                      if (result7 !== null) {
+                        result8 = parse_CatchErrVar();
+                        if (result8 !== null) {
+                          result9 = parse___();
+                          if (result9 !== null) {
+                            result10 = parse_EOL();
+                            result10 = result10 !== null ? result10 : "";
+                            if (result10 !== null) {
+                              pos3 = pos;
+                              pos4 = pos;
+                              result11 = [];
+                              result12 = parse_blank();
+                              while (result12 !== null) {
+                                result11.push(result12);
+                                result12 = parse_blank();
+                              }
+                              if (result11 !== null) {
+                                result12 = parse_INDENT();
+                                if (result12 !== null) {
+                                  result13 = [];
+                                  result14 = parse_statement();
+                                  while (result14 !== null) {
+                                    result13.push(result14);
+                                    result14 = parse_statement();
+                                  }
+                                  if (result13 !== null) {
+                                    result14 = parse_DEDENT();
+                                    if (result14 !== null) {
+                                      result11 = [result11, result12, result13, result14];
+                                    } else {
+                                      result11 = null;
+                                      pos = pos4;
+                                    }
+                                  } else {
+                                    result11 = null;
+                                    pos = pos4;
+                                  }
+                                } else {
+                                  result11 = null;
+                                  pos = pos4;
+                                }
+                              } else {
+                                result11 = null;
+                                pos = pos4;
+                              }
+                              if (result11 !== null) {
+                                result11 = (function(offset, b, c) { return b.concat(c); })(pos3, result11[0], result11[2]);
+                              }
+                              if (result11 === null) {
+                                pos = pos3;
+                              }
+                              result11 = result11 !== null ? result11 : "";
+                              if (result11 !== null) {
+                                result5 = [result5, result6, result7, result8, result9, result10, result11];
+                              } else {
+                                result5 = null;
+                                pos = pos2;
+                              }
+                            } else {
+                              result5 = null;
+                              pos = pos2;
+                            }
+                          } else {
+                            result5 = null;
+                            pos = pos2;
+                          }
+                        } else {
+                          result5 = null;
+                          pos = pos2;
+                        }
+                      } else {
+                        result5 = null;
+                        pos = pos2;
+                      }
+                    } else {
+                      result5 = null;
+                      pos = pos2;
+                    }
+                  } else {
+                    result5 = null;
+                    pos = pos2;
+                  }
+                  if (result5 !== null) {
+                    pos2 = pos;
+                    result6 = parse_SAMEDENT();
+                    if (result6 !== null) {
+                      result7 = parse_finallyToken();
+                      if (result7 !== null) {
+                        result8 = parse___();
+                        if (result8 !== null) {
+                          result9 = parse_EOL();
+                          result9 = result9 !== null ? result9 : "";
+                          if (result9 !== null) {
+                            pos3 = pos;
+                            pos4 = pos;
+                            result10 = [];
+                            result11 = parse_blank();
+                            while (result11 !== null) {
+                              result10.push(result11);
+                              result11 = parse_blank();
+                            }
+                            if (result10 !== null) {
+                              result11 = parse_INDENT();
+                              if (result11 !== null) {
+                                result12 = [];
+                                result13 = parse_statement();
+                                while (result13 !== null) {
+                                  result12.push(result13);
+                                  result13 = parse_statement();
+                                }
+                                if (result12 !== null) {
+                                  result13 = parse_DEDENT();
+                                  if (result13 !== null) {
+                                    result10 = [result10, result11, result12, result13];
+                                  } else {
+                                    result10 = null;
+                                    pos = pos4;
+                                  }
+                                } else {
+                                  result10 = null;
+                                  pos = pos4;
+                                }
+                              } else {
+                                result10 = null;
+                                pos = pos4;
+                              }
+                            } else {
+                              result10 = null;
+                              pos = pos4;
+                            }
+                            if (result10 !== null) {
+                              result10 = (function(offset, b, c) { return b.concat(c); })(pos3, result10[0], result10[2]);
+                            }
+                            if (result10 === null) {
+                              pos = pos3;
+                            }
+                            result10 = result10 !== null ? result10 : "";
+                            if (result10 !== null) {
+                              result6 = [result6, result7, result8, result9, result10];
+                            } else {
+                              result6 = null;
+                              pos = pos2;
+                            }
+                          } else {
+                            result6 = null;
+                            pos = pos2;
+                          }
+                        } else {
+                          result6 = null;
+                          pos = pos2;
+                        }
+                      } else {
+                        result6 = null;
+                        pos = pos2;
+                      }
+                    } else {
+                      result6 = null;
+                      pos = pos2;
+                    }
+                    result6 = result6 !== null ? result6 : "";
+                    if (result6 !== null) {
+                      result0 = [result0, result1, result2, result3, result4, result5, result6];
+                    } else {
+                      result0 = null;
+                      pos = pos1;
+                    }
+                  } else {
+                    result0 = null;
+                    pos = pos1;
+                  }
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, TryStatement, CatchStatemnt, FinallyStatemnt) {
+            return {
+              type:          "TryStatement",
+              TryStatement:   TryStatement !== "" ? TryStatement : null,
+              CatchStatement: CatchStatemnt[6] !== "" ? CatchStatemnt[6] : null,
+              CatchErrVar: CatchStatemnt[3],
+              FinallyStatemnt: FinallyStatemnt[4] !== "" ? FinallyStatemnt[4] : null
+            };
+          })(pos0, result0[4], result0[5], result0[6]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_CatchErrVar() {
+        var result0, result1, result2;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_Identifier();
+        if (result0 !== null) {
+          result2 = parse_WhiteSpace();
+          if (result2 !== null) {
+            result1 = [];
+            while (result2 !== null) {
+              result1.push(result2);
+              result2 = parse_WhiteSpace();
+            }
+          } else {
+            result1 = null;
+          }
+          if (result1 !== null) {
+            result2 = parse_Identifier();
+            if (result2 !== null) {
+              result0 = [result0, result1, result2];
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, Type, name) { 
+            return { 
+              type: "VariableWithType", 
+              name: {
+                type:"Variable",
+                name:name
+              },
+              vtype: Type
+            }; 
+          })(pos0, result0[0], result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        if (result0 === null) {
+          pos0 = pos;
+          result0 = parse_Identifier();
+          if (result0 !== null) {
+            result0 = (function(offset, name) { 
+              return { 
+                type: "VariableWithType", 
+                name: {
+                  type:"Variable",
+                  name:name
+                },
+                vtype: "Exception"
+              }; 
+            })(pos0, result0);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
         }
         return result0;
       }
@@ -6195,6 +6574,21 @@ mammouth.parser = (function(){
           result0 = null;
           if (reportFailures === 0) {
             matchFailed("\"case\"");
+          }
+        }
+        return result0;
+      }
+      
+      function parse_CatchToken() {
+        var result0;
+        
+        if (input.substr(pos, 5) === "catch") {
+          result0 = "catch";
+          pos += 5;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"catch\"");
           }
         }
         return result0;
@@ -6268,6 +6662,21 @@ mammouth.parser = (function(){
           result0 = null;
           if (reportFailures === 0) {
             matchFailed("\"false\"");
+          }
+        }
+        return result0;
+      }
+      
+      function parse_finallyToken() {
+        var result0;
+        
+        if (input.substr(pos, 7) === "finally") {
+          result0 = "finally";
+          pos += 7;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"finally\"");
           }
         }
         return result0;
@@ -6468,6 +6877,21 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse_TryToken() {
+        var result0;
+        
+        if (input.substr(pos, 3) === "try") {
+          result0 = "try";
+          pos += 3;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"try\"");
+          }
+        }
+        return result0;
+      }
+      
       function parse_WhileToken() {
         var result0;
         
@@ -6492,47 +6916,56 @@ mammouth.parser = (function(){
           if (result0 === null) {
             result0 = parse_CaseToken();
             if (result0 === null) {
-              result0 = parse_ElseToken();
+              result0 = parse_CatchToken();
               if (result0 === null) {
-                result0 = parse_FalseToken();
+                result0 = parse_ElseToken();
                 if (result0 === null) {
-                  result0 = parse_ForToken();
+                  result0 = parse_FalseToken();
                   if (result0 === null) {
-                    result0 = parse_IfToken();
+                    result0 = parse_finallyToken();
                     if (result0 === null) {
-                      result0 = parse_InToken();
+                      result0 = parse_ForToken();
                       if (result0 === null) {
-                        result0 = parse_NewToken();
+                        result0 = parse_IfToken();
                         if (result0 === null) {
-                          result0 = parse_NullToken();
+                          result0 = parse_InToken();
                           if (result0 === null) {
-                            result0 = parse_OfToken();
+                            result0 = parse_NewToken();
                             if (result0 === null) {
-                              result0 = parse_OrToken();
+                              result0 = parse_NullToken();
                               if (result0 === null) {
-                                result0 = parse_script_end();
+                                result0 = parse_OfToken();
                                 if (result0 === null) {
-                                  result0 = parse_script_start();
+                                  result0 = parse_OrToken();
                                   if (result0 === null) {
-                                    result0 = parse_SwitchToken();
+                                    result0 = parse_script_end();
                                     if (result0 === null) {
-                                      result0 = parse_ThenToken();
+                                      result0 = parse_script_start();
                                       if (result0 === null) {
-                                        result0 = parse_ThisToken();
+                                        result0 = parse_SwitchToken();
                                         if (result0 === null) {
-                                          result0 = parse_TrueToken();
+                                          result0 = parse_ThenToken();
                                           if (result0 === null) {
-                                            if (input.substr(pos, 8) === "function") {
-                                              result0 = "function";
-                                              pos += 8;
-                                            } else {
-                                              result0 = null;
-                                              if (reportFailures === 0) {
-                                                matchFailed("\"function\"");
-                                              }
-                                            }
+                                            result0 = parse_ThisToken();
                                             if (result0 === null) {
-                                              result0 = parse_WhileToken();
+                                              result0 = parse_TrueToken();
+                                              if (result0 === null) {
+                                                result0 = parse_TryToken();
+                                                if (result0 === null) {
+                                                  if (input.substr(pos, 8) === "function") {
+                                                    result0 = "function";
+                                                    pos += 8;
+                                                  } else {
+                                                    result0 = null;
+                                                    if (reportFailures === 0) {
+                                                      matchFailed("\"function\"");
+                                                    }
+                                                  }
+                                                  if (result0 === null) {
+                                                    result0 = parse_WhileToken();
+                                                  }
+                                                }
+                                              }
                                             }
                                           }
                                         }
@@ -7059,8 +7492,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, start, parts) {
-        		return start + parts.join("");
-        	})(pos0, result0[0], result0[1]);
+            return start + parts.join("");
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -7077,24 +7510,13 @@ mammouth.parser = (function(){
         
         result0 = parse_UnicodeLetter();
         if (result0 === null) {
-          if (input.charCodeAt(pos) === 36) {
-            result0 = "$";
+          if (input.charCodeAt(pos) === 95) {
+            result0 = "_";
             pos++;
           } else {
             result0 = null;
             if (reportFailures === 0) {
-              matchFailed("\"$\"");
-            }
-          }
-          if (result0 === null) {
-            if (input.charCodeAt(pos) === 95) {
-              result0 = "_";
-              pos++;
-            } else {
-              result0 = null;
-              if (reportFailures === 0) {
-                matchFailed("\"_\"");
-              }
+              matchFailed("\"_\"");
             }
           }
         }
@@ -7240,11 +7662,11 @@ mammouth.parser = (function(){
             result0 = parse_NumericLiteral();
             if (result0 !== null) {
               result0 = (function(offset, value) {
-            		return {
-            			type:  "NumericLiteral",
-            			value: value
-            		};
-            	})(pos0, result0);
+                return {
+                  type:  "NumericLiteral",
+                  value: value
+                };
+              })(pos0, result0);
             }
             if (result0 === null) {
               pos = pos0;
@@ -7254,11 +7676,11 @@ mammouth.parser = (function(){
               result0 = parse_StringLiteral();
               if (result0 !== null) {
                 result0 = (function(offset, value) {
-              		return {
-              			type:  "StringLiteral",
-              			value: value
-              		};
-              	})(pos0, result0);
+                  return {
+                    type:  "StringLiteral",
+                    value: value
+                  };
+                })(pos0, result0);
               }
               if (result0 === null) {
                 pos = pos0;
@@ -7268,11 +7690,11 @@ mammouth.parser = (function(){
                 result0 = parse_EODLiteral();
                 if (result0 !== null) {
                   result0 = (function(offset, value) {
-                		return {
-                			type: "EODLiteral",
-                			value: value
-                		}
-                	})(pos0, result0);
+                    return {
+                      type: "EODLiteral",
+                      value: value
+                    }
+                  })(pos0, result0);
                 }
                 if (result0 === null) {
                   pos = pos0;
@@ -7282,11 +7704,11 @@ mammouth.parser = (function(){
                   result0 = parse_EOTLiteral();
                   if (result0 !== null) {
                     result0 = (function(offset, value) {
-                  		return {
-                  			type: "EOTLiteral",
-                  			value: value
-                  		}
-                  	})(pos0, result0);
+                      return {
+                        type: "EOTLiteral",
+                        value: value
+                      }
+                    })(pos0, result0);
                   }
                   if (result0 === null) {
                     pos = pos0;
@@ -7351,8 +7773,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, literal) {
-        		return literal;
-        	})(pos0, result0);
+            return literal;
+          })(pos0, result0);
         }
         if (result0 === null) {
           pos = pos0;
@@ -7407,8 +7829,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, before, after, exponent) {
-        		return parseFloat(before + "." + after + exponent);
-        	})(pos0, result0[0], result0[2], result0[3]);
+            return parseFloat(before + "." + after + exponent);
+          })(pos0, result0[0], result0[2], result0[3]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -7446,8 +7868,8 @@ mammouth.parser = (function(){
           }
           if (result0 !== null) {
             result0 = (function(offset, after, exponent) {
-          		return parseFloat("." + after + exponent);
-          	})(pos0, result0[1], result0[2]);
+              return parseFloat("." + after + exponent);
+            })(pos0, result0[1], result0[2]);
           }
           if (result0 === null) {
             pos = pos0;
@@ -7471,8 +7893,8 @@ mammouth.parser = (function(){
             }
             if (result0 !== null) {
               result0 = (function(offset, before, exponent) {
-            		return parseFloat(before + exponent);
-            	})(pos0, result0[0], result0[1]);
+                return parseFloat(before + exponent);
+              })(pos0, result0[0], result0[1]);
             }
             if (result0 === null) {
               pos = pos0;
@@ -7597,8 +8019,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, indicator, integer) {
-        		return indicator + integer;
-        	})(pos0, result0[0], result0[1]);
+            return indicator + integer;
+          })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -7816,8 +8238,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, parts) {
-        		return parts[1];
-        	})(pos0, result0);
+            return parts[1];
+          })(pos0, result0);
         }
         if (result0 === null) {
           pos = pos0;
@@ -8047,8 +8469,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, EODv) {
-        		return EODv.join("");
-        	})(pos0, result0[1]);
+            return EODv.join("");
+          })(pos0, result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -8108,8 +8530,8 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, EOTv) {
-        		return EOTv.join("");
-        	})(pos0, result0[1]);
+            return EOTv.join("");
+          })(pos0, result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -8294,11 +8716,11 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, elements) {
-        		return {
-        			type:     "ArrayLiteral",
-        			elements: elements !== "" ? elements : []
-        		};
-        	})(pos0, result0[2]);
+            return {
+              type:     "ArrayLiteral",
+              elements: elements !== "" ? elements : []
+            };
+          })(pos0, result0[2]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -8444,12 +8866,12 @@ mammouth.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, head, tail) {
-        		var result = [head];
-        		for (var i = 0; i < tail.length; i++) {
-        			result.push(tail[i][5]);
-        		}
-        		return result;
-        	})(pos0, result0[1], result0[2]);
+            var result = [head];
+            for (var i = 0; i < tail.length; i++) {
+              result.push(tail[i][5]);
+            }
+            return result;
+          })(pos0, result0[1], result0[2]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -9619,664 +10041,784 @@ mammouth.parser = (function(){
   
   return result;
 })();mammouth.Tokens = {
-	NewToken: 'new',
-	FunctionToken: 'function',
-	IfToken: 'if',
-	ElseToken: 'else',
-	ForToken: 'for',
-	WhileToken: 'while',
-	SwitchToken: 'switch',
-	CaseToken: 'case',
-	DefaultToken: 'default'
+  NewToken: 'new',
+  FunctionToken: 'function',
+  IfToken: 'if',
+  ElseToken: 'else',
+  ForToken: 'for',
+  WhileToken: 'while',
+  SwitchToken: 'switch',
+  CaseToken: 'case',
+  DefaultToken: 'default',
+  TryToken: 'try',
+  CatchToken: 'catch',
+  FinallyToken: 'finally'
 };
 mammouth.VERSION = '0.1.4';
 mammouth.compile = function(code) {
-	Tokens = mammouth.Tokens;
-	FunctionInAssignment = function(seq) {
-		var r = Tokens.FunctionToken + ' ';
-		r += seq.left.name;
-		var arguments = '(';
-		for (var i = 0; i < seq.right.params.length; i++) {
-			if( i != 0 ) {
-				arguments += ', '
-			}
-			arguments += evalStatement(seq.right.params[i]);
-		};
-		arguments += ')';
-		r += arguments;
-		r += ' {';
-		var body = '';
-		for(var j = 0; j < seq.right.body.length; j++) {
-			if(typeof seq.right.body[j] == 'undefined') {
-				body += '\n';
-			} else {
-				seq.right.body[j].only = true;
-				if(typeof seq.right.body[j] == 'string') {
-					body += evalStatement(seq.right.body[j]);
-				} else {
-					body += evalStatement(seq.right.body[j]) + '\n';
-				}
-			}
-		}
-		var pars = mammouth.LineTerminatorParser.parse(body);
-		for(var x = 0; x < pars.length; x++) {
-			if(pars[x] != '' || x == 0) {
-				if(x == (pars.length - 1)) {
-					r += '\t' + pars[x];
-				} else {
-					if(seq.right.body.length == 1) {
-						r += '\t' + pars[x];
-					} else {
-						r += '\t' + pars[x] + '\n';
-					}
-				}
-			} else if(typeof pars[x] == 'undefined') {
-				r += '\n';
-			} else {
-				r += pars[x];
-			}
-		}
-		r += '}';
-		return r + ';';
-	};
-	evalStatement = function(seq) {
-		if(typeof seq == 'string') {
-			return seq;
-		}
-		if(seq == null) {
-			return '';
-		}
-		switch(seq.type) {
-			case 'embed':
-				return seq.content;
-			case 'block':
-				var r = '<?php \n';
-				for(var i = 0; i < seq.elements.length; i++) {
-					if(typeof seq.elements[i] == 'undefined') {
-						r += '\n';
-					} else {
-						seq.elements[i].only = true;
-						if(typeof seq.elements[i] == 'string') {
-							r += evalStatement(seq.elements[i]);
-						} else {
-							r += evalStatement(seq.elements[i]) + '\n';
-						}
-					}
-				}
-				return r + '?>';
-			case 'blockwithoutbra':
-				var r = '';
-				for(var i = 0; i < seq.elements.length; i++) {
-					if(typeof seq.elements[i] == 'undefined') {
-						r += '\n';
-					} else {
-						seq.elements[i].only = true;
-						if(typeof seq.elements[i] == 'string') {
-							r += evalStatement(seq.elements[i]);
-						} else {
-							r += evalStatement(seq.elements[i]) + '\n';
-						}
-					}
-				}
-				return r;
-			case 'NumericLiteral':
-				var r = seq.value;
-				if(seq.only==true) {
-					r += ';';
-				}
-				return r;
-			case 'BooleanLiteral':
-				var r = seq.value;
-				if(seq.only==true) {
-					r += ';';
-				}
-				return r;
-			case 'StringLiteral':
-				var r = "'" + seq.value + "'";
-				if(seq.only==true) {
-					r += ';';
-				}
-				return r;
-			case 'ArrayLiteral':
-				var r = 'array(';
-				var elements = '';
-				if(seq.elements != '') {
-					for (var i = 0; i < seq.elements.length; i++) {
-						if( i != 0 ) {
-							elements += ', '
-						}
-						elements += evalStatement(seq.elements[i]);
-					};
-				}
-				r += elements + ')'; 
-				if(seq.only==true) {
-					r += ';';
-				}
-				return r;
-			case 'EODLiteral':
-				r = '<<<EOD' + '\n';
-				r += seq.value +'\n';
-				r += 'EOD';
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'EOTLiteral':
-				r = '<<<EOT' + '\n';
-				r += seq.value +'\n';
-				r += 'EOT';
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'Variable':
-				var r = '$' + evalStatement(seq.name);
-				if(seq.only==true) {
-					r += ';';
-				}
-				return r;
-			case 'ReferenceVariable':
-				var r = '&$' + evalStatement(seq.name);
-				return r;
-			case 'PropertyAccess':
-				var b = evalStatement(seq.base);
-				var n, r;
-				if(typeof seq.name == 'string') {
-					n = seq.name;
-					r = b + '->' + n;
-				} else {
-					n = '[' + evalStatement(seq.name) + ']'
-					r = b + n;
-				} 
-				if(seq.only==true) {
-					r += ';';
-				}
-				return r;
-			case 'NewOperator':
-				var r = Tokens.NewToken;
-				var constructor = evalStatement(seq.constructor);
-				var arguments = '(';
-				for (var i = 0; i < seq.arguments.length; i++) {
-					if( i != 0 ) {
-						arguments += ', '
-					}
-					arguments += evalStatement(seq.arguments[i]);
-				};
-				arguments += ')';
-				r += ' ' + constructor + arguments;
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'BinaryExpression':
-				if(seq.left.type == 'BinaryExpression') {
-					seq.left.Parentheses = true;
-				}
-				var left = evalStatement(seq.left);
-				if(seq.right.type == 'BinaryExpression') {
-					seq.right.Parentheses = true;
-				}
-				var right = evalStatement(seq.right);
-				var operator = ' ' + seq.operator + ' ';
-				var r = left + operator + right;
-				if(seq.Parentheses == true) {
-					r = '(' + r;
-					r += ')';
-				}
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'PostfixExpression':
-				if(seq.expression.type == 'BinaryExpression') {
-					seq.expression.Parentheses = true;
-				}
-				var expression = evalStatement(seq.expression);
-				var operator = seq.operator;
-				var r = expression + operator;
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'UnaryExpression':
-				if(seq.expression.type == 'BinaryExpression') {
-					seq.expression.Parentheses = true;
-				}
-				var expression = evalStatement(seq.expression);
-				var operator = seq.operator;
-				var r = operator + expression;
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'AssignmentExpression':
-				if(seq.right.type == 'Function') {
-					var r = FunctionInAssignment(seq);
-					return r;
-				}
-				var left = evalStatement(seq.left);
-				var right = evalStatement(seq.right);
-				var operator = ' ' + seq.operator + ' ';
-				var r = left + operator + right;
-				if(seq.Parentheses == true) {
-					r = '(' + r;
-					r += ')';
-				}
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'AssignmentExpressionOfFunction':
-				var left = evalStatement(seq.left);
-				var right = evalStatement(seq.right);
-				var operator = ' ' + seq.operator + ' ';
-				var r = left + operator + right;
-				if(seq.Parentheses == true) {
-					r = '(' + r;
-					r += ')';
-				}
-				return r;
-			case 'ConditionalExpression':
-				if(seq.condition.type == 'BinaryExpression') {
-					seq.condition.Parentheses = true;
-				}
-				var condition = evalStatement(seq.condition);
-				var trueExpression = evalStatement(seq.trueExpression);
-				var falseExpression = evalStatement(seq.falseExpression);
-				var r = condition + ' ? ' + trueExpression + ' : ' + falseExpression; 
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'break':
-				var r = 'break'
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'FunctionCall':
-				var name;
-				if(seq.name.type == 'PropertyAccess') {
-					name = evalStatement(seq.name);
-				} else {
-					name = evalStatement(seq.name.name);
-				}
-				var arguments = '(';
-				for (var i = 0; i < seq.arguments.length; i++) {
-					if( i != 0 ) {
-						arguments += ', '
-					}
-					arguments += evalStatement(seq.arguments[i]);
-				};
-				arguments += ')';
-				r = name + arguments;
-				if(seq.only == true) {
-					r += ';';
-				}
-				return r;
-			case 'IfStatement':
-				var r = Tokens.IfToken;
-				var condition = '(';
-				condition += evalStatement(seq.condition);
-				condition += ')';
-				r += condition;
-				r += ' {';
-				var body = '';
-				for(var j = 0; j < seq.ifStatement.length; j++) {
-					if(typeof seq.ifStatement[j] == 'undefined') {
-						body += '\n';
-					} else {
-						seq.ifStatement[j].only = true;
-						if(typeof seq.ifStatement[j] == 'string') {
-							body += evalStatement(seq.ifStatement[j]);
-						} else {
-							body += evalStatement(seq.ifStatement[j]) + '\n';
-						}
-					}
-				}
-				var pars = mammouth.LineTerminatorParser.parse(body);
-				for(var x = 0; x < pars.length; x++) {
-					if(pars[x] != '' || x == 0) {
-						if(x == (pars.length - 1)) {
-							r += '\t' + pars[x];
-						} else {
-							if(seq.ifStatement.length == 1) {
-								r += '\t' + pars[x];
-							} else {
-								r += '\t' + pars[x] + '\n';
-							}
-						}
-					} else if(typeof pars[x] == 'undefined') {
-						r += '\n';
-					} else {
-						r += pars[x];
-					}
-				}
-				r += '}';
-				if(seq.elseifStatement != null) {
-					for (var i = 0; i < seq.elseifStatement.length; i++) {
-						r += ' ' + Tokens.ElseToken + Tokens.IfToken;
-						condition = '(';
-						condition += evalStatement(seq.elseifStatement[i].condition);
-						condition += ')';
-						r += condition;
-						r += ' {';
-						body = '';
-						for(var j = 0; j < seq.elseifStatement[i].statement.length; j++) {
-							if(typeof seq.elseifStatement[i].statement[j] == 'undefined') {
-								body += '\n';
-							} else {
-								seq.elseifStatement[i].statement[j].only = true;
-								if(typeof seq.elseifStatement[i][j] == 'string') {
-									body += evalStatement(seq.elseifStatement[i].statement[j]);
-								} else {
-									body += evalStatement(seq.elseifStatement[i].statement[j]) + '\n';
-								}
-							}
-						}
-						var pars = mammouth.LineTerminatorParser.parse(body);
-						for(var x = 0; x < pars.length; x++) {
-							if(pars[x] != '' || x == 0) {
-								if(x == (pars.length - 1)) {
-									r += '\t' + pars[x];
-								} else {
-									if(seq.elseifStatement[i].statement.length == 1) {
-										r += '\t' + pars[x];
-									} else {
-										r += '\t' + pars[x] + '\n';
-									}
-								}
-							} else if(typeof pars[x] == 'undefined') {
-								r += '\n';
-							} else {
-								r += pars[x];
-							}
-						}
-						r += '}';
-					};
-				}
-				if(seq.elseStatement != null) {
-					r += ' else {';
-					body = '';
-					for(var j = 0; j < seq.elseStatement.length; j++) {
-						if(typeof seq.elseStatement[j] == 'undefined') {
-							body += '\n';
-						} else {
-							seq.elseStatement[j].only = true;
-							if(typeof seq.elseStatement[j] == 'string') {
-								body += evalStatement(seq.elseStatement[j]);
-							} else {
-								body += evalStatement(seq.elseStatement[j]) + '\n';
-							}
-						}
-					}
-					var pars = mammouth.LineTerminatorParser.parse(body);
-					for(var x = 0; x < pars.length; x++) {
-						if(pars[x] != '' || x == 0) {
-							if(x == (pars.length - 1)) {
-								r += '\t' + pars[x];
-							} else {
-								if(seq.elseStatement.length == 1) {
-									r += '\t' + pars[x];
-								} else {
-									r += '\t' + pars[x] + '\n';
-								}
-							}
-						} else if(typeof pars[x] == 'undefined') {
-							r += '\n';
-						} else {
-							r += pars[x];
-						}
-					}
-					r += '}';
-				}
-				return r;
-			case 'ForStatement':
-				var r = Tokens.ForToken + '(';
-				if(seq.initializer.type == 'BinaryExpression') {
-					if(seq.initializer.operator == 'of') {
-						seq.test = {
-							"type": "BinaryExpression",
-							"operator": "<",
-							"left": seq.initializer.left,
-							"right": {
-								"type": "FunctionCall",
-								"name": {
-									"type": "Variable",
-									"name": "count"
-								},
-								"arguments": [
-									seq.initializer.right
-								]
-							}
-						};
-						seq.counter = {
-							"type": "PostfixExpression",
-							"operator": "++",
-							"expression": {
-								"type": "Variable",
-								"name": "_i"
-							}
-						};
-						seq.statement.splice(1, 0, {
-							"type": "AssignmentExpression",
-							"operator": "=",
-							"left": seq.initializer.left,
-							"right": {
-								"type": "PropertyAccess",
-								"base": seq.initializer.right,
-								"name": {
-									"type": "Variable",
-									"name": "_i"
-								}
-					         }
-						});
-						seq.initializer = {
-							"type": "AssignmentExpression",
-							"operator": "=",
-							"left": {
-									"type": "Variable",
-									"name": "_i"
-								},
-							"right": {
-								"type": "NumericLiteral",
-								"value": 0
-							}
-						};
-					}
-				}
-				r += evalStatement(seq.initializer) + '; ';
-				r += evalStatement(seq.test) + '; ';
-				r += evalStatement(seq.counter);
-				r += ')';
-				r += ' {';
-				var body = '';
-				for(var j = 0; j < seq.statement.length; j++) {
-					if(typeof seq.statement[j] == 'undefined') {
-						body += '\n';
-					} else {
-						seq.statement[j].only = true;
-						if(typeof seq.statement[j] == 'string') {
-							body += evalStatement(seq.statement[j]);
-						} else {
-							body += evalStatement(seq.statement[j]) + '\n';
-						}
-					}
-				}
-				var pars = mammouth.LineTerminatorParser.parse(body);
-				for(var x = 0; x < pars.length; x++) {
-					if(pars[x] != '' || x == 0) {
-						if(x == (pars.length - 1)) {
-							r += '\t' + pars[x];
-						} else {
-							if(seq.statement.length == 1) {
-								r += '\t' + pars[x];
-							} else {
-								r += '\t' + pars[x] + '\n';
-							}
-						}
-					} else if(typeof pars[x] == 'undefined') {
-						r += '\n';
-					} else {
-						r += pars[x];
-					}
-				}
-				r += '}';
-				return r;
-			case 'WhileStatement':
-				var r = Tokens.WhileToken + '(';
-				r += evalStatement(seq.condition);
-				r += ')';
-				r += ' {';
-				var body = '';
-				for(var j = 0; j < seq.statement.length; j++) {
-					if(typeof seq.statement[j] == 'undefined') {
-						body += '\n';
-					} else {
-						seq.statement[j].only = true;
-						if(typeof seq.statement[j] == 'string') {
-							body += evalStatement(seq.statement[j]);
-						} else {
-							body += evalStatement(seq.statement[j]) + '\n';
-						}
-					}
-				}
-				var pars = mammouth.LineTerminatorParser.parse(body);
-				for(var x = 0; x < pars.length; x++) {
-					if(pars[x] != '' || x == 0) {
-						if(x == (pars.length - 1)) {
-							r += '\t' + pars[x];
-						} else {
-							if(seq.statement.length == 1) {
-								r += '\t' + pars[x];
-							} else {
-								r += '\t' + pars[x] + '\n';
-							}
-						}
-					} else if(typeof pars[x] == 'undefined') {
-						r += '\n';
-					} else {
-						r += pars[x];
-					}
-				}
-				r += '}';
-				return r;
-			case 'SwitchStatement':
-				var r = Tokens.SwitchToken + '(';
-				r += evalStatement(seq.variable);
-				r += ')';
-				r += ' {\n';
-				var CasesBlock = '';
-				for(var i = 0; i < seq.cases.length; i++) {
-					if(typeof seq.cases[i] != 'undefined') {
-						if(seq.cases[i].type == 'case') {
-							CasesBlock += Tokens.CaseToken + ' ' + evalStatement(seq.cases[i].value) + ':';
-							if(seq.cases[i].statement != '') {
-								seq.cases[i].statement.unshift(undefined);
-								seq.cases[i].statement.push({
-									type: 'break'
-								})
-								var body = '';
-								for(var j = 0; j < seq.cases[i].statement.length; j++) {
-									if(typeof seq.cases[i].statement[j] == 'undefined') {
-										body += '\n';
-									} else {
-										seq.cases[i].statement[j].only = true;
-										if(typeof seq.cases[i].statement[j] == 'string') {
-											body += evalStatement(seq.cases[i].statement[j]);
-										} else {
-											body += evalStatement(seq.cases[i].statement[j]) + '\n';
-										}
-									}
-								}
-								var pars = mammouth.LineTerminatorParser.parse(body);
-								for(var x = 0; x < pars.length; x++) {
-									if(pars[x] != '' || x == 0) {
-										if(x == (pars.length - 1)) {
-											CasesBlock += '\t' + pars[x];
-										} else {
-											if(seq.cases[i].statement.length == 1) {
-												CasesBlock += '\t' + pars[x];
-											} else {
-												CasesBlock += '\t' + pars[x] + '\n';
-											}
-										}
-									} else if(typeof pars[x] == 'undefined') {
-										CasesBlock += '\n';
-									} else {
-										CasesBlock += pars[x];
-									}
-								}
-							}
-						}
-					}
-				}
-				if(seq.elsed != '') {
-					CasesBlock += Tokens.DefaultToken + ':';
-					seq.elsed.unshift(undefined);
-					var body = '';
-					for(var j = 0; j < seq.elsed.length; j++) {
-						if(typeof seq.elsed[j] == 'undefined') {
-							body += '\n';
-						} else {
-							seq.elsed[j].only = true;
-							if(typeof seq.elsed[j] == 'string') {
-								body += evalStatement(seq.elsed[j]);
-							} else {
-								body += evalStatement(seq.elsed[j]) + '\n';
-							}
-						}
-					}
-					var pars = mammouth.LineTerminatorParser.parse(body);
-					for(var x = 0; x < pars.length; x++) {
-						if(pars[x] != '' || x == 0) {
-							if(x == (pars.length - 1)) {
-								CasesBlock += '\t' + pars[x];
-							} else {
-								if(seq.elsed.length == 1) {
-									CasesBlock += '\t' + pars[x];
-								} else {
-									CasesBlock += '\t' + pars[x] + '\n';
-								}
-							}
-						} else if(typeof pars[x] == 'undefined') {
-							CasesBlock += '\n';
-						} else {
-							CasesBlock += pars[x];
-						}
-					}
-				}
-				var pars = mammouth.LineTerminatorParser.parse(CasesBlock);
-				for(var x = 0; x < pars.length; x++) {
-					if(pars[x] != '' || x == 0) {
-						if(x == (pars.length - 1)) {
-							r += '\t' + pars[x];
-						} else {
-							if(seq.cases.length == 1) {
-								r += '\t' + pars[x];
-							} else {
-								r += '\t' + pars[x] + '\n';
-							}
-						}
-					} else if(typeof pars[x] == 'undefined') {
-						r += '\n';
-					} else {
-						r += pars[x];
-					}
-				}
-				r += '}';
-				return r;
-		}
-	};
-	var interprete = function(code){
-		var r = '';
-		var seq = mammouth.parser.parse(code);
-		for(var i = 0; i < seq.length; i++) {
-			r += evalStatement(seq[i]);
-		}
-		return r;
-	};
-	var codeout = interprete(code);
-	return codeout;
+  Tokens = mammouth.Tokens;
+  FunctionInAssignment = function(seq) {
+    var r = Tokens.FunctionToken + ' ';
+    r += seq.left.name;
+    var arguments = '(';
+    for (var i = 0; i < seq.right.params.length; i++) {
+      if( i != 0 ) {
+        arguments += ', '
+      }
+      arguments += evalStatement(seq.right.params[i]);
+    };
+    arguments += ')';
+    r += arguments;
+    r += ' {';
+    var body = '';
+    for(var j = 0; j < seq.right.body.length; j++) {
+      if(typeof seq.right.body[j] == 'undefined') {
+        body += '\n';
+      } else {
+        seq.right.body[j].only = true;
+        if(typeof seq.right.body[j] == 'string') {
+          body += evalStatement(seq.right.body[j]);
+        } else {
+          body += evalStatement(seq.right.body[j]) + '\n';
+        }
+      }
+    }
+    var pars = mammouth.LineTerminatorParser.parse(body);
+    for(var x = 0; x < pars.length; x++) {
+      if(pars[x] != '' || x == 0) {
+        if(x == (pars.length - 1)) {
+          r += '\t' + pars[x];
+        } else {
+          if(seq.right.body.length == 1) {
+            r += '\t' + pars[x];
+          } else {
+            r += '\t' + pars[x] + '\n';
+          }
+        }
+      } else if(typeof pars[x] == 'undefined') {
+        r += '\n';
+      } else {
+        r += pars[x];
+      }
+    }
+    r += '}';
+    return r + ';';
+  };
+  evalStatement = function(seq) {
+    if(typeof seq == 'string') {
+      return seq;
+    }
+    if(seq == null) {
+      return '';
+    }
+    switch(seq.type) {
+      case 'embed':
+        return seq.content;
+      case 'block':
+        var r = '<?php \n';
+        for(var i = 0; i < seq.elements.length; i++) {
+          if(typeof seq.elements[i] == 'undefined') {
+            r += '\n';
+          } else {
+            seq.elements[i].only = true;
+            if(typeof seq.elements[i] == 'string') {
+              r += evalStatement(seq.elements[i]);
+            } else {
+              r += evalStatement(seq.elements[i]) + '\n';
+            }
+          }
+        }
+        return r + '?>';
+      case 'blockwithoutbra':
+        var r = '';
+        for(var i = 0; i < seq.elements.length; i++) {
+          if(typeof seq.elements[i] == 'undefined') {
+            r += '\n';
+          } else {
+            seq.elements[i].only = true;
+            if(typeof seq.elements[i] == 'string') {
+              r += evalStatement(seq.elements[i]);
+            } else {
+              r += evalStatement(seq.elements[i]) + '\n';
+            }
+          }
+        }
+        return r;
+      case 'NumericLiteral':
+        var r = seq.value;
+        if(seq.only==true) {
+          r += ';';
+        }
+        return r;
+      case 'BooleanLiteral':
+        var r = seq.value;
+        if(seq.only==true) {
+          r += ';';
+        }
+        return r;
+      case 'StringLiteral':
+        var r = "'" + seq.value + "'";
+        if(seq.only==true) {
+          r += ';';
+        }
+        return r;
+      case 'ArrayLiteral':
+        var r = 'array(';
+        var elements = '';
+        if(seq.elements != '') {
+          for (var i = 0; i < seq.elements.length; i++) {
+            if( i != 0 ) {
+              elements += ', '
+            }
+            elements += evalStatement(seq.elements[i]);
+          };
+        }
+        r += elements + ')'; 
+        if(seq.only==true) {
+          r += ';';
+        }
+        return r;
+      case 'EODLiteral':
+        r = '<<<EOD' + '\n';
+        r += seq.value +'\n';
+        r += 'EOD';
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'EOTLiteral':
+        r = '<<<EOT' + '\n';
+        r += seq.value +'\n';
+        r += 'EOT';
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'Variable':
+        var r = '$' + evalStatement(seq.name);
+        if(seq.only==true) {
+          r += ';';
+        }
+        return r;
+      case 'ReferenceVariable':
+        var r = '&$' + evalStatement(seq.name);
+        return r;
+      case 'PropertyAccess':
+        var b = evalStatement(seq.base);
+        var n, r;
+        if(typeof seq.name == 'string') {
+          n = seq.name;
+          r = b + '->' + n;
+        } else {
+          n = '[' + evalStatement(seq.name) + ']'
+          r = b + n;
+        } 
+        if(seq.only==true) {
+          r += ';';
+        }
+        return r;
+      case 'NewOperator':
+        var r = Tokens.NewToken;
+        var constructor = evalStatement(seq.constructor);
+        var arguments = '(';
+        for (var i = 0; i < seq.arguments.length; i++) {
+          if( i != 0 ) {
+            arguments += ', '
+          }
+          arguments += evalStatement(seq.arguments[i]);
+        };
+        arguments += ')';
+        r += ' ' + constructor + arguments;
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'BinaryExpression':
+        if(seq.left.type == 'BinaryExpression') {
+          seq.left.Parentheses = true;
+        }
+        var left = evalStatement(seq.left);
+        if(seq.right.type == 'BinaryExpression') {
+          seq.right.Parentheses = true;
+        }
+        var right = evalStatement(seq.right);
+        var operator = ' ' + seq.operator + ' ';
+        var r = left + operator + right;
+        if(seq.Parentheses == true) {
+          r = '(' + r;
+          r += ')';
+        }
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'PostfixExpression':
+        if(seq.expression.type == 'BinaryExpression') {
+          seq.expression.Parentheses = true;
+        }
+        var expression = evalStatement(seq.expression);
+        var operator = seq.operator;
+        var r = expression + operator;
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'UnaryExpression':
+        if(seq.expression.type == 'BinaryExpression') {
+          seq.expression.Parentheses = true;
+        }
+        var expression = evalStatement(seq.expression);
+        var operator = seq.operator;
+        var r = operator + expression;
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'AssignmentExpression':
+        if(seq.right.type == 'Function') {
+          var r = FunctionInAssignment(seq);
+          return r;
+        }
+        var left = evalStatement(seq.left);
+        var right = evalStatement(seq.right);
+        var operator = ' ' + seq.operator + ' ';
+        var r = left + operator + right;
+        if(seq.Parentheses == true) {
+          r = '(' + r;
+          r += ')';
+        }
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'AssignmentExpressionOfFunction':
+        var left = evalStatement(seq.left);
+        var right = evalStatement(seq.right);
+        var operator = ' ' + seq.operator + ' ';
+        var r = left + operator + right;
+        if(seq.Parentheses == true) {
+          r = '(' + r;
+          r += ')';
+        }
+        return r;
+      case 'ConditionalExpression':
+        if(seq.condition.type == 'BinaryExpression') {
+          seq.condition.Parentheses = true;
+        }
+        var condition = evalStatement(seq.condition);
+        var trueExpression = evalStatement(seq.trueExpression);
+        var falseExpression = evalStatement(seq.falseExpression);
+        var r = condition + ' ? ' + trueExpression + ' : ' + falseExpression; 
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'break':
+        var r = 'break'
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'FunctionCall':
+        var name;
+        if(seq.name.type == 'PropertyAccess') {
+          name = evalStatement(seq.name);
+        } else {
+          name = evalStatement(seq.name.name);
+        }
+        var arguments = '(';
+        for (var i = 0; i < seq.arguments.length; i++) {
+          if( i != 0 ) {
+            arguments += ', '
+          }
+          arguments += evalStatement(seq.arguments[i]);
+        };
+        arguments += ')';
+        r = name + arguments;
+        if(seq.only == true) {
+          r += ';';
+        }
+        return r;
+      case 'IfStatement':
+        var r = Tokens.IfToken;
+        var condition = '(';
+        condition += evalStatement(seq.condition);
+        condition += ')';
+        r += condition;
+        r += ' {';
+        var body = '';
+        for(var j = 0; j < seq.ifStatement.length; j++) {
+          if(typeof seq.ifStatement[j] == 'undefined') {
+            body += '\n';
+          } else {
+            seq.ifStatement[j].only = true;
+            if(typeof seq.ifStatement[j] == 'string') {
+              body += evalStatement(seq.ifStatement[j]);
+            } else {
+              body += evalStatement(seq.ifStatement[j]) + '\n';
+            }
+          }
+        }
+        var pars = mammouth.LineTerminatorParser.parse(body);
+        for(var x = 0; x < pars.length; x++) {
+          if(pars[x] != '' || x == 0) {
+            if(x == (pars.length - 1)) {
+              r += '\t' + pars[x];
+            } else {
+              if(seq.ifStatement.length == 1) {
+                r += '\t' + pars[x];
+              } else {
+                r += '\t' + pars[x] + '\n';
+              }
+            }
+          } else if(typeof pars[x] == 'undefined') {
+            r += '\n';
+          } else {
+            r += pars[x];
+          }
+        }
+        r += '}';
+        if(seq.elseifStatement != null) {
+          for (var i = 0; i < seq.elseifStatement.length; i++) {
+            r += ' ' + Tokens.ElseToken + Tokens.IfToken;
+            condition = '(';
+            condition += evalStatement(seq.elseifStatement[i].condition);
+            condition += ')';
+            r += condition;
+            r += ' {';
+            body = '';
+            for(var j = 0; j < seq.elseifStatement[i].statement.length; j++) {
+              if(typeof seq.elseifStatement[i].statement[j] == 'undefined') {
+                body += '\n';
+              } else {
+                seq.elseifStatement[i].statement[j].only = true;
+                if(typeof seq.elseifStatement[i][j] == 'string') {
+                  body += evalStatement(seq.elseifStatement[i].statement[j]);
+                } else {
+                  body += evalStatement(seq.elseifStatement[i].statement[j]) + '\n';
+                }
+              }
+            }
+            var pars = mammouth.LineTerminatorParser.parse(body);
+            for(var x = 0; x < pars.length; x++) {
+              if(pars[x] != '' || x == 0) {
+                if(x == (pars.length - 1)) {
+                  r += '\t' + pars[x];
+                } else {
+                  if(seq.elseifStatement[i].statement.length == 1) {
+                    r += '\t' + pars[x];
+                  } else {
+                    r += '\t' + pars[x] + '\n';
+                  }
+                }
+              } else if(typeof pars[x] == 'undefined') {
+                r += '\n';
+              } else {
+                r += pars[x];
+              }
+            }
+            r += '}';
+          };
+        }
+        if(seq.elseStatement != null) {
+          r += ' else {';
+          body = '';
+          for(var j = 0; j < seq.elseStatement.length; j++) {
+            if(typeof seq.elseStatement[j] == 'undefined') {
+              body += '\n';
+            } else {
+              seq.elseStatement[j].only = true;
+              if(typeof seq.elseStatement[j] == 'string') {
+                body += evalStatement(seq.elseStatement[j]);
+              } else {
+                body += evalStatement(seq.elseStatement[j]) + '\n';
+              }
+            }
+          }
+          var pars = mammouth.LineTerminatorParser.parse(body);
+          for(var x = 0; x < pars.length; x++) {
+            if(pars[x] != '' || x == 0) {
+              if(x == (pars.length - 1)) {
+                r += '\t' + pars[x];
+              } else {
+                if(seq.elseStatement.length == 1) {
+                  r += '\t' + pars[x];
+                } else {
+                  r += '\t' + pars[x] + '\n';
+                }
+              }
+            } else if(typeof pars[x] == 'undefined') {
+              r += '\n';
+            } else {
+              r += pars[x];
+            }
+          }
+          r += '}';
+        }
+        return r;
+      case 'ForStatement':
+        var r = Tokens.ForToken + '(';
+        if(seq.initializer.type == 'BinaryExpression') {
+          if(seq.initializer.operator == 'of') {
+            seq.test = {
+              "type": "BinaryExpression",
+              "operator": "<",
+              "left": seq.initializer.left,
+              "right": {
+                "type": "FunctionCall",
+                "name": {
+                  "type": "Variable",
+                  "name": "count"
+                },
+                "arguments": [
+                  seq.initializer.right
+                ]
+              }
+            };
+            seq.counter = {
+              "type": "PostfixExpression",
+              "operator": "++",
+              "expression": {
+                "type": "Variable",
+                "name": "_i"
+              }
+            };
+            seq.statement.splice(1, 0, {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": seq.initializer.left,
+              "right": {
+                "type": "PropertyAccess",
+                "base": seq.initializer.right,
+                "name": {
+                  "type": "Variable",
+                  "name": "_i"
+                }
+                   }
+            });
+            seq.initializer = {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                  "type": "Variable",
+                  "name": "_i"
+                },
+              "right": {
+                "type": "NumericLiteral",
+                "value": 0
+              }
+            };
+          }
+        }
+        r += evalStatement(seq.initializer) + '; ';
+        r += evalStatement(seq.test) + '; ';
+        r += evalStatement(seq.counter);
+        r += ')';
+        r += ' {';
+        var body = '';
+        for(var j = 0; j < seq.statement.length; j++) {
+          if(typeof seq.statement[j] == 'undefined') {
+            body += '\n';
+          } else {
+            seq.statement[j].only = true;
+            if(typeof seq.statement[j] == 'string') {
+              body += evalStatement(seq.statement[j]);
+            } else {
+              body += evalStatement(seq.statement[j]) + '\n';
+            }
+          }
+        }
+        var pars = mammouth.LineTerminatorParser.parse(body);
+        for(var x = 0; x < pars.length; x++) {
+          if(pars[x] != '' || x == 0) {
+            if(x == (pars.length - 1)) {
+              r += '\t' + pars[x];
+            } else {
+              if(seq.statement.length == 1) {
+                r += '\t' + pars[x];
+              } else {
+                r += '\t' + pars[x] + '\n';
+              }
+            }
+          } else if(typeof pars[x] == 'undefined') {
+            r += '\n';
+          } else {
+            r += pars[x];
+          }
+        }
+        r += '}';
+        return r;
+      case 'WhileStatement':
+        var r = Tokens.WhileToken + '(';
+        r += evalStatement(seq.condition);
+        r += ')';
+        r += ' {';
+        var body = '';
+        for(var j = 0; j < seq.statement.length; j++) {
+          if(typeof seq.statement[j] == 'undefined') {
+            body += '\n';
+          } else {
+            seq.statement[j].only = true;
+            if(typeof seq.statement[j] == 'string') {
+              body += evalStatement(seq.statement[j]);
+            } else {
+              body += evalStatement(seq.statement[j]) + '\n';
+            }
+          }
+        }
+        var pars = mammouth.LineTerminatorParser.parse(body);
+        for(var x = 0; x < pars.length; x++) {
+          if(pars[x] != '' || x == 0) {
+            if(x == (pars.length - 1)) {
+              r += '\t' + pars[x];
+            } else {
+              if(seq.statement.length == 1) {
+                r += '\t' + pars[x];
+              } else {
+                r += '\t' + pars[x] + '\n';
+              }
+            }
+          } else if(typeof pars[x] == 'undefined') {
+            r += '\n';
+          } else {
+            r += pars[x];
+          }
+        }
+        r += '}';
+        return r;
+      case 'SwitchStatement':
+        var r = Tokens.SwitchToken + '(';
+        r += evalStatement(seq.variable);
+        r += ')';
+        r += ' {\n';
+        var CasesBlock = '';
+        for(var i = 0; i < seq.cases.length; i++) {
+          if(typeof seq.cases[i] != 'undefined') {
+            if(seq.cases[i].type == 'case') {
+              CasesBlock += Tokens.CaseToken + ' ' + evalStatement(seq.cases[i].value) + ':\n';
+              if(seq.cases[i].statement != '') {
+                seq.cases[i].statement.push({
+                  type: 'break'
+                })
+                var body = '';
+                for(var j = 0; j < seq.cases[i].statement.length; j++) {
+                  if(typeof seq.cases[i].statement[j] == 'undefined') {
+                    body += '\n';
+                  } else {
+                    seq.cases[i].statement[j].only = true;
+                    if(typeof seq.cases[i].statement[j] == 'string') {
+                      body += evalStatement(seq.cases[i].statement[j]);
+                    } else {
+                      body += evalStatement(seq.cases[i].statement[j]) + '\n';
+                    }
+                  }
+                }
+                var pars = mammouth.LineTerminatorParser.parse(body);
+                for(var x = 0; x < pars.length; x++) {
+                  if(pars[x] != '' || x == 0) {
+                    if(x == (pars.length - 1)) {
+                      CasesBlock += '\t' + pars[x];
+                    } else {
+                      if(seq.cases[i].statement.length == 1) {
+                        CasesBlock += '\t' + pars[x];
+                      } else {
+                        CasesBlock += '\t' + pars[x] + '\n';
+                      }
+                    }
+                  } else if(typeof pars[x] == 'undefined') {
+                    CasesBlock += '\n';
+                  } else {
+                    CasesBlock += pars[x];
+                  }
+                }
+              }
+            }
+          }
+        }
+        if(seq.elsed != '') {
+          CasesBlock += Tokens.DefaultToken + ':';
+          seq.elsed.unshift(undefined);
+          var body = '';
+          for(var j = 0; j < seq.elsed.length; j++) {
+            if(typeof seq.elsed[j] == 'undefined') {
+              body += '\n';
+            } else {
+              seq.elsed[j].only = true;
+              if(typeof seq.elsed[j] == 'string') {
+                body += evalStatement(seq.elsed[j]);
+              } else {
+                body += evalStatement(seq.elsed[j]) + '\n';
+              }
+            }
+          }
+          var pars = mammouth.LineTerminatorParser.parse(body);
+          for(var x = 0; x < pars.length; x++) {
+            if(pars[x] != '' || x == 0) {
+              if(x == (pars.length - 1)) {
+                CasesBlock += '\t' + pars[x];
+              } else {
+                if(seq.elsed.length == 1) {
+                  CasesBlock += '\t' + pars[x];
+                } else {
+                  CasesBlock += '\t' + pars[x] + '\n';
+                }
+              }
+            } else if(typeof pars[x] == 'undefined') {
+              CasesBlock += '\n';
+            } else {
+              CasesBlock += pars[x];
+            }
+          }
+        }
+        var pars = mammouth.LineTerminatorParser.parse(CasesBlock);
+        for(var x = 0; x < pars.length; x++) {
+          if(pars[x] != '' || x == 0) {
+            if(x == (pars.length - 1)) {
+              r += '\t' + pars[x];
+            } else {
+              if(seq.cases.length == 1) {
+                r += '\t' + pars[x];
+              } else {
+                r += '\t' + pars[x] + '\n';
+              }
+            }
+          } else if(typeof pars[x] == 'undefined') {
+            r += '\n';
+          } else {
+            r += pars[x];
+          }
+        }
+        r += '}';
+        return r;
+      case 'TryStatement':
+        var r = Tokens.TryToken;
+        r += ' {\n';
+        if(seq.TryStatement != null) {
+          var body = '';
+          for(var j = 0; j < seq.TryStatement.length; j++) {
+            if(typeof seq.TryStatement[j] == 'undefined') {
+              body += '\n';
+            } else {
+              seq.TryStatement[j].only = true;
+              if(typeof seq.TryStatement[j] == 'string') {
+                body += evalStatement(seq.TryStatement[j]);
+              } else {
+                body += evalStatement(seq.TryStatement[j]) + '\n';
+              }
+            }
+          }
+          var pars = mammouth.LineTerminatorParser.parse(body);
+          for(var x = 0; x < pars.length; x++) {
+            if(pars[x] != '' || x == 0) {
+              if(x == (pars.length - 1)) {
+                r += '\t' + pars[x];
+              } else {
+                if(seq.TryStatement.length == 1) {
+                  r += '\t' + pars[x];
+                } else {
+                  r += '\t' + pars[x] + '\n';
+                }
+              }
+            } else if(typeof pars[x] == 'undefined') {
+              r += '\n';
+            } else {
+              if(x == 1) {
+                r += '\n';
+              }
+            }
+          }
+        }
+        r += '}'
+        r += ' ' + Tokens.CatchToken + '(';
+        r += seq.CatchErrVar.vtype + ' ' + evalStatement(seq.CatchErrVar.name);
+        r += ')';
+        r += ' {\n';
+        if(seq.CatchStatement != null) {
+          body = '';
+          for(var j = 0; j < seq.CatchStatement.length; j++) {
+            if(typeof seq.CatchStatement[j] == 'undefined') {
+              body += '\n';
+            } else {
+              seq.CatchStatement[j].only = true;
+              if(typeof seq.CatchStatement[j] == 'string') {
+                body += evalStatement(seq.CatchStatement[j]);
+              } else {
+                body += evalStatement(seq.CatchStatement[j]) + '\n';
+              }
+            }
+          }
+          pars = mammouth.LineTerminatorParser.parse(body);
+          for(var x = 0; x < pars.length; x++) {
+            if(pars[x] != '' || x == 0) {
+              if(x == (pars.length - 1)) {
+                r += '\t' + pars[x];
+              } else {
+                if(seq.CatchStatement.length == 1) {
+                  r += '\t' + pars[x];
+                } else {
+                  r += '\t' + pars[x] + '\n';
+                }
+              }
+            } else if(typeof pars[x] == 'undefined') {
+              r += '\n';
+            } else {
+              if(x == 1) {
+                r += '\n';
+              }
+            }
+          }
+        }
+        r += '}'
+        if(seq.FinallyStatemnt != null) {
+          r += ' ' + Tokens.FinallyToken;
+          r += ' {\n';
+          body = '';
+          for(var j = 0; j < seq.FinallyStatemnt.length; j++) {
+            if(typeof seq.FinallyStatemnt[j] == 'undefined') {
+              body += '\n';
+            } else {
+              seq.FinallyStatemnt[j].only = true;
+              if(typeof seq.FinallyStatemnt[j] == 'string') {
+                body += evalStatement(seq.FinallyStatemnt[j]);
+              } else {
+                body += evalStatement(seq.FinallyStatemnt[j]) + '\n';
+              }
+            }
+          }
+          pars = mammouth.LineTerminatorParser.parse(body);
+          for(var x = 0; x < pars.length; x++) {
+            if(pars[x] != '' || x == 0) {
+              if(x == (pars.length - 1)) {
+                r += '\t' + pars[x];
+              } else {
+                if(seq.FinallyStatemnt.length == 1) {
+                  r += '\t' + pars[x];
+                } else {
+                  r += '\t' + pars[x] + '\n';
+                }
+              }
+            } else if(typeof pars[x] == 'undefined') {
+              r += '\n';
+            } else {
+              if(x == 1) {
+                r += '\n';
+              }
+            }
+          }
+          r += '}'
+        }
+        return r;
+    }
+  };
+  var interprete = function(code){
+    var r = '';
+    var seq = mammouth.parser.parse(code);
+    for(var i = 0; i < seq.length; i++) {
+      r += evalStatement(seq[i]);
+    }
+    return r;
+  };
+  var codeout = interprete(code);
+  return codeout;
 }
 
