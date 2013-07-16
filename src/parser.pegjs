@@ -554,7 +554,7 @@ IfStatement
 			}
 		})+
 	)?
-	elseStatement:(SAMEDENT ElseToken __ EOL? (b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) )? {
+	elseStatement:(SAMEDENT ElseToken __ EOL? (b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? )? {
 		return {
 			type:          "IfStatement",
 			condition:     condition,
@@ -588,15 +588,15 @@ ForStatement
 				statement:   statement !== "" ? statement: null
 			};
 	}
-	/ ForToken __
+	/ SAMEDENT ForToken __
 		"("? __
 		initializer:Expression? __
 		(";" __
 		test:Expression? __
 		";" __
 		counter:Expression? __
-		")"? __)?
-		statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) {
+		")"?)? __ EOL?
+		statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
 			if(typeof test == 'undefined') {
 				test = '';
 			}
@@ -613,8 +613,8 @@ ForStatement
 	}
 
 WhileStatement
-	= WhileToken __ "("? __ condition:Expression __ ")"? __
-	statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) {
+	= SAMEDENT WhileToken __ "("? __ condition:Expression __ ")"? __ EOL?
+	statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
 		return {
 			type: 'WhileStatement',
 			condition: condition,
