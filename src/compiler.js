@@ -447,28 +447,30 @@ mammouth.compile = function(code) {
 							"operator": "++",
 							"expression": {
 								"type": "Variable",
-								"name": "_i"
+								"name": "i"
 							}
 						};
-						seq.statement.splice(1, 0, {
-							"type": "AssignmentExpression",
-							"operator": "=",
-							"left": seq.initializer.left,
-							"right": {
-								"type": "PropertyAccess",
-								"base": seq.initializer.right,
-								"name": {
-									"type": "Variable",
-									"name": "_i"
+						if(seq.statement !== null) {
+							seq.statement.splice(0, 0, {
+								"type": "AssignmentExpression",
+								"operator": "=",
+								"left": seq.initializer.left,
+								"right": {
+									"type": "PropertyAccess",
+									"base": seq.initializer.right,
+									"name": {
+										"type": "Variable",
+										"name": "i"
+									}
 								}
-					         }
-						});
+							});
+						}
 						seq.initializer = {
 							"type": "AssignmentExpression",
 							"operator": "=",
 							"left": {
 									"type": "Variable",
-									"name": "_i"
+									"name": "i"
 								},
 							"right": {
 								"type": "NumericLiteral",
@@ -483,34 +485,42 @@ mammouth.compile = function(code) {
 				r += ')';
 				r += ' {';
 				var body = '';
-				for(var j = 0; j < seq.statement.length; j++) {
-					if(typeof seq.statement[j] == 'undefined') {
-						body += '\n';
-					} else {
-						seq.statement[j].only = true;
-						if(typeof seq.statement[j] == 'string') {
-							body += evalStatement(seq.statement[j]);
+				if(seq.statement !== null) {
+					for(var j = 0; j < seq.statement.length; j++) {
+						if(typeof seq.statement[j] == 'undefined') {
+							body += '\n';
 						} else {
-							body += evalStatement(seq.statement[j]) + '\n';
-						}
-					}
-				}
-				var pars = mammouth.LineTerminatorParser.parse(body);
-				for(var x = 0; x < pars.length; x++) {
-					if(pars[x] != '' || x == 0) {
-						if(x == (pars.length - 1)) {
-							r += '\t' + pars[x];
-						} else {
-							if(seq.statement.length == 1) {
-								r += '\t' + pars[x];
+							seq.statement[j].only = true;
+							if(typeof seq.statement[j] == 'string') {
+								body += evalStatement(seq.statement[j]);
 							} else {
-								r += '\t' + pars[x] + '\n';
+								body += evalStatement(seq.statement[j]) + '\n';
 							}
 						}
-					} else if(typeof pars[x] == 'undefined') {
+					}
+					if(seq.statement.length!==1) {
 						r += '\n';
+						var pars = mammouth.LineTerminatorParser.parse(body);
+						for(var x = 0; x < pars.length; x++) {
+							if(pars[x] != '' || x == 0) {
+								if(x == (pars.length - 1)) {
+									r += '\t' + pars[x];
+								} else {
+									if(seq.statement.length == 1) {
+										r += '\t' + pars[x];
+									} else {
+										r += '\t' + pars[x] + '\n';
+									}
+								}
+							} else if(typeof pars[x] == 'undefined') {
+								r += '\n';
+							} else {
+								r += pars[x];
+							}
+						}
 					} else {
-						r += pars[x];
+						var pars = mammouth.LineTerminatorParser.parse(body);
+						r += pars[0];
 					}
 				}
 				r += '}';

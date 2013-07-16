@@ -565,15 +565,15 @@ IfStatement
 	}
 
 ForStatement
-	= ForToken __
+	= SAMEDENT ForToken __
 		"("? __
 		initializer:Expression? __
 		(";" __
 		test:Expression? __
 		";" __
 		counter:Expression? __
-		")"? __)
-		statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); }) {
+		")"?)? __ EOL?
+		statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
 			if(typeof test == 'undefined') {
 				test = '';
 			}
@@ -585,7 +585,7 @@ ForStatement
 				initializer: initializer !== "" ? initializer : null,
 				test:        test !== "" ? test : null,
 				counter:     counter !== "" ? counter : null,
-				statement:   statement
+				statement:   statement !== "" ? statement: null
 			};
 	}
 	/ ForToken __
