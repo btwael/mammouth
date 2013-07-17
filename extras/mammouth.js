@@ -10384,7 +10384,7 @@ mammouth.parser = (function(){
 	CatchToken: 'catch',
 	FinallyToken: 'finally'
 };
-mammouth.VERSION = '0.1.5';
+mammouth.VERSION = '0.1.6';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
