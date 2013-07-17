@@ -102,7 +102,7 @@ list <span class="Keyword">=</span> [1, 2, 3, 4, 5]
 <span class="Keyword">if</span> elvis
  alert(<span class="String">"I knew it!"</span>) 
 
-<span class="FunctionName">Hello</span> <span class="Keyword">=</span> <span class="Keyword">-></span>
+<span class="FunctionName">Hello</span>-></span>
  echo(<span class="String">'Hello Mammouth'</span>)
 
 $Hello()
@@ -124,11 +124,11 @@ $list <span class="Keyword">=</span> array(1, 2, 3, 4, 5);
   alert(<span class="String">'I knew it!'</span>);
 }
 
-<span class="FunctionName">$Hello</span> <span class="Keyword">= function</span>() {  
+<span class="Keyword">function</span> <span class="FunctionName">Hello</span>() {  
   echo(<span class="String">'Hello Mammouth'</span>);
 };
 
-$Hello();
+Hello();
 ?&gt;
 </pre><br class='clear' /></div>
 
@@ -255,17 +255,36 @@ npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
 <span class="FunctionName">square</span> <span class="Keyword">=</span> <span class="FunctionArgument">(x)</span> <span class="Keyword">-></span>
  <span class="Keyword">return</span>(x <span class="Keyword">*</span> x)
 
+$square()
+
 <span class="FunctionName">cube</span> <span class="">=</span> <span class="FunctionArgument">(x)</span> <span class="Keyword">-></span>
- <span class="Keyword">return</span>(square(x) <span class="Keyword">*</span> x)
+ <span class="Keyword">return</span>($square(x) <span class="Keyword">*</span> x)
+
+$cube()
+
+<span class="FunctionName">hello</span><span class="Keyword">-></span>
+ echo(<span class="String">"Hello"</span>)
+
+hello()
 }}
 </pre><pre class="idle">
 &lt;?php
 <span class="FunctionName">square</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
   <span class="Keyword">return</span>($x * $x);
 };
+
+$square();
+
 <span class="FunctionName">cube</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
-  <span class="Keyword">return</span>(square($x) * $x);
-};
+  <span class="Keyword">return</span>($square($x) * $x);
+
+$cube();
+
+<span class="Keyword">function</span> <span class="FunctionName">hello</span>(<span class="FunctionArgument">$x</span>) {  
+  echo('Hello');
+}
+
+hello();
 ?&gt;
 </pre><br class='clear' /></div>
 
