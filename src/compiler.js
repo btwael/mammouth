@@ -2,6 +2,7 @@ mammouth.VERSION = '0.1.4';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
+		//
 		var r = Tokens.FunctionToken;
 		var arguments = '(';
 		for (var i = 0; i < seq.right.params.length; i++) {
