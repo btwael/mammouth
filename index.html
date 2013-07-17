@@ -95,6 +95,8 @@ opposite <span class="Keyword">=</span> <span class="BuiltInConstant">true</span
 <span class="FunctionName">square</span> <span class="Keyword">=</span> <span class="FunctionArgument">(x)</span> <span class="Keyword">-></span>
  <span class="Keyword">return</span>(x <span class="Keyword">*</span> x)
 
+$square()
+
 list <span class="Keyword">=</span> [1, 2, 3, 4, 5]
 
 <span class="Keyword">if</span> elvis
@@ -102,6 +104,8 @@ list <span class="Keyword">=</span> [1, 2, 3, 4, 5]
 
 <span class="FunctionName">Hello</span> <span class="Keyword">=</span> <span class="Keyword">-></span>
  echo(<span class="String">'Hello Mammouth'</span>)
+
+$Hello()
 }}
 </pre><pre class="idle">
 &lt;?php 
@@ -111,14 +115,20 @@ $opposite <span class="Keyword">=</span> true;
 <span class="Keyword">function</span> <span class="FunctionName">square</span>(<span class="FunctionArgument">$x</span>) { 
   <span class="Keyword">return</span>($x <span class="Keyword">*</span> $x);
 };
+
+$square();
+
 $list <span class="Keyword">=</span> array(1, 2, 3, 4, 5);
 
 <span class="Keyword">if</span>($elvis) {  
   alert(<span class="String">'I knew it!'</span>);
 }
-<span class="Keyword">function</span> <span class="FunctionName">Hello</span>() {  
+
+<span class="FunctionName">$Hello</span> <span class="Keyword">= function</span>() {  
   echo(<span class="String">'Hello Mammouth'</span>);
 };
+
+$Hello();
 ?&gt;
 </pre><br class='clear' /></div>
 
@@ -227,21 +237,9 @@ npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
       ending the line will do just as well (although semicolons can still
       be used to fit multiple expressions onto a single line).
       Instead of using curly braces
-<<<<<<< HEAD
-<<<<<<< HEAD
       <tt>{ }</tt> to surround blocks of code in <a href="#functions">functions</a>,
       <a href="#If">if-statements</a> and
       <a href="#switch">switch</a>,
-=======
-      <tt>{ }</tt> to surround blocks of code in <a href="#literals">functions</a>,
-      <a href="#conditionals">if statements</a> and
-      <a href="#switch">switch statements</a>,
->>>>>>> ac637ab8720a9e6c9432e8861d1080618a2af69a
-=======
-      <tt>{ }</tt> to surround blocks of code in <a href="#literals">functions</a>,
-      <a href="#conditionals">if statements</a> and
-      <a href="#switch">switch statements</a>,
->>>>>>> ac637ab8720a9e6c9432e8861d1080618a2af69a
       use indentation.
     </p>
 
@@ -262,10 +260,10 @@ npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
 }}
 </pre><pre class="idle">
 &lt;?php
-<span class="Keyword">function</span> <span class="FunctionName">square</span>(<span class="FunctionArgument">$x</span>) { 
+<span class="FunctionName">square</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
   <span class="Keyword">return</span>($x * $x);
 };
-<span class="Keyword">function</span> <span class="FunctionName">cube</span>(<span class="FunctionArgument">$x</span>) { 
+<span class="FunctionName">cube</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
   <span class="Keyword">return</span>(square($x) * $x);
 };
 ?&gt;
@@ -282,7 +280,7 @@ npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
 }}
 </pre><pre class="idle">
 &lt;?php
-<span class="Keyword">function</span> <span class="FunctionName">Say</span>(<span class="FunctionArgument">$text = "Hello World!"</span>) { 
+<span class="FunctionName">Say</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$text = "Hello World!"</span>) { 
   echo($text);
 };
 ?&gt;
@@ -301,7 +299,7 @@ foo(a)
 }}
 </pre><pre class="idle">
 &lt;?php
-<span class="Keyword">function</span> <span class="FunctionName">foo</span>(<span class="FunctionArgument">&$var</span>) { 
+<span class="FunctionName">foo</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">&$var</span>) { 
   $var++;
 };
 a <span class="Keyword">=</span> 5;
