@@ -465,6 +465,8 @@ statement
 		{ return m; }
 	/ SAMEDENT m:TryStatement EOL?
 		{ return m; }
+	/ SAMEDENT m:FunctionDeclaration EOL?
+		{ return m; }
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -696,6 +698,20 @@ CatchErrVar
 			},
 			vtype: "Exception"
 		}; 
+	}
+
+FunctionDeclaration
+	= name:(!('$') Identifier) __ params:( "(" __ prm:FormalParameterList? __ ")" {return prm;})? __ "->" __
+	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
+		if(params == '') {
+			params = []
+		}
+		return {
+			type: "FunctionDeclaration",
+			name: name[1],
+			params: params,
+			body: body !== '' ? body:null 
+		}
 	}
 /* ===== Tokens ===== */
 AndToken = 'and'
