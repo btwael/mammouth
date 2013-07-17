@@ -180,14 +180,22 @@ mammouth.compile = function(code) {
 				return r;
 			case 'BinaryExpression':
 				if(seq.left.type == 'BinaryExpression') {
-					seq.left.Parentheses = true;
+					if(seq.left.operator != '.') {
+						seq.left.Parentheses = true;
+					}
 				}
 				var left = evalStatement(seq.left);
 				if(seq.right.type == 'BinaryExpression') {
-					seq.right.Parentheses = true;
+					if(seq.right.operator != '.') {
+						seq.right.Parentheses = true;
+					}
 				}
 				var right = evalStatement(seq.right);
-				var operator = ' ' + seq.operator + ' ';
+				if(seq.operator != '.') {
+					var operator = ' ' + seq.operator + ' ';
+				} else {
+					var operator = seq.operator;
+				}
 				var r = left + operator + right;
 				if(seq.Parentheses == true) {
 					r = '(' + r;

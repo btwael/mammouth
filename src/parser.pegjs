@@ -339,8 +339,8 @@ EqualityOperator
 	/ "!="
 
 ShiftExpression
-  = head:AdditiveExpression
-    tail:(__ ShiftOperator __ AdditiveExpression)* {
+  = head:DotAddExpression
+    tail:(__ ShiftOperator __ DotAddExpression)* {
       var result = head;
       for (var i = 0; i < tail.length; i++) {
         result = {
@@ -440,6 +440,21 @@ AdditiveExpression
 				operator: tail[i][1],
 				left:     result,
 				right:    tail[i][3]
+			};
+		}
+		return result;
+	}
+
+DotAddExpression
+	= head:AdditiveExpression
+	tail:(WhiteSpace+ AdditiveExpression)* {
+		var result = head;
+		for (var i = 0; i < tail.length; i++) {
+			result = {
+				type:     "BinaryExpression",
+				operator: '.',
+				left:     result,
+				right:    tail[i][1]
 			};
 		}
 		return result;

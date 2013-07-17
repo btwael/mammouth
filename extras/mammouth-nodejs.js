@@ -80,6 +80,7 @@ mammouth.parser = (function(){
         "MultiplicativeExpression": parse_MultiplicativeExpression,
         "MultiplicativeOperator": parse_MultiplicativeOperator,
         "AdditiveExpression": parse_AdditiveExpression,
+        "DotAddExpression": parse_DotAddExpression,
         "AdditiveOperator": parse_AdditiveOperator,
         "statements": parse_statements,
         "statement": parse_statement,
@@ -3164,7 +3165,7 @@ mammouth.parser = (function(){
         
         pos0 = pos;
         pos1 = pos;
-        result0 = parse_AdditiveExpression();
+        result0 = parse_DotAddExpression();
         if (result0 !== null) {
           result1 = [];
           pos2 = pos;
@@ -3174,7 +3175,7 @@ mammouth.parser = (function(){
             if (result3 !== null) {
               result4 = parse___();
               if (result4 !== null) {
-                result5 = parse_AdditiveExpression();
+                result5 = parse_DotAddExpression();
                 if (result5 !== null) {
                   result2 = [result2, result3, result4, result5];
                 } else {
@@ -3202,7 +3203,7 @@ mammouth.parser = (function(){
               if (result3 !== null) {
                 result4 = parse___();
                 if (result4 !== null) {
-                  result5 = parse_AdditiveExpression();
+                  result5 = parse_DotAddExpression();
                   if (result5 !== null) {
                     result2 = [result2, result3, result4, result5];
                   } else {
@@ -3868,6 +3869,94 @@ mammouth.parser = (function(){
         				operator: tail[i][1],
         				left:     result,
         				right:    tail[i][3]
+        			};
+        		}
+        		return result;
+        	})(pos0, result0[0], result0[1]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_DotAddExpression() {
+        var result0, result1, result2, result3;
+        var pos0, pos1, pos2;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_AdditiveExpression();
+        if (result0 !== null) {
+          result1 = [];
+          pos2 = pos;
+          result3 = parse_WhiteSpace();
+          if (result3 !== null) {
+            result2 = [];
+            while (result3 !== null) {
+              result2.push(result3);
+              result3 = parse_WhiteSpace();
+            }
+          } else {
+            result2 = null;
+          }
+          if (result2 !== null) {
+            result3 = parse_AdditiveExpression();
+            if (result3 !== null) {
+              result2 = [result2, result3];
+            } else {
+              result2 = null;
+              pos = pos2;
+            }
+          } else {
+            result2 = null;
+            pos = pos2;
+          }
+          while (result2 !== null) {
+            result1.push(result2);
+            pos2 = pos;
+            result3 = parse_WhiteSpace();
+            if (result3 !== null) {
+              result2 = [];
+              while (result3 !== null) {
+                result2.push(result3);
+                result3 = parse_WhiteSpace();
+              }
+            } else {
+              result2 = null;
+            }
+            if (result2 !== null) {
+              result3 = parse_AdditiveExpression();
+              if (result3 !== null) {
+                result2 = [result2, result3];
+              } else {
+                result2 = null;
+                pos = pos2;
+              }
+            } else {
+              result2 = null;
+              pos = pos2;
+            }
+          }
+          if (result1 !== null) {
+            result0 = [result0, result1];
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, head, tail) {
+        		var result = head;
+        		for (var i = 0; i < tail.length; i++) {
+        			result = {
+        				type:     "BinaryExpression",
+        				operator: '.',
+        				left:     result,
+        				right:    tail[i][1]
         			};
         		}
         		return result;
@@ -10566,14 +10655,22 @@ mammouth.compile = function(code) {
 				return r;
 			case 'BinaryExpression':
 				if(seq.left.type == 'BinaryExpression') {
-					seq.left.Parentheses = true;
+					if(seq.left.operator != '.') {
+						seq.left.Parentheses = true;
+					}
 				}
 				var left = evalStatement(seq.left);
 				if(seq.right.type == 'BinaryExpression') {
-					seq.right.Parentheses = true;
+					if(seq.right.operator != '.') {
+						seq.right.Parentheses = true;
+					}
 				}
 				var right = evalStatement(seq.right);
-				var operator = ' ' + seq.operator + ' ';
+				if(seq.operator != '.') {
+					var operator = ' ' + seq.operator + ' ';
+				} else {
+					var operator = seq.operator;
+				}
 				var r = left + operator + right;
 				if(seq.Parentheses == true) {
 					r = '(' + r;
