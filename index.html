@@ -112,7 +112,7 @@ $Hello()
 $number <span class="Keyword">=</span> 42;
 $opposite <span class="Keyword">=</span> true;
 
-<span class="Keyword">function</span> <span class="FunctionName">square</span>(<span class="FunctionArgument">$x</span>) { 
+<span class="FunctionName">$square</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
   <span class="Keyword">return</span>($x <span class="Keyword">*</span> $x);
 };
 
@@ -269,13 +269,13 @@ hello()
 }}
 </pre><pre class="idle">
 &lt;?php
-<span class="FunctionName">square</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
+<span class="FunctionName">$square</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
   <span class="Keyword">return</span>($x * $x);
 };
 
 $square();
 
-<span class="FunctionName">cube</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
+<span class="FunctionName">$cube</span> <span class="Keyword">= function</span>(<span class="FunctionArgument">$x</span>) { 
   <span class="Keyword">return</span>($square($x) * $x);
 
 $cube();
