@@ -267,7 +267,11 @@ mammouth.compile = function(code) {
 				return r;
 			case 'FunctionCall':
 				var name;
-				name = evalStatement(seq.name);
+				if(seq.name.type == 'PropertyAccess') {
+					name = evalStatement(seq.name);
+				} else {
+					name = evalStatement(seq.name.name);
+				}
 				var arguments = '(';
 				for (var i = 0; i < seq.arguments.length; i++) {
 					if( i != 0 ) {
