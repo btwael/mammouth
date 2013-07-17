@@ -7602,6 +7602,17 @@ mammouth.parser = (function(){
               matchFailed("\"_\"");
             }
           }
+          if (result0 === null) {
+            if (input.charCodeAt(pos) === 36) {
+              result0 = "$";
+              pos++;
+            } else {
+              result0 = null;
+              if (reportFailures === 0) {
+                matchFailed("\"$\"");
+              }
+            }
+          }
         }
         return result0;
       }
@@ -10141,8 +10152,7 @@ mammouth.VERSION = '0.1.4';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
-		var r = Tokens.FunctionToken + ' ';
-		r += seq.left.name;
+		var r = Tokens.FunctionToken;
 		var arguments = '(';
 		for (var i = 0; i < seq.right.params.length; i++) {
 			if( i != 0 ) {
@@ -10187,7 +10197,7 @@ mammouth.compile = function(code) {
 			}
 		}
 		r += '}';
-		return r + ';';
+		return r;
 	};
 	evalStatement = function(seq) {
 		if(typeof seq == 'string') {
@@ -10360,12 +10370,13 @@ mammouth.compile = function(code) {
 				}
 				return r;
 			case 'AssignmentExpression':
-				if(seq.right.type == 'Function') {
-					var r = FunctionInAssignment(seq);
-					return r;
-				}
 				var left = evalStatement(seq.left);
-				var right = evalStatement(seq.right);
+				var right;
+				if(seq.right.type == 'Function') {
+					right = FunctionInAssignment(seq);
+				} else {
+					right = evalStatement(seq.right);
+				}
 				var operator = ' ' + seq.operator + ' ';
 				var r = left + operator + right;
 				if(seq.Parentheses == true) {
@@ -10406,11 +10417,7 @@ mammouth.compile = function(code) {
 				return r;
 			case 'FunctionCall':
 				var name;
-				if(seq.name.type == 'PropertyAccess') {
-					name = evalStatement(seq.name);
-				} else {
-					name = evalStatement(seq.name.name);
-				}
+				name = evalStatement(seq.name);
 				var arguments = '(';
 				for (var i = 0; i < seq.arguments.length; i++) {
 					if( i != 0 ) {

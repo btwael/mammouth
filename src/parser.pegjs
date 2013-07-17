@@ -788,6 +788,7 @@ IdentifierName "identifier"
 IdentifierStart
 	= UnicodeLetter
 	/ "_"
+	/ '$'
 
 IdentifierPart
 	= IdentifierStart

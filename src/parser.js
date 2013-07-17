@@ -7601,6 +7601,17 @@ mammouth.parser = (function(){
               matchFailed("\"_\"");
             }
           }
+          if (result0 === null) {
+            if (input.charCodeAt(pos) === 36) {
+              result0 = "$";
+              pos++;
+            } else {
+              result0 = null;
+              if (reportFailures === 0) {
+                matchFailed("\"$\"");
+              }
+            }
+          }
         }
         return result0;
       }
