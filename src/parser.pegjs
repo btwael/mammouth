@@ -732,16 +732,26 @@ FunctionDeclaration
 	}
 
 NamespaceDeclaration
-	= NamespaceToken __ name:(!('$') Identifier)? __ 
+	= NamespaceToken __ name:(NamespaceId)? __ 
 	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
-		if(name != '') {
-			name = name[1];
-		}
 		return {
 			type:"NamespaceDeclaration",
 			name: name,
 			body: body !== '' ? body: null
 		}
+	}
+
+NamespaceId
+	= head:(!('$') Identifier)
+	tail:("/" (!('$') Identifier))* {
+		var array = [head[1]];
+		for (var i = 0; i < tail.length; i++) {
+			array.push(tail[i][1][1])
+		}
+		return {
+			type:     "NamespaceIdentifier",
+			name: array,
+		};;
 	}
 /* ===== Tokens ===== */
 AndToken = 'and'

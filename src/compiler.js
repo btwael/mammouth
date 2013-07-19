@@ -828,7 +828,7 @@ mammouth.compile = function(code) {
 				r += '}';
 				return r;
 			case 'NamespaceDeclaration':
-				var r = Tokens.NamespaceToken + ' ' + seq.name;
+				var r = Tokens.NamespaceToken + ' ' + evalStatement(seq.name);
 				if(seq.body != null) {
 					r += ' {';
 					var body = '';
@@ -866,6 +866,15 @@ mammouth.compile = function(code) {
 				} else {
 					r += ';'
 				}
+				return r;
+			case 'NamespaceIdentifier':
+				var r = '';
+				for (var i = 0; i < seq.name.length; i++) {
+					if(i!=0) {
+						r += '\\'
+					}
+					r += seq.name[i];
+				};
 				return r;
 		}
 	};
