@@ -828,7 +828,44 @@ mammouth.compile = function(code) {
 				r += '}';
 				return r;
 			case 'NamespaceDeclaration':
-				var r = Tokens.NamespaceToken + ' ' + seq.name + ';';
+				var r = Tokens.NamespaceToken + ' ' + seq.name;
+				if(seq.body != null) {
+					r += ' {';
+					var body = '';
+					for(var j = 0; j < seq.body.length; j++) {
+						if(typeof seq.body[j] == 'undefined') {
+							body += '\n';
+						} else {
+							seq.body[j].only = true;
+							if(typeof seq.body[j] == 'string') {
+								body += evalStatement(seq.body[j]);
+							} else {
+								body += evalStatement(seq.body[j]) + '\n';
+							}
+						}
+					}
+					var pars = mammouth.LineTerminatorParser.parse(body);
+					for(var x = 0; x < pars.length; x++) {
+						if(pars[x] != '' || x == 0) {
+							if(x == (pars.length - 1)) {
+								r += '\t' + pars[x];
+							} else {
+								if(seq.body.length == 1) {
+									r += '\t' + pars[x];
+								} else {
+									r += '\t' + pars[x] + '\n';
+								}
+							}
+						} else if(typeof pars[x] == 'undefined') {
+							r += '\n';
+						} else {
+							r += pars[x];
+						}
+					}
+					r += '}';
+				} else {
+					r += ';'
+				}
 				return r;
 		}
 	};

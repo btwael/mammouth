@@ -727,15 +727,20 @@ FunctionDeclaration
 			type: "FunctionDeclaration",
 			name: name[1],
 			params: params,
-			body: body !== '' ? body:null 
+			body: body !== '' ? body: null 
 		}
 	}
 
 NamespaceDeclaration
-	= NamespaceToken __ name:(!('$') Identifier) __ {
+	= NamespaceToken __ name:(!('$') Identifier)? __ 
+	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
+		if(name != '') {
+			name = name[1];
+		}
 		return {
 			type:"NamespaceDeclaration",
-			name: name[1]
+			name: name,
+			body: body !== '' ? body: null
 		}
 	}
 /* ===== Tokens ===== */
