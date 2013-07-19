@@ -482,6 +482,8 @@ statement
 		{ return m; }
 	/ SAMEDENT m:FunctionDeclaration EOL?
 		{ return m; }
+	/ SAMEDENT m:NamespaceDeclaration EOL?
+		{ return m; }
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -728,6 +730,14 @@ FunctionDeclaration
 			body: body !== '' ? body:null 
 		}
 	}
+
+NamespaceDeclaration
+	= NamespaceToken __ name:(!('$') Identifier) __ {
+		return {
+			type:"NamespaceDeclaration",
+			name: name[1]
+		}
+	}
 /* ===== Tokens ===== */
 AndToken = 'and'
 BreakToken = 'break'
@@ -740,6 +750,7 @@ finallyToken = 'finally'
 ForToken = 'for'
 IfToken = 'if'
 InToken = 'in'
+NamespaceToken = 'namespace'
 NewToken = 'new'
 NullToken = 'null'
 OfToken = 'of'
@@ -764,6 +775,7 @@ ReservedWord
 	/ ForToken
 	/ IfToken
 	/ InToken
+	/ NamespaceToken
 	/ NewToken
 	/ NullToken
 	/ OfToken

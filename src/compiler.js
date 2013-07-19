@@ -780,53 +780,56 @@ mammouth.compile = function(code) {
 				}
 				return r;
 			case 'FunctionDeclaration':
-			var r = Tokens.FunctionToken;
-			r += ' ' + evalStatement(seq.name);
-			var arguments = '(';
-			for (var i = 0; i < seq.params.length; i++) {
-				if( i != 0 ) {
-					arguments += ', '
-				}
-				arguments += evalStatement(seq.params[i]);
-			};
-			arguments += ')';
-			r += arguments;
-			r += ' {';
-			if(seq.body != null) {
-				var body = '';
-				for(var j = 0; j < seq.body.length; j++) {
-					if(typeof seq.body[j] == 'undefined') {
-						body += '\n';
-					} else {
-						seq.body[j].only = true;
-						if(typeof seq.body[j] == 'string') {
-							body += evalStatement(seq.body[j]);
-						} else {
-							body += evalStatement(seq.body[j]) + '\n';
-						}
+				var r = Tokens.FunctionToken;
+				r += ' ' + evalStatement(seq.name);
+				var arguments = '(';
+				for (var i = 0; i < seq.params.length; i++) {
+					if( i != 0 ) {
+						arguments += ', '
 					}
-				}
-				var pars = mammouth.LineTerminatorParser.parse(body);
-				for(var x = 0; x < pars.length; x++) {
-					if(pars[x] != '' || x == 0) {
-						if(x == (pars.length - 1)) {
-							r += '\t' + pars[x];
+					arguments += evalStatement(seq.params[i]);
+				};
+				arguments += ')';
+				r += arguments;
+				r += ' {';
+				if(seq.body != null) {
+					var body = '';
+					for(var j = 0; j < seq.body.length; j++) {
+						if(typeof seq.body[j] == 'undefined') {
+							body += '\n';
 						} else {
-							if(seq.body.length == 1) {
-								r += '\t' + pars[x];
+							seq.body[j].only = true;
+							if(typeof seq.body[j] == 'string') {
+								body += evalStatement(seq.body[j]);
 							} else {
-								r += '\t' + pars[x] + '\n';
+								body += evalStatement(seq.body[j]) + '\n';
 							}
 						}
-					} else if(typeof pars[x] == 'undefined') {
-						r += '\n';
-					} else {
-						r += pars[x];
+					}
+					var pars = mammouth.LineTerminatorParser.parse(body);
+					for(var x = 0; x < pars.length; x++) {
+						if(pars[x] != '' || x == 0) {
+							if(x == (pars.length - 1)) {
+								r += '\t' + pars[x];
+							} else {
+								if(seq.body.length == 1) {
+									r += '\t' + pars[x];
+								} else {
+									r += '\t' + pars[x] + '\n';
+								}
+							}
+						} else if(typeof pars[x] == 'undefined') {
+							r += '\n';
+						} else {
+							r += pars[x];
+						}
 					}
 				}
-			}
-			r += '}';
-			return r;
+				r += '}';
+				return r;
+			case 'NamespaceDeclaration':
+				var r = Tokens.NamespaceToken + ' ' + seq.name + ';';
+				return r;
 		}
 	};
 	var interprete = function(code){
