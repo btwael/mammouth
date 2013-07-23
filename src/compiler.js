@@ -1,4 +1,4 @@
-mammouth.VERSION = '0.1.7';
+﻿mammouth.VERSION = '0.1.7';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
@@ -63,7 +63,7 @@ mammouth.compile = function(code) {
 				var r = '<?php \n';
 				for(var i = 0; i < seq.elements.length; i++) {
 					if(typeof seq.elements[i] == 'undefined') {
-						r += '\n';
+						
 					} else {
 						seq.elements[i].only = true;
 						if(typeof seq.elements[i] == 'string') {
@@ -829,6 +829,7 @@ mammouth.compile = function(code) {
 				return r;
 			case 'NamespaceDeclaration':
 				var r = Tokens.NamespaceToken + ' ' + evalStatement(seq.name);
+				console.log(seq);
 				if(seq.body != null) {
 					r += ' {';
 					var body = '';

@@ -39,7 +39,7 @@ Expression
 AssignmentExpression
 	= left:LeftHandSideExpression __
 	operator:AssignmentOperator __
-	right:AssignmentExpression {
+	right:(AssignmentExpression/FunctionExpression) {
 		return {
 			type:     "AssignmentExpression",
 			operator: operator,
@@ -47,7 +47,7 @@ AssignmentExpression
 			right:    right
 		};
 	}
-	/ FunctionExpression
+	/ ConditionalExpression
 
 FunctionExpression
 	= params:( "(" __ prm:FormalParameterList? __ ")" {return prm;})? __ "->" __
@@ -61,7 +61,6 @@ FunctionExpression
 			body: body !== '' ? body:null 
 		}
 	}
-	/ ConditionalExpression
 
 FormalParameterList
 	= head:AssignmentExpressionOfFunction tail:(__ "," __ AssignmentExpressionOfFunction)* {
@@ -732,7 +731,7 @@ FunctionDeclaration
 	}
 
 NamespaceDeclaration
-	= NamespaceToken __ name:(NamespaceId)? __ 
+	= NamespaceToken __ name:NamespaceId __ '->' __
 	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
 		return {
 			type:"NamespaceDeclaration",
@@ -740,18 +739,29 @@ NamespaceDeclaration
 			body: body !== '' ? body: null
 		}
 	}
+	/ NamespaceToken __ name:NamespaceId __ {
+		return {
+			type:"NamespaceDeclaration",
+			name: name,
+			body: null 
+		};
+	}
 
 NamespaceId
-	= head:(!('$') Identifier)
-	tail:("/" (!('$') Identifier))* {
-		var array = [head[1]];
+	= head:(Identifier)
+	tail:("/" (Identifier))* {
+		if(head != '') {
+			var array = [head];
+		} else {
+			return '';
+		}
 		for (var i = 0; i < tail.length; i++) {
-			array.push(tail[i][1][1])
+			array.push(tail[i][1])
 		}
 		return {
 			type:     "NamespaceIdentifier",
 			name: array,
-		};;
+		};
 	}
 /* ===== Tokens ===== */
 AndToken = 'and'
