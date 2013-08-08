@@ -749,7 +749,7 @@ NamespaceDeclaration
 
 NamespaceId
 	= head:(Identifier)
-	tail:("/" (Identifier))* {
+	tail:("\\" (Identifier))* {
 		if(head != '') {
 			var array = [head];
 		} else {

@@ -7141,13 +7141,13 @@ mammouth.parser = (function(){
         if (result0 !== null) {
           result1 = [];
           pos2 = pos;
-          if (input.charCodeAt(pos) === 47) {
-            result2 = "/";
+          if (input.charCodeAt(pos) === 92) {
+            result2 = "\\";
             pos++;
           } else {
             result2 = null;
             if (reportFailures === 0) {
-              matchFailed("\"/\"");
+              matchFailed("\"\\\\\"");
             }
           }
           if (result2 !== null) {
@@ -7165,13 +7165,13 @@ mammouth.parser = (function(){
           while (result2 !== null) {
             result1.push(result2);
             pos2 = pos;
-            if (input.charCodeAt(pos) === 47) {
-              result2 = "/";
+            if (input.charCodeAt(pos) === 92) {
+              result2 = "\\";
               pos++;
             } else {
               result2 = null;
               if (reportFailures === 0) {
-                matchFailed("\"/\"");
+                matchFailed("\"\\\\\"");
               }
             }
             if (result2 !== null) {
