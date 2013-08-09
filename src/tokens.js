@@ -11,5 +11,6 @@ mammouth.Tokens = {
 	TryToken: 'try',
 	CatchToken: 'catch',
 	FinallyToken: 'finally',
-	NamespaceToken: 'namespace'
+	NamespaceToken: 'namespace',
+	ClassToken: 'class'
 };

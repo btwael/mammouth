@@ -483,6 +483,8 @@ statement
 		{ return m; }
 	/ SAMEDENT m:NamespaceDeclaration EOL?
 		{ return m; }
+	/ SAMEDENT m:ClassDeclaration EOL?
+		{ return m; }
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -763,11 +765,81 @@ NamespaceId
 			name: array,
 		};
 	}
+	
+ClassDeclaration
+	= ClassToken __ name:Identifier __ '->' __
+	body:( b:blank* INDENT c:(n:ClassStatement)* DEDENT { return b.concat(c); })? {
+		return {
+			type:"ClassDeclaration",
+			name: name,
+			body: body !== '' ? body: null
+		}
+	}
+
+ClassStatement
+	= m:ClassFunctionDeclaration
+		{ return m; }
+	/ SAMEDENT m:ClassConstPropertyDeclaration EOL?
+		{ return m; }
+	/ SAMEDENT m:ClassPropertyDeclaration EOL?
+		{ return m; }
+	/ blank
+
+ClassPropertyDeclaration
+	= Visibility:(PropertyVisibility __ StaticToken?)? __ 
+	left:(name:Identifier { return { type: "Variable", name: name }; }) __
+	m:(operator:AssignmentOperator __
+	right:(!(EOTLiteral/EODLiteral) n:(AssignmentExpression/FunctionExpression)))? {
+		return {
+			type:     "ClassPropertyDeclaration",
+			operator: m !== "" ? m[0]: false,
+			left:     left,
+			right:    m !== "" ? m[2][1]: false,
+			Visibility: Visibility !== "" ? Visibility[0] : false,
+			staticx: Visibility !== "" ? (Visibility[2] !== "" ? Visibility[2] : false) : false
+		};
+	}
+
+ClassConstPropertyDeclaration
+	= ConstToken __ left:(name:Identifier { return { type: "Variable", name: name }; }) __
+	m:(operator:AssignmentOperator __
+	right:(!(EOTLiteral/EODLiteral) n:(AssignmentExpression/FunctionExpression)))? {
+		return {
+			type:     "ClassConstPropertyDeclaration",
+			operator: m !== "" ? m[0]: false,
+			left:     left,
+			right:    m !== "" ? m[2][1]: false
+		};
+	}
+
+ClassFunctionDeclaration
+	= SAMEDENT Visibility:(PropertyVisibility __ StaticToken?)? __ name:(!('$') Identifier) __ params:( "(" __ prm:FormalParameterList? __ ")" {return prm;})? __ "->" __ EOL?
+	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
+		if(params == '') {
+			params = []
+		}
+		return {
+			type: "ClassFunctionDeclaration",
+			name: name[1],
+			params: params,
+			body: body !== '' ? body: null,
+			Visibility: Visibility !== "" ? Visibility[0] : false,
+			staticx: Visibility !== "" ? (Visibility[2] !== "" ? Visibility[2] : false) : false
+		}
+	}
+
+PropertyVisibility
+	= PrivateToken
+	/ ProtectedToken
+	/ PublicToken
+
 /* ===== Tokens ===== */
 AndToken = 'and'
 BreakToken = 'break'
 CaseToken = 'case'
 CatchToken = 'catch'
+ClassToken = "class"
+ConstToken = "const"
 ElseToken = 'else'
 ElseIfToken = 'else' __ 'if'
 FalseToken = 'false'
@@ -780,8 +852,12 @@ NewToken = 'new'
 NullToken = 'null'
 OfToken = 'of'
 OrToken = 'or'
+PrivateToken = "private"
+ProtectedToken = "protected"
+PublicToken = "public"
 script_start = '{{'
 script_end = '}}'
+StaticToken = 'static'
 SwitchToken = 'switch'
 ThenToken = 'then'
 ThisToken = 'this'
@@ -794,6 +870,8 @@ ReservedWord
 	/ BreakToken
 	/ CaseToken
 	/ CatchToken
+	/ ClassToken
+	/ ConstToken
 	/ ElseToken
 	/ FalseToken
 	/ finallyToken
@@ -805,9 +883,13 @@ ReservedWord
 	/ NullToken
 	/ OfToken
 	/ OrToken
+	/ PrivateToken
+	/ ProtectedToken
+	/ PublicToken
 	/ script_end
 	/ script_start
 	/ SwitchToken
+	/ StaticToken
 	/ ThenToken
 	/ ThisToken
 	/ TrueToken

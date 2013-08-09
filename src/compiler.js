@@ -145,6 +145,12 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'VariableConst':
+				var r = '$' + '__' + evalStatement(seq.name) + '__';
+				if(seq.only==true) {
+					r += ';';
+				}
+				return r;
 			case 'ReferenceVariable':
 				var r = '&$' + evalStatement(seq.name);
 				return r;
@@ -829,7 +835,6 @@ mammouth.compile = function(code) {
 				return r;
 			case 'NamespaceDeclaration':
 				var r = Tokens.NamespaceToken + ' ' + evalStatement(seq.name);
-				console.log(seq);
 				if(seq.body != null) {
 					r += ' {';
 					var body = '';
@@ -876,6 +881,141 @@ mammouth.compile = function(code) {
 					}
 					r += seq.name[i];
 				};
+				return r;
+			case 'ClassDeclaration':
+				var r = Tokens.ClassToken + ' ' + evalStatement(seq.name);
+				r += ' {';
+				if(seq.body != null) {
+					var body = '';
+					for(var j = 0; j < seq.body.length; j++) {
+						if(typeof seq.body[j] == 'undefined') {
+							body += '\n';
+						} else {
+							seq.body[j].only = true;
+							if(typeof seq.body[j] == 'string') {
+								body += evalStatement(seq.body[j]);
+							} else {
+								body += evalStatement(seq.body[j]) + '\n';
+							}
+						}
+					}
+					var pars = mammouth.LineTerminatorParser.parse(body);
+					for(var x = 0; x < pars.length; x++) {
+						if(pars[x] != '' || x == 0) {
+							if(x == (pars.length - 1)) {
+								if(pars[x] == 'EOD;' || pars[x] == 'EOT;') {
+									r += pars[x];
+								} else {
+									r += '\t' + pars[x];
+								}
+							} else {
+								if(seq.body.length == 1) {
+									if(pars[x] == 'EOD;' || pars[x] == 'EOT;') {
+										r += pars[x];
+									} else {
+										r += '\t' + pars[x];
+									}
+								} else {
+									if(pars[x] == 'EOD;' || pars[x] == 'EOT;') {
+										r += pars[x] + '\n';
+									} else {
+										r += '\t' + pars[x] + '\n';
+									}
+								}
+							}
+						} else if(typeof pars[x] == 'undefined') {
+							r += '\n';
+						} else {
+							r += pars[x];
+						}
+					}
+				}
+				r += '}';
+				return r;
+			case 'ClassPropertyDeclaration':
+				var r;
+				if(seq.Visibility == false) {
+					r = 'var '
+				} else {
+					r = seq.Visibility + ' ';
+					if(seq.staticx !==  false) {
+						r += 'static ';
+					}
+				}
+				var left = evalStatement(seq.left);
+				if(seq.operator !== false) {
+					right = ' ' + seq.operator + ' ' + evalStatement(seq.right);
+				} else {
+					right = '';
+				}
+				r += left + right + ';';
+				return r;
+			case 'ClassConstPropertyDeclaration':
+				var r = 'const ';
+				var left = evalStatement(seq.left);
+				if(seq.operator !== false) {
+					right = ' ' + seq.operator + ' ' + evalStatement(seq.right);
+				} else {
+					right = '';
+				}
+				r += left + right + ';';
+				return r;
+			case 'ClassFunctionDeclaration':
+				var r;
+				if(seq.Visibility == false) {
+					r = ''
+				} else {
+					r = seq.Visibility + ' ';
+					if(seq.staticx !==  false) {
+						r += 'static ';
+					}
+				}
+				r += Tokens.FunctionToken;
+				r += ' ' + evalStatement(seq.name);
+				var arguments = '(';
+				for (var i = 0; i < seq.params.length; i++) {
+					if( i != 0 ) {
+						arguments += ', '
+					}
+					arguments += evalStatement(seq.params[i]);
+				};
+				arguments += ')';
+				r += arguments;
+				r += ' {\n';
+				if(seq.body != null) {
+					var body = '';
+					for(var j = 0; j < seq.body.length; j++) {
+						if(typeof seq.body[j] == 'undefined') {
+							body += '\n';
+						} else {
+							seq.body[j].only = true;
+							if(typeof seq.body[j] == 'string') {
+								body += evalStatement(seq.body[j]);
+							} else {
+								body += evalStatement(seq.body[j]) + '\n';
+							}
+						}
+					}
+					var pars = mammouth.LineTerminatorParser.parse(body);
+					for(var x = 0; x < pars.length; x++) {
+						if(pars[x] != '' || x == 0) {
+							if(x == (pars.length - 1)) {
+								r += '\t' + pars[x];
+							} else {
+								if(seq.body.length == 1) {
+									r += '\t' + pars[x];
+								} else {
+									r += '\t' + pars[x] + '\n';
+								}
+							}
+						} else if(typeof pars[x] == 'undefined') {
+							r += '\n';
+						} else {
+							r += pars[x];
+						}
+					}
+				}
+				r += '}';
 				return r;
 		}
 	};
