@@ -7485,27 +7485,7 @@ mammouth.parser = (function(){
         
         pos0 = pos;
         pos1 = pos;
-        pos2 = pos;
         result0 = parse_PropertyVisibility();
-        if (result0 !== null) {
-          result1 = parse___();
-          if (result1 !== null) {
-            result2 = parse_StaticToken();
-            result2 = result2 !== null ? result2 : "";
-            if (result2 !== null) {
-              result0 = [result0, result1, result2];
-            } else {
-              result0 = null;
-              pos = pos2;
-            }
-          } else {
-            result0 = null;
-            pos = pos2;
-          }
-        } else {
-          result0 = null;
-          pos = pos2;
-        }
         result0 = result0 !== null ? result0 : "";
         if (result0 !== null) {
           result1 = parse___();
@@ -7599,8 +7579,7 @@ mammouth.parser = (function(){
         			operator: m !== "" ? m[0]: false,
         			left:     left,
         			right:    m !== "" ? m[2][1]: false,
-        			Visibility: Visibility !== "" ? Visibility[0] : false,
-        			staticx: Visibility !== "" ? (Visibility[2] !== "" ? Visibility[2] : false) : false
+        			Visibility: Visibility !== "" ? Visibility : false,
         		};
         	})(pos0, result0[0], result0[2], result0[4]);
         }
@@ -7726,27 +7705,7 @@ mammouth.parser = (function(){
         pos1 = pos;
         result0 = parse_SAMEDENT();
         if (result0 !== null) {
-          pos2 = pos;
           result1 = parse_PropertyVisibility();
-          if (result1 !== null) {
-            result2 = parse___();
-            if (result2 !== null) {
-              result3 = parse_StaticToken();
-              result3 = result3 !== null ? result3 : "";
-              if (result3 !== null) {
-                result1 = [result1, result2, result3];
-              } else {
-                result1 = null;
-                pos = pos2;
-              }
-            } else {
-              result1 = null;
-              pos = pos2;
-            }
-          } else {
-            result1 = null;
-            pos = pos2;
-          }
           result1 = result1 !== null ? result1 : "";
           if (result1 !== null) {
             result2 = parse___();
@@ -7960,8 +7919,7 @@ mammouth.parser = (function(){
         			name: name[1],
         			params: params,
         			body: body !== '' ? body: null,
-        			Visibility: Visibility !== "" ? Visibility[0] : false,
-        			staticx: Visibility !== "" ? (Visibility[2] !== "" ? Visibility[2] : false) : false
+        			Visibility: Visibility !== "" ? Visibility : false,
         		}
         	})(pos0, result0[1], result0[3], result0[5], result0[10]);
         }
@@ -11643,7 +11601,7 @@ mammouth.parser = (function(){
 	NamespaceToken: 'namespace',
 	ClassToken: 'class'
 };
-﻿mammouth.VERSION = '0.1.7';
+﻿mammouth.VERSION = '0.1.8';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
@@ -12592,9 +12550,6 @@ mammouth.compile = function(code) {
 					r = 'var '
 				} else {
 					r = seq.Visibility + ' ';
-					if(seq.staticx !==  false) {
-						r += 'static ';
-					}
 				}
 				var left = evalStatement(seq.left);
 				if(seq.operator !== false) {
@@ -12620,9 +12575,6 @@ mammouth.compile = function(code) {
 					r = ''
 				} else {
 					r = seq.Visibility + ' ';
-					if(seq.staticx !==  false) {
-						r += 'static ';
-					}
 				}
 				r += Tokens.FunctionToken;
 				r += ' ' + evalStatement(seq.name);
