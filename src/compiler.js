@@ -145,6 +145,12 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'This':
+				var r = '$this';
+				if(seq.only==true) {
+					r += ';';
+				}
+				return r;
 			case 'VariableConst':
 				var r = '$' + '__' + evalStatement(seq.name) + '__';
 				if(seq.only==true) {
@@ -875,6 +881,9 @@ mammouth.compile = function(code) {
 				return r;
 			case 'NamespaceIdentifier':
 				var r = '';
+				if(seq.start == true) {
+					r += '\\';
+				}
 				for (var i = 0; i < seq.name.length; i++) {
 					if(i!=0) {
 						r += '\\'
@@ -938,9 +947,6 @@ mammouth.compile = function(code) {
 					r = 'var '
 				} else {
 					r = seq.Visibility + ' ';
-					if(seq.staticx !==  false) {
-						r += 'static ';
-					}
 				}
 				var left = evalStatement(seq.left);
 				if(seq.operator !== false) {
@@ -966,9 +972,6 @@ mammouth.compile = function(code) {
 					r = ''
 				} else {
 					r = seq.Visibility + ' ';
-					if(seq.staticx !==  false) {
-						r += 'static ';
-					}
 				}
 				r += Tokens.FunctionToken;
 				r += ' ' + evalStatement(seq.name);

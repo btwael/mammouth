@@ -17,6 +17,7 @@ code_block
 PrimaryExpression
 	= ThisToken       { return { type: "This" }; }
 	/ name:Identifier { return { type: "Variable", name: name }; }
+	/ NamespaceId
 	/ Literal
 	/ ArrayLiteral
 	/ "(" __ expression:Expression __ ")" { return expression; }
@@ -109,7 +110,7 @@ LeftHandSideExpression
 
 NewExpression
 	= MemberExpression
-	/ NewToken __ constructor:Identifier {
+	/ NewToken __ constructor:(NamespaceId/Identifier) {
 		return {
 			type:        "NewOperator",
 			constructor: constructor,
@@ -120,7 +121,7 @@ NewExpression
 MemberExpression
 	= base:(
 		PrimaryExpression
-		/ NewToken __ constructor:Identifier __ arguments:Arguments {
+		/ NewToken __ constructor:(NamespaceId/Identifier) __ arguments:Arguments {
 			return {
 				type:        "NewOperator",
 				constructor: constructor,
@@ -750,7 +751,8 @@ NamespaceDeclaration
 	}
 
 NamespaceId
-	= head:(Identifier)
+	= start:"\\"? 
+	head:(Identifier)
 	tail:("\\" (Identifier))* {
 		if(head != '') {
 			var array = [head];
@@ -763,6 +765,7 @@ NamespaceId
 		return {
 			type:     "NamespaceIdentifier",
 			name: array,
+			start: start !== '' ? true : false
 		};
 	}
 	
@@ -786,7 +789,7 @@ ClassStatement
 	/ blank
 
 ClassPropertyDeclaration
-	= Visibility:(PropertyVisibility __ StaticToken?)? __ 
+	= Visibility:(PropertyVisibility)? __ 
 	left:(name:Identifier { return { type: "Variable", name: name }; }) __
 	m:(operator:AssignmentOperator __
 	right:(!(EOTLiteral/EODLiteral) n:(AssignmentExpression/FunctionExpression)))? {
@@ -795,8 +798,7 @@ ClassPropertyDeclaration
 			operator: m !== "" ? m[0]: false,
 			left:     left,
 			right:    m !== "" ? m[2][1]: false,
-			Visibility: Visibility !== "" ? Visibility[0] : false,
-			staticx: Visibility !== "" ? (Visibility[2] !== "" ? Visibility[2] : false) : false
+			Visibility: Visibility !== "" ? Visibility : false,
 		};
 	}
 
@@ -813,7 +815,7 @@ ClassConstPropertyDeclaration
 	}
 
 ClassFunctionDeclaration
-	= SAMEDENT Visibility:(PropertyVisibility __ StaticToken?)? __ name:(!('$') Identifier) __ params:( "(" __ prm:FormalParameterList? __ ")" {return prm;})? __ "->" __ EOL?
+	= SAMEDENT Visibility:(PropertyVisibility)? __ name:(!('$') Identifier) __ params:( "(" __ prm:FormalParameterList? __ ")" {return prm;})? __ "->" __ EOL?
 	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
 		if(params == '') {
 			params = []
@@ -823,8 +825,7 @@ ClassFunctionDeclaration
 			name: name[1],
 			params: params,
 			body: body !== '' ? body: null,
-			Visibility: Visibility !== "" ? Visibility[0] : false,
-			staticx: Visibility !== "" ? (Visibility[2] !== "" ? Visibility[2] : false) : false
+			Visibility: Visibility !== "" ? Visibility : false,
 		}
 	}
 
