@@ -929,7 +929,7 @@ SingleLineComment
 	= "//" (!LineTerminator SourceCharacter)*
 
 Identifier "identifier"
-	= !ReservedWord name:IdentifierName { return name; }
+	= name:IdentifierName !ReservedWord { return name; }
 
 IdentifierName "identifier"
 	= start:IdentifierStart parts:IdentifierPart* {

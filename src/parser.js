@@ -8963,18 +8963,18 @@ mammouth.parser = (function(){
         reportFailures++;
         pos0 = pos;
         pos1 = pos;
-        pos2 = pos;
-        reportFailures++;
-        result0 = parse_ReservedWord();
-        reportFailures--;
-        if (result0 === null) {
-          result0 = "";
-        } else {
-          result0 = null;
-          pos = pos2;
-        }
+        result0 = parse_IdentifierName();
         if (result0 !== null) {
-          result1 = parse_IdentifierName();
+          pos2 = pos;
+          reportFailures++;
+          result1 = parse_ReservedWord();
+          reportFailures--;
+          if (result1 === null) {
+            result1 = "";
+          } else {
+            result1 = null;
+            pos = pos2;
+          }
           if (result1 !== null) {
             result0 = [result0, result1];
           } else {
@@ -8986,7 +8986,7 @@ mammouth.parser = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, name) { return name; })(pos0, result0[1]);
+          result0 = (function(offset, name) { return name; })(pos0, result0[0]);
         }
         if (result0 === null) {
           pos = pos0;
