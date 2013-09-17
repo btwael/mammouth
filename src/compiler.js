@@ -1,4 +1,4 @@
-﻿mammouth.VERSION = '0.1.8';
+﻿mammouth.VERSION = '0.1.9';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	FunctionInAssignment = function(seq) {
