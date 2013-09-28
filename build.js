@@ -35,6 +35,7 @@ try {
 		});
 		data += 'mammouth.LineTerminatorParser' + " = " + r + ';';
 		data += fs.readFileSync('src/tokens.js').toString() + '\n';
+		data += fs.readFileSync('src/helpers.js').toString() + '\n';
 		data += fs.readFileSync('src/compiler.js').toString() + '\n';
 		fs.appendFileSync("extras/mammouth.js", data + "\n");
 	} catch(err) {
