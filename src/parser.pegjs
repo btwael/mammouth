@@ -50,6 +50,16 @@ AssignmentExpression
 	}
 	/ ConditionalExpression
 
+SliceExpression
+	= slicer:MemberExpression __ "[" __ start:Expression? __ ':' __ end:Expression? __ "]" {
+		return {
+			type:   "SliceExpression",
+			slicer: slicer,
+			start:  start !== '' ? start:0,
+			end:    end !== '' ? end:null 
+		};
+	}
+
 FunctionExpression
 	= params:( "(" __ prm:FormalParameterList? __ ")" {return prm;})? __ "->" __
 	body:( b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
@@ -106,6 +116,7 @@ AssignmentOperator
 
 LeftHandSideExpression
 	= CallExpression
+	/ SliceExpression
 	/ NewExpression
 
 NewExpression

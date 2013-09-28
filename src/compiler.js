@@ -1,6 +1,10 @@
 ﻿mammouth.VERSION = '0.1.9';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
+	var Use_Slice_Function = false;
+	var Added_Slice_Function = false;
+	var Use_Len_Function = false;
+	var Added_Len_Function = false;
 	FunctionInAssignment = function(seq) {
 		var r = Tokens.FunctionToken;
 		var arguments = '(';
@@ -60,7 +64,7 @@ mammouth.compile = function(code) {
 			case 'embed':
 				return seq.content;
 			case 'block':
-				var r = '<?php \n';
+				var r = '';
 				for(var i = 0; i < seq.elements.length; i++) {
 					if(typeof seq.elements[i] == 'undefined') {
 						
@@ -73,6 +77,15 @@ mammouth.compile = function(code) {
 						}
 					}
 				}
+				if(Use_Slice_Function == true && Added_Slice_Function == false) {
+					r = mammouth.helpers.slice_php_function + '\n' + r;
+					Added_Slice_Function = true;
+				}
+				if(Use_Len_Function == true && Added_Len_Function == false) {
+					r = mammouth.helpers.len_php_function + '\n' + r;
+					Added_Len_Function = true;
+				}
+				r = '<?php \n' + r;
 				return r + '?>';
 			case 'blockwithoutbra':
 				var r = '';
@@ -301,6 +314,23 @@ mammouth.compile = function(code) {
 				};
 				arguments += ')';
 				r = name + arguments;
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
+			case 'SliceExpression':
+				var r = '';
+				Use_Slice_Function = true;
+				var end = evalStatement(seq.end);
+				var start = evalStatement(seq.start);
+				if(seq.end == null) {
+					Use_Len_Function = true;
+					end = '_m_len(' + evalStatement(seq.slicer) + ')';
+				}
+				if(seq.start == 0) {
+					start = 0;
+				}
+				r += '_m_slice(' + evalStatement(seq.slicer) + ', ' + start + ', ' + end + ')';
 				if(seq.only == true) {
 					r += ';';
 				}
@@ -1025,6 +1055,7 @@ mammouth.compile = function(code) {
 	var interprete = function(code){
 		var r = '';
 		var seq = mammouth.parser.parse(code);
+		console.log(seq);
 		for(var i = 0; i < seq.length; i++) {
 			r += evalStatement(seq[i]);
 		}

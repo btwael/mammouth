@@ -44,6 +44,7 @@ mammouth.parser = (function(){
         "PrimaryExpression": parse_PrimaryExpression,
         "Expression": parse_Expression,
         "AssignmentExpression": parse_AssignmentExpression,
+        "SliceExpression": parse_SliceExpression,
         "FunctionExpression": parse_FunctionExpression,
         "FormalParameterList": parse_FormalParameterList,
         "AssignmentExpressionOfFunction": parse_AssignmentExpressionOfFunction,
@@ -658,6 +659,121 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse_SliceExpression() {
+        var result0, result1, result2, result3, result4, result5, result6, result7, result8, result9, result10;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_MemberExpression();
+        if (result0 !== null) {
+          result1 = parse___();
+          if (result1 !== null) {
+            if (input.charCodeAt(pos) === 91) {
+              result2 = "[";
+              pos++;
+            } else {
+              result2 = null;
+              if (reportFailures === 0) {
+                matchFailed("\"[\"");
+              }
+            }
+            if (result2 !== null) {
+              result3 = parse___();
+              if (result3 !== null) {
+                result4 = parse_Expression();
+                result4 = result4 !== null ? result4 : "";
+                if (result4 !== null) {
+                  result5 = parse___();
+                  if (result5 !== null) {
+                    if (input.charCodeAt(pos) === 58) {
+                      result6 = ":";
+                      pos++;
+                    } else {
+                      result6 = null;
+                      if (reportFailures === 0) {
+                        matchFailed("\":\"");
+                      }
+                    }
+                    if (result6 !== null) {
+                      result7 = parse___();
+                      if (result7 !== null) {
+                        result8 = parse_Expression();
+                        result8 = result8 !== null ? result8 : "";
+                        if (result8 !== null) {
+                          result9 = parse___();
+                          if (result9 !== null) {
+                            if (input.charCodeAt(pos) === 93) {
+                              result10 = "]";
+                              pos++;
+                            } else {
+                              result10 = null;
+                              if (reportFailures === 0) {
+                                matchFailed("\"]\"");
+                              }
+                            }
+                            if (result10 !== null) {
+                              result0 = [result0, result1, result2, result3, result4, result5, result6, result7, result8, result9, result10];
+                            } else {
+                              result0 = null;
+                              pos = pos1;
+                            }
+                          } else {
+                            result0 = null;
+                            pos = pos1;
+                          }
+                        } else {
+                          result0 = null;
+                          pos = pos1;
+                        }
+                      } else {
+                        result0 = null;
+                        pos = pos1;
+                      }
+                    } else {
+                      result0 = null;
+                      pos = pos1;
+                    }
+                  } else {
+                    result0 = null;
+                    pos = pos1;
+                  }
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, slicer, start, end) {
+        		return {
+        			type:   "SliceExpression",
+        			slicer: slicer,
+        			start:  start !== '' ? start:0,
+        			end:    end !== '' ? end:null 
+        		};
+        	})(pos0, result0[0], result0[4], result0[8]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
       function parse_FunctionExpression() {
         var result0, result1, result2, result3, result4, result5, result6, result7;
         var pos0, pos1, pos2, pos3;
@@ -1262,7 +1378,10 @@ mammouth.parser = (function(){
         
         result0 = parse_CallExpression();
         if (result0 === null) {
-          result0 = parse_NewExpression();
+          result0 = parse_SliceExpression();
+          if (result0 === null) {
+            result0 = parse_NewExpression();
+          }
         }
         return result0;
       }
