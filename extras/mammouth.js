@@ -10791,17 +10791,8 @@ mammouth.parser = (function(){
         pos0 = pos;
         pos1 = pos;
         result0 = [];
-        if (/^[ \t]/.test(input.charAt(pos))) {
-          result1 = input.charAt(pos);
-          pos++;
-        } else {
-          result1 = null;
-          if (reportFailures === 0) {
-            matchFailed("[ \\t]");
-          }
-        }
-        while (result1 !== null) {
-          result0.push(result1);
+        result1 = parse_Comment();
+        if (result1 === null) {
           if (/^[ \t]/.test(input.charAt(pos))) {
             result1 = input.charAt(pos);
             pos++;
@@ -10809,6 +10800,21 @@ mammouth.parser = (function(){
             result1 = null;
             if (reportFailures === 0) {
               matchFailed("[ \\t]");
+            }
+          }
+        }
+        while (result1 !== null) {
+          result0.push(result1);
+          result1 = parse_Comment();
+          if (result1 === null) {
+            if (/^[ \t]/.test(input.charAt(pos))) {
+              result1 = input.charAt(pos);
+              pos++;
+            } else {
+              result1 = null;
+              if (reportFailures === 0) {
+                matchFailed("[ \\t]");
+              }
             }
           }
         }
@@ -10872,7 +10878,7 @@ mammouth.parser = (function(){
       
       function parse_SAMEDENT() {
         var result0, result1;
-        var pos0;
+        var pos0, pos1;
         
         pos0 = pos;
         result0 = [];
@@ -10885,6 +10891,16 @@ mammouth.parser = (function(){
             matchFailed("[ \\t]");
           }
         }
+        if (result1 === null) {
+          pos1 = pos;
+          result1 = parse_Comment();
+          if (result1 !== null) {
+            result1 = (function(offset) { return ""})(pos1);
+          }
+          if (result1 === null) {
+            pos = pos1;
+          }
+        }
         while (result1 !== null) {
           result0.push(result1);
           if (/^[ \t]/.test(input.charAt(pos))) {
@@ -10894,6 +10910,16 @@ mammouth.parser = (function(){
             result1 = null;
             if (reportFailures === 0) {
               matchFailed("[ \\t]");
+            }
+          }
+          if (result1 === null) {
+            pos1 = pos;
+            result1 = parse_Comment();
+            if (result1 !== null) {
+              result1 = (function(offset) { return ""})(pos1);
+            }
+            if (result1 === null) {
+              pos = pos1;
             }
           }
         }
@@ -10913,32 +10939,104 @@ mammouth.parser = (function(){
       }
       
       function parse_INDENT() {
-        var result0, result1;
-        var pos0, pos1;
+        var result0, result1, result2, result3, result4;
+        var pos0, pos1, pos2, pos3;
         
         pos0 = pos;
         pos1 = pos;
-        if (/^[ \t]/.test(input.charAt(pos))) {
-          result1 = input.charAt(pos);
-          pos++;
+        pos2 = pos;
+        pos3 = pos;
+        result1 = [];
+        result2 = parse_Comment();
+        while (result2 !== null) {
+          result1.push(result2);
+          result2 = parse_Comment();
+        }
+        if (result1 !== null) {
+          if (/^[ \t]/.test(input.charAt(pos))) {
+            result2 = input.charAt(pos);
+            pos++;
+          } else {
+            result2 = null;
+            if (reportFailures === 0) {
+              matchFailed("[ \\t]");
+            }
+          }
+          if (result2 !== null) {
+            result3 = [];
+            result4 = parse_Comment();
+            while (result4 !== null) {
+              result3.push(result4);
+              result4 = parse_Comment();
+            }
+            if (result3 !== null) {
+              result1 = [result1, result2, result3];
+            } else {
+              result1 = null;
+              pos = pos3;
+            }
+          } else {
+            result1 = null;
+            pos = pos3;
+          }
         } else {
           result1 = null;
-          if (reportFailures === 0) {
-            matchFailed("[ \\t]");
-          }
+          pos = pos3;
+        }
+        if (result1 !== null) {
+          result1 = (function(offset, m) {return m[1]})(pos2, result1);
+        }
+        if (result1 === null) {
+          pos = pos2;
         }
         if (result1 !== null) {
           result0 = [];
           while (result1 !== null) {
             result0.push(result1);
-            if (/^[ \t]/.test(input.charAt(pos))) {
-              result1 = input.charAt(pos);
-              pos++;
+            pos2 = pos;
+            pos3 = pos;
+            result1 = [];
+            result2 = parse_Comment();
+            while (result2 !== null) {
+              result1.push(result2);
+              result2 = parse_Comment();
+            }
+            if (result1 !== null) {
+              if (/^[ \t]/.test(input.charAt(pos))) {
+                result2 = input.charAt(pos);
+                pos++;
+              } else {
+                result2 = null;
+                if (reportFailures === 0) {
+                  matchFailed("[ \\t]");
+                }
+              }
+              if (result2 !== null) {
+                result3 = [];
+                result4 = parse_Comment();
+                while (result4 !== null) {
+                  result3.push(result4);
+                  result4 = parse_Comment();
+                }
+                if (result3 !== null) {
+                  result1 = [result1, result2, result3];
+                } else {
+                  result1 = null;
+                  pos = pos3;
+                }
+              } else {
+                result1 = null;
+                pos = pos3;
+              }
             } else {
               result1 = null;
-              if (reportFailures === 0) {
-                matchFailed("[ \\t]");
-              }
+              pos = pos3;
+            }
+            if (result1 !== null) {
+              result1 = (function(offset, m) {return m[1]})(pos2, result1);
+            }
+            if (result1 === null) {
+              pos = pos2;
             }
           }
         } else {

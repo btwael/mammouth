@@ -1162,17 +1162,17 @@ Zs = [\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u
 
 /* ===== Python & CoffeeScript style rules */
 blank
-	= [ \t]* EOL
+	= (Comment / [ \t])*  EOL
 	{ return undefined; }
  
 EOL
 	= "\r\n" / "\n" / "\r"
  
 SAMEDENT
-	= i:[ \t]* &{ return i.join("") === indent; }
+	= i:([ \t] / (Comment { return ""}))* &{ return i.join("") === indent; }
  
 INDENT
-	= i:[ \t]+ &{ return i.length > indent.length; }
+	= i:(m:(Comment* [ \t] Comment*) {return m[1]})+ &{ return i.length > indent.length; }
 	{ indentStack.push(indent); indent = i.join(""); pos = offset; }
  
 DEDENT
