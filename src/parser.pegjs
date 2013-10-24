@@ -483,7 +483,7 @@ statements
 statement
 	= SAMEDENT m:SwitchStatement EOL?
 		{ return m; }
-	/ SAMEDENT m:IfStatement EOL?
+	/ m:IfStatement
 		{ return m; }
 	/ SAMEDENT m:ForStatement EOL?
 		{ return m; }
