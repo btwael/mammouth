@@ -1084,6 +1084,7 @@ DoubleStringCharacter
 
 SingleStringCharacter
 	= !("'" / "\\" / LineTerminator) char_:SourceCharacter { return char_;     }
+	/ m:('\\' .) { return "'.\"\\"+m[1]+"\".'"; }
 
 EODLiteral
 	= '`' EODv:EODString+ '`' {
