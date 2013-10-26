@@ -164,6 +164,12 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'NullLiteral':
+				var r = 'NULL';
+				if(seq.only==true) {
+					r += ';';
+				}
+				return r;
 			case 'VariableConst':
 				var r = '$' + '__' + evalStatement(seq.name) + '__';
 				if(seq.only==true) {

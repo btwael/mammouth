@@ -412,50 +412,56 @@ mammouth.parser = (function(){
           pos = pos0;
         }
         if (result0 === null) {
-          pos0 = pos;
-          result0 = parse_Identifier();
-          if (result0 !== null) {
-            result0 = (function(offset, name) { return { type: "Variable", name: name }; })(pos0, result0);
-          }
+          result0 = parse_NullLiteral();
           if (result0 === null) {
-            pos = pos0;
-          }
-          if (result0 === null) {
-            result0 = parse_NamespaceId();
+            pos0 = pos;
+            result0 = parse_Identifier();
+            if (result0 !== null) {
+              result0 = (function(offset, name) { return { type: "Variable", name: name }; })(pos0, result0);
+            }
             if (result0 === null) {
-              result0 = parse_Literal();
+              pos = pos0;
+            }
+            if (result0 === null) {
+              result0 = parse_NamespaceId();
               if (result0 === null) {
-                result0 = parse_ArrayLiteral();
+                result0 = parse_Literal();
                 if (result0 === null) {
-                  pos0 = pos;
-                  pos1 = pos;
-                  if (input.charCodeAt(pos) === 40) {
-                    result0 = "(";
-                    pos++;
-                  } else {
-                    result0 = null;
-                    if (reportFailures === 0) {
-                      matchFailed("\"(\"");
+                  result0 = parse_ArrayLiteral();
+                  if (result0 === null) {
+                    pos0 = pos;
+                    pos1 = pos;
+                    if (input.charCodeAt(pos) === 40) {
+                      result0 = "(";
+                      pos++;
+                    } else {
+                      result0 = null;
+                      if (reportFailures === 0) {
+                        matchFailed("\"(\"");
+                      }
                     }
-                  }
-                  if (result0 !== null) {
-                    result1 = parse___();
-                    if (result1 !== null) {
-                      result2 = parse_Expression();
-                      if (result2 !== null) {
-                        result3 = parse___();
-                        if (result3 !== null) {
-                          if (input.charCodeAt(pos) === 41) {
-                            result4 = ")";
-                            pos++;
-                          } else {
-                            result4 = null;
-                            if (reportFailures === 0) {
-                              matchFailed("\")\"");
+                    if (result0 !== null) {
+                      result1 = parse___();
+                      if (result1 !== null) {
+                        result2 = parse_Expression();
+                        if (result2 !== null) {
+                          result3 = parse___();
+                          if (result3 !== null) {
+                            if (input.charCodeAt(pos) === 41) {
+                              result4 = ")";
+                              pos++;
+                            } else {
+                              result4 = null;
+                              if (reportFailures === 0) {
+                                matchFailed("\")\"");
+                              }
                             }
-                          }
-                          if (result4 !== null) {
-                            result0 = [result0, result1, result2, result3, result4];
+                            if (result4 !== null) {
+                              result0 = [result0, result1, result2, result3, result4];
+                            } else {
+                              result0 = null;
+                              pos = pos1;
+                            }
                           } else {
                             result0 = null;
                             pos = pos1;
@@ -472,15 +478,12 @@ mammouth.parser = (function(){
                       result0 = null;
                       pos = pos1;
                     }
-                  } else {
-                    result0 = null;
-                    pos = pos1;
-                  }
-                  if (result0 !== null) {
-                    result0 = (function(offset, expression) { return expression; })(pos0, result0[2]);
-                  }
-                  if (result0 === null) {
-                    pos = pos0;
+                    if (result0 !== null) {
+                      result0 = (function(offset, expression) { return expression; })(pos0, result0[2]);
+                    }
+                    if (result0 === null) {
+                      pos = pos0;
+                    }
                   }
                 }
               }
@@ -8296,13 +8299,24 @@ mammouth.parser = (function(){
       function parse_NullToken() {
         var result0;
         
-        if (input.substr(pos, 4) === "null") {
-          result0 = "null";
+        if (input.substr(pos, 4) === "NULL") {
+          result0 = "NULL";
           pos += 4;
         } else {
           result0 = null;
           if (reportFailures === 0) {
-            matchFailed("\"null\"");
+            matchFailed("\"NULL\"");
+          }
+        }
+        if (result0 === null) {
+          if (input.substr(pos, 4) === "None") {
+            result0 = "None";
+            pos += 4;
+          } else {
+            result0 = null;
+            if (reportFailures === 0) {
+              matchFailed("\"None\"");
+            }
           }
         }
         return result0;
@@ -9297,16 +9311,28 @@ mammouth.parser = (function(){
         var result0;
         var pos0;
         
-        result0 = parse_NullLiteral();
+        result0 = parse_BooleanLiteral();
         if (result0 === null) {
-          result0 = parse_BooleanLiteral();
+          pos0 = pos;
+          result0 = parse_NumericLiteral();
+          if (result0 !== null) {
+            result0 = (function(offset, value) {
+          		return {
+          			type:  "NumericLiteral",
+          			value: value
+          		};
+          	})(pos0, result0);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
           if (result0 === null) {
             pos0 = pos;
-            result0 = parse_NumericLiteral();
+            result0 = parse_StringLiteral();
             if (result0 !== null) {
               result0 = (function(offset, value) {
             		return {
-            			type:  "NumericLiteral",
+            			type:  "StringLiteral",
             			value: value
             		};
             	})(pos0, result0);
@@ -9316,13 +9342,13 @@ mammouth.parser = (function(){
             }
             if (result0 === null) {
               pos0 = pos;
-              result0 = parse_StringLiteral();
+              result0 = parse_EODLiteral();
               if (result0 !== null) {
                 result0 = (function(offset, value) {
               		return {
-              			type:  "StringLiteral",
+              			type: "EODLiteral",
               			value: value
-              		};
+              		}
               	})(pos0, result0);
               }
               if (result0 === null) {
@@ -9330,32 +9356,17 @@ mammouth.parser = (function(){
               }
               if (result0 === null) {
                 pos0 = pos;
-                result0 = parse_EODLiteral();
+                result0 = parse_EOTLiteral();
                 if (result0 !== null) {
                   result0 = (function(offset, value) {
                 		return {
-                			type: "EODLiteral",
+                			type: "EOTLiteral",
                 			value: value
                 		}
                 	})(pos0, result0);
                 }
                 if (result0 === null) {
                   pos = pos0;
-                }
-                if (result0 === null) {
-                  pos0 = pos;
-                  result0 = parse_EOTLiteral();
-                  if (result0 !== null) {
-                    result0 = (function(offset, value) {
-                  		return {
-                  			type: "EOTLiteral",
-                  			value: value
-                  		}
-                  	})(pos0, result0);
-                  }
-                  if (result0 === null) {
-                    pos = pos0;
-                  }
                 }
               }
             }

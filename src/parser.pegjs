@@ -16,6 +16,7 @@ code_block
 
 PrimaryExpression
 	= ThisToken       { return { type: "This" }; }
+	/ NullLiteral
 	/ name:Identifier { return { type: "Variable", name: name }; }
 	/ NamespaceId
 	/ Literal
@@ -861,7 +862,7 @@ IfToken = 'if'
 InToken = 'in'
 NamespaceToken = 'namespace'
 NewToken = 'new'
-NullToken = 'null'
+NullToken = 'NULL' / 'None'
 OfToken = 'of'
 OrToken = 'or'
 PrivateToken = "private"
@@ -985,8 +986,7 @@ __
 	= (WhiteSpace / Comment)*
 
 Literal
-	= NullLiteral
-	/ BooleanLiteral
+	= BooleanLiteral
 	/ value:NumericLiteral {
 		return {
 			type:  "NumericLiteral",
