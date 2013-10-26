@@ -5664,7 +5664,6 @@ mammouth.parser = (function(){
                         result7 = null;
                         pos = pos2;
                       }
-                      result7 = result7 !== null ? result7 : "";
                       if (result7 !== null) {
                         result8 = parse___();
                         if (result8 !== null) {
@@ -5762,21 +5761,15 @@ mammouth.parser = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, initializer, statement) {
-        			if(typeof test == 'undefined') {
-        				test = '';
-        			}
-        			if(typeof counter == 'undefined') {
-        				counter = '';
-        			}
+          result0 = (function(offset, initializer, test, counter, statement) {
         			return {
         				type:        "ForStatement",
         				initializer: initializer !== "" ? initializer : null,
         				test:        test !== "" ? test : null,
         				counter:     counter !== "" ? counter : null,
-        				statement:   statement !== "" ? statement: null
+        				statement:   statement
         			};
-        	})(pos0, result0[5], result0[10]);
+        	})(pos0, result0[5], result0[7][2], result0[7][6], result0[10]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -6001,7 +5994,7 @@ mammouth.parser = (function(){
           				initializer: initializer !== "" ? initializer : null,
           				test:        test !== "" ? test : null,
           				counter:     counter !== "" ? counter : null,
-          				statement:   statement
+          				statement:   statement !== "" ? statement: null
           			};
           	})(pos0, result0[5], result0[10]);
           }
@@ -9071,23 +9064,15 @@ mammouth.parser = (function(){
       
       function parse_Identifier() {
         var result0, result1;
-        var pos0, pos1, pos2;
+        var pos0, pos1;
         
         reportFailures++;
         pos0 = pos;
         pos1 = pos;
-        result0 = parse_IdentifierName();
+        result0 = parse_ReservedWord();
+        result0 = result0 !== null ? result0 : "";
         if (result0 !== null) {
-          pos2 = pos;
-          reportFailures++;
-          result1 = parse_ReservedWord();
-          reportFailures--;
-          if (result1 === null) {
-            result1 = "";
-          } else {
-            result1 = null;
-            pos = pos2;
-          }
+          result1 = parse_IdentifierName();
           if (result1 !== null) {
             result0 = [result0, result1];
           } else {
@@ -9099,7 +9084,7 @@ mammouth.parser = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, name) { return name; })(pos0, result0[0]);
+          result0 = (function(offset, f, name) { return f+name; })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;

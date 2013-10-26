@@ -605,20 +605,14 @@ ForStatement
 		test:Expression? __
 		";" __
 		counter:Expression? __
-		")"?)? __ EOL?
+		")"?) __ EOL?
 		statement:(b:blank* INDENT c:(n:statement)* DEDENT { return b.concat(c); })? {
-			if(typeof test == 'undefined') {
-				test = '';
-			}
-			if(typeof counter == 'undefined') {
-				counter = '';
-			}
 			return {
 				type:        "ForStatement",
 				initializer: initializer !== "" ? initializer : null,
 				test:        test !== "" ? test : null,
 				counter:     counter !== "" ? counter : null,
-				statement:   statement !== "" ? statement: null
+				statement:   statement
 			};
 	}
 	/ SAMEDENT ForToken __
@@ -641,7 +635,7 @@ ForStatement
 				initializer: initializer !== "" ? initializer : null,
 				test:        test !== "" ? test : null,
 				counter:     counter !== "" ? counter : null,
-				statement:   statement
+				statement:   statement !== "" ? statement: null
 			};
 	}
 
@@ -941,7 +935,7 @@ SingleLineComment
 	= "//" (!LineTerminator SourceCharacter)*
 
 Identifier "identifier"
-	= name:IdentifierName !ReservedWord { return name; }
+	= f:ReservedWord? name:IdentifierName { return f+name; }
 
 IdentifierName "identifier"
 	= start:IdentifierStart parts:IdentifierPart* {
