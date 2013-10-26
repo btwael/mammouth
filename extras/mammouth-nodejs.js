@@ -618,9 +618,9 @@ mammouth.parser = (function(){
             if (result2 !== null) {
               result3 = parse___();
               if (result3 !== null) {
-                result4 = parse_AssignmentExpression();
+                result4 = parse_FunctionExpression();
                 if (result4 === null) {
-                  result4 = parse_FunctionExpression();
+                  result4 = parse_AssignmentExpression();
                 }
                 if (result4 !== null) {
                   result0 = [result0, result1, result2, result3, result4];

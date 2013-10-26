@@ -41,7 +41,7 @@ Expression
 AssignmentExpression
 	= left:LeftHandSideExpression __
 	operator:AssignmentOperator __
-	right:(AssignmentExpression/FunctionExpression) {
+	right:(FunctionExpression/AssignmentExpression) {
 		return {
 			type:     "AssignmentExpression",
 			operator: operator,
