@@ -4313,87 +4313,27 @@ mammouth.parser = (function(){
           }
           if (result0 === null) {
             pos0 = pos;
-            pos1 = pos;
-            result0 = parse_SAMEDENT();
+            result0 = parse_ForStatement();
             if (result0 !== null) {
-              result1 = parse_ForStatement();
-              if (result1 !== null) {
-                result2 = parse_EOL();
-                result2 = result2 !== null ? result2 : "";
-                if (result2 !== null) {
-                  result0 = [result0, result1, result2];
-                } else {
-                  result0 = null;
-                  pos = pos1;
-                }
-              } else {
-                result0 = null;
-                pos = pos1;
-              }
-            } else {
-              result0 = null;
-              pos = pos1;
-            }
-            if (result0 !== null) {
-              result0 = (function(offset, m) { return m; })(pos0, result0[1]);
+              result0 = (function(offset, m) { return m; })(pos0, result0);
             }
             if (result0 === null) {
               pos = pos0;
             }
             if (result0 === null) {
               pos0 = pos;
-              pos1 = pos;
-              result0 = parse_SAMEDENT();
+              result0 = parse_WhileStatement();
               if (result0 !== null) {
-                result1 = parse_WhileStatement();
-                if (result1 !== null) {
-                  result2 = parse_EOL();
-                  result2 = result2 !== null ? result2 : "";
-                  if (result2 !== null) {
-                    result0 = [result0, result1, result2];
-                  } else {
-                    result0 = null;
-                    pos = pos1;
-                  }
-                } else {
-                  result0 = null;
-                  pos = pos1;
-                }
-              } else {
-                result0 = null;
-                pos = pos1;
-              }
-              if (result0 !== null) {
-                result0 = (function(offset, m) { return m; })(pos0, result0[1]);
+                result0 = (function(offset, m) { return m; })(pos0, result0);
               }
               if (result0 === null) {
                 pos = pos0;
               }
               if (result0 === null) {
                 pos0 = pos;
-                pos1 = pos;
-                result0 = parse_SAMEDENT();
+                result0 = parse_TryStatement();
                 if (result0 !== null) {
-                  result1 = parse_TryStatement();
-                  if (result1 !== null) {
-                    result2 = parse_EOL();
-                    result2 = result2 !== null ? result2 : "";
-                    if (result2 !== null) {
-                      result0 = [result0, result1, result2];
-                    } else {
-                      result0 = null;
-                      pos = pos1;
-                    }
-                  } else {
-                    result0 = null;
-                    pos = pos1;
-                  }
-                } else {
-                  result0 = null;
-                  pos = pos1;
-                }
-                if (result0 !== null) {
-                  result0 = (function(offset, m) { return m; })(pos0, result0[1]);
+                  result0 = (function(offset, m) { return m; })(pos0, result0);
                 }
                 if (result0 === null) {
                   pos = pos0;

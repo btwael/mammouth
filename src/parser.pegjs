@@ -486,11 +486,11 @@ statement
 		{ return m; }
 	/ m:IfStatement
 		{ return m; }
-	/ SAMEDENT m:ForStatement EOL?
+	/ m:ForStatement
 		{ return m; }
-	/ SAMEDENT m:WhileStatement EOL?
+	/ m:WhileStatement
 		{ return m; }
-	/ SAMEDENT m:TryStatement EOL?
+	/ m:TryStatement
 		{ return m; }
 	/ SAMEDENT m:FunctionDeclaration EOL?
 		{ return m; }
