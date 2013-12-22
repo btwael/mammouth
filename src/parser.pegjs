@@ -18,6 +18,13 @@ PrimaryExpression
 	= ThisToken       { return { type: "This" }; }
 	/ NullLiteral
 	/ name:Identifier { return { type: "Variable", name: name }; }
+	/ "@" name:Identifier {
+		return {
+			type: "PropertyAccess",
+			base: {type: "Variable", name: "this"},
+			name: name
+		};
+	}
 	/ NamespaceId
 	/ Literal
 	/ ArrayLiteral
