@@ -182,7 +182,10 @@ mammouth.compile = function(code) {
 			case 'PropertyAccess':
 				var b = evalStatement(seq.base);
 				var n, r;
-				if(typeof seq.name == 'string') {
+				if(typeof seq.name == 'object') {
+					n = seq.name;
+					r = b + '::' + n[0];
+				} else if(typeof seq.name == 'string') {
 					n = seq.name;
 					r = b + '->' + n;
 				} else {

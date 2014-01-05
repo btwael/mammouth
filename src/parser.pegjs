@@ -151,6 +151,7 @@ MemberExpression
 	accessors:(
 		__ "[" __ name:Expression __ "]" { return name; }
 		/ __ "." __ name:IdentifierName    { return name; }
+		/ __ "::" __ name:IdentifierName    { return [name, '::']; }
 	)* {
 		var result = base;
 		for (var i = 0; i < accessors.length; i++) {
