@@ -20,6 +20,14 @@ try {
 	fs.unlinkSync('extras/mammouth-nodejs.js');
 } catch(err) {
 	console.log(err);
+	fs.writeFile('src/parser.js', '', function () {
+		});
+	fs.writeFile('src/LineTerminator.js', '', function () {
+		});
+	fs.writeFile('extras/mammouth.js', '', function () {
+		});
+	fs.writeFile('extras/mammouth-nodejs.js', '', function () {
+		});
 } finally {
 	try {
 		var data = '';
