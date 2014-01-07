@@ -695,7 +695,10 @@ mammouth.parser = (function(){
           pos = pos0;
         }
         if (result0 === null) {
-          result0 = parse_ConditionalExpression();
+          result0 = parse_FunctionExpression();
+          if (result0 === null) {
+            result0 = parse_ConditionalExpression();
+          }
         }
         return result0;
       }
@@ -12123,7 +12126,7 @@ mammouth.compile = function(code) {
 			case 'PropertyAccess':
 				var b = evalStatement(seq.base);
 				var n, r;
-				if(typeof seq.name == 'object') {
+				if(typeof seq.name == 'object' && seq.name[1] == '::') {
 					n = seq.name;
 					r = b + '::' + n[0];
 				} else if(typeof seq.name == 'string') {
@@ -12220,6 +12223,10 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'Function':
+				console.log('wael');
+				var r = {right: seq}
+				return FunctionInAssignment(r);
 			case 'AssignmentExpressionOfFunction':
 				var left = evalStatement(seq.left);
 				var right = evalStatement(seq.right);

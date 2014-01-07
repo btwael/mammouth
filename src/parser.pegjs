@@ -56,6 +56,7 @@ AssignmentExpression
 			right:    right
 		};
 	}
+	/ FunctionExpression
 	/ ConditionalExpression
 
 SliceExpression

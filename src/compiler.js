@@ -182,7 +182,7 @@ mammouth.compile = function(code) {
 			case 'PropertyAccess':
 				var b = evalStatement(seq.base);
 				var n, r;
-				if(typeof seq.name == 'object') {
+				if(typeof seq.name == 'object' && seq.name[1] == '::') {
 					n = seq.name;
 					r = b + '::' + n[0];
 				} else if(typeof seq.name == 'string') {
@@ -279,6 +279,10 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'Function':
+				console.log('wael');
+				var r = {right: seq}
+				return FunctionInAssignment(r);
 			case 'AssignmentExpressionOfFunction':
 				var left = evalStatement(seq.left);
 				var right = evalStatement(seq.right);

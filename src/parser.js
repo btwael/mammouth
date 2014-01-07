@@ -694,7 +694,10 @@ mammouth.parser = (function(){
           pos = pos0;
         }
         if (result0 === null) {
-          result0 = parse_ConditionalExpression();
+          result0 = parse_FunctionExpression();
+          if (result0 === null) {
+            result0 = parse_ConditionalExpression();
+          }
         }
         return result0;
       }
