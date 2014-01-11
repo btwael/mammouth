@@ -11,5 +11,8 @@
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/btwael/mammouth.git"
+	},
+	"dependencies": {
+		"commander": "2.1.*"
 	}
 }
