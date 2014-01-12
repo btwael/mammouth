@@ -1687,21 +1687,41 @@ mammouth.parser = (function(){
               pos3 = pos;
               result2 = parse___();
               if (result2 !== null) {
-                if (input.substr(pos, 2) === "::") {
-                  result3 = "::";
-                  pos += 2;
+                if (input.charCodeAt(pos) === 123) {
+                  result3 = "{";
+                  pos++;
                 } else {
                   result3 = null;
                   if (reportFailures === 0) {
-                    matchFailed("\"::\"");
+                    matchFailed("\"{\"");
                   }
                 }
                 if (result3 !== null) {
                   result4 = parse___();
                   if (result4 !== null) {
-                    result5 = parse_IdentifierName();
+                    result5 = parse_Expression();
                     if (result5 !== null) {
-                      result2 = [result2, result3, result4, result5];
+                      result6 = parse___();
+                      if (result6 !== null) {
+                        if (input.charCodeAt(pos) === 125) {
+                          result7 = "}";
+                          pos++;
+                        } else {
+                          result7 = null;
+                          if (reportFailures === 0) {
+                            matchFailed("\"}\"");
+                          }
+                        }
+                        if (result7 !== null) {
+                          result2 = [result2, result3, result4, result5, result6, result7];
+                        } else {
+                          result2 = null;
+                          pos = pos3;
+                        }
+                      } else {
+                        result2 = null;
+                        pos = pos3;
+                      }
                     } else {
                       result2 = null;
                       pos = pos3;
@@ -1719,10 +1739,58 @@ mammouth.parser = (function(){
                 pos = pos3;
               }
               if (result2 !== null) {
-                result2 = (function(offset, name) { return [name, '::']; })(pos2, result2[3]);
+                result2 = (function(offset, name) {
+              			return {
+              				type: 'PropertyFields',
+              				name: name
+              			}
+              		})(pos2, result2[3]);
               }
               if (result2 === null) {
                 pos = pos2;
+              }
+              if (result2 === null) {
+                pos2 = pos;
+                pos3 = pos;
+                result2 = parse___();
+                if (result2 !== null) {
+                  if (input.substr(pos, 2) === "::") {
+                    result3 = "::";
+                    pos += 2;
+                  } else {
+                    result3 = null;
+                    if (reportFailures === 0) {
+                      matchFailed("\"::\"");
+                    }
+                  }
+                  if (result3 !== null) {
+                    result4 = parse___();
+                    if (result4 !== null) {
+                      result5 = parse_IdentifierName();
+                      if (result5 !== null) {
+                        result2 = [result2, result3, result4, result5];
+                      } else {
+                        result2 = null;
+                        pos = pos3;
+                      }
+                    } else {
+                      result2 = null;
+                      pos = pos3;
+                    }
+                  } else {
+                    result2 = null;
+                    pos = pos3;
+                  }
+                } else {
+                  result2 = null;
+                  pos = pos3;
+                }
+                if (result2 !== null) {
+                  result2 = (function(offset, name) { return [name, '::']; })(pos2, result2[3]);
+                }
+                if (result2 === null) {
+                  pos = pos2;
+                }
               }
             }
           }
@@ -1836,21 +1904,41 @@ mammouth.parser = (function(){
                 pos3 = pos;
                 result2 = parse___();
                 if (result2 !== null) {
-                  if (input.substr(pos, 2) === "::") {
-                    result3 = "::";
-                    pos += 2;
+                  if (input.charCodeAt(pos) === 123) {
+                    result3 = "{";
+                    pos++;
                   } else {
                     result3 = null;
                     if (reportFailures === 0) {
-                      matchFailed("\"::\"");
+                      matchFailed("\"{\"");
                     }
                   }
                   if (result3 !== null) {
                     result4 = parse___();
                     if (result4 !== null) {
-                      result5 = parse_IdentifierName();
+                      result5 = parse_Expression();
                       if (result5 !== null) {
-                        result2 = [result2, result3, result4, result5];
+                        result6 = parse___();
+                        if (result6 !== null) {
+                          if (input.charCodeAt(pos) === 125) {
+                            result7 = "}";
+                            pos++;
+                          } else {
+                            result7 = null;
+                            if (reportFailures === 0) {
+                              matchFailed("\"}\"");
+                            }
+                          }
+                          if (result7 !== null) {
+                            result2 = [result2, result3, result4, result5, result6, result7];
+                          } else {
+                            result2 = null;
+                            pos = pos3;
+                          }
+                        } else {
+                          result2 = null;
+                          pos = pos3;
+                        }
                       } else {
                         result2 = null;
                         pos = pos3;
@@ -1868,10 +1956,58 @@ mammouth.parser = (function(){
                   pos = pos3;
                 }
                 if (result2 !== null) {
-                  result2 = (function(offset, name) { return [name, '::']; })(pos2, result2[3]);
+                  result2 = (function(offset, name) {
+                			return {
+                				type: 'PropertyFields',
+                				name: name
+                			}
+                		})(pos2, result2[3]);
                 }
                 if (result2 === null) {
                   pos = pos2;
+                }
+                if (result2 === null) {
+                  pos2 = pos;
+                  pos3 = pos;
+                  result2 = parse___();
+                  if (result2 !== null) {
+                    if (input.substr(pos, 2) === "::") {
+                      result3 = "::";
+                      pos += 2;
+                    } else {
+                      result3 = null;
+                      if (reportFailures === 0) {
+                        matchFailed("\"::\"");
+                      }
+                    }
+                    if (result3 !== null) {
+                      result4 = parse___();
+                      if (result4 !== null) {
+                        result5 = parse_IdentifierName();
+                        if (result5 !== null) {
+                          result2 = [result2, result3, result4, result5];
+                        } else {
+                          result2 = null;
+                          pos = pos3;
+                        }
+                      } else {
+                        result2 = null;
+                        pos = pos3;
+                      }
+                    } else {
+                      result2 = null;
+                      pos = pos3;
+                    }
+                  } else {
+                    result2 = null;
+                    pos = pos3;
+                  }
+                  if (result2 !== null) {
+                    result2 = (function(offset, name) { return [name, '::']; })(pos2, result2[3]);
+                  }
+                  if (result2 === null) {
+                    pos = pos2;
+                  }
                 }
               }
             }

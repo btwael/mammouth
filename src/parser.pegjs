@@ -166,7 +166,13 @@ MemberExpression
 	)
 	accessors:(
 		__ "[" __ name:Expression __ "]" { return name; }
-		/ __ "." __ name:IdentifierName    { return name; }
+		/ __ "." __ name:(IdentifierName)    { return name; }
+		/ __ '{' __ name:Expression __ '}'{
+			return {
+				type: 'PropertyFields',
+				name: name
+			}
+		}
 		/ __ "::" __ name:IdentifierName    { return [name, '::']; }
 	)* {
 		var result = base;
@@ -203,7 +209,7 @@ CallExpression
 				name: name
 			};
 		}
-		/ __ "." __ name:IdentifierName {
+		/ __ "." __ name:(IdentifierName) {
 			return {
 				type: "PropertyAccessProperty",
 				name: name

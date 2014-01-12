@@ -188,6 +188,9 @@ mammouth.compile = function(code) {
 				} else if(typeof seq.name == 'string') {
 					n = seq.name;
 					r = b + '->' + n;
+				} else if(seq.name.type == 'PropertyFields') {
+					n = '->{' + evalStatement(seq.name.name) +'}'
+					r = b + n; 
 				} else {
 					n = '[' + evalStatement(seq.name) + ']'
 					r = b + n;
