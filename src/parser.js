@@ -154,6 +154,7 @@ mammouth.parser = (function(){
         "UnicodeCombiningMark": parse_UnicodeCombiningMark,
         "_": parse__,
         "__": parse___,
+        "___": parse____,
         "Literal": parse_Literal,
         "NullLiteral": parse_NullLiteral,
         "BooleanLiteral": parse_BooleanLiteral,
@@ -180,6 +181,9 @@ mammouth.parser = (function(){
         "ArrayLiteral": parse_ArrayLiteral,
         "ElementList": parse_ElementList,
         "Elision": parse_Elision,
+        "PropertyNameAndValueList": parse_PropertyNameAndValueList,
+        "PropertyAssignment": parse_PropertyAssignment,
+        "PropertyName": parse_PropertyName,
         "Ll": parse_Ll,
         "Lm": parse_Lm,
         "Lo": parse_Lo,
@@ -9762,6 +9766,30 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse____() {
+        var result0, result1;
+        
+        result0 = [];
+        result1 = parse_WhiteSpace();
+        if (result1 === null) {
+          result1 = parse_LineTerminator();
+          if (result1 === null) {
+            result1 = parse_Comment();
+          }
+        }
+        while (result1 !== null) {
+          result0.push(result1);
+          result1 = parse_WhiteSpace();
+          if (result1 === null) {
+            result1 = parse_LineTerminator();
+            if (result1 === null) {
+              result1 = parse_Comment();
+            }
+          }
+        }
+        return result0;
+      }
+      
       function parse_Literal() {
         var result0;
         var pos0;
@@ -10829,7 +10857,7 @@ mammouth.parser = (function(){
       
       function parse_ArrayLiteral() {
         var result0, result1, result2, result3, result4, result5;
-        var pos0, pos1, pos2;
+        var pos0, pos1, pos2, pos3;
         
         pos0 = pos;
         pos1 = pos;
@@ -10843,40 +10871,141 @@ mammouth.parser = (function(){
           }
         }
         if (result0 !== null) {
-          result1 = parse___();
+          result1 = parse____();
           if (result1 !== null) {
-            result2 = parse_ElementList();
-            result2 = result2 !== null ? result2 : "";
+            pos2 = pos;
+            result2 = parse_PropertyNameAndValueList();
             if (result2 !== null) {
-              result3 = parse___();
+              result3 = parse____();
               if (result3 !== null) {
-                pos2 = pos;
-                result4 = parse_Elision();
+                pos3 = pos;
+                if (input.charCodeAt(pos) === 44) {
+                  result4 = ",";
+                  pos++;
+                } else {
+                  result4 = null;
+                  if (reportFailures === 0) {
+                    matchFailed("\",\"");
+                  }
+                }
                 if (result4 !== null) {
-                  result5 = parse___();
+                  result5 = parse____();
                   if (result5 !== null) {
                     result4 = [result4, result5];
                   } else {
                     result4 = null;
-                    pos = pos2;
+                    pos = pos3;
                   }
                 } else {
                   result4 = null;
-                  pos = pos2;
+                  pos = pos3;
                 }
                 result4 = result4 !== null ? result4 : "";
                 if (result4 !== null) {
-                  if (input.charCodeAt(pos) === 93) {
-                    result5 = "]";
-                    pos++;
-                  } else {
-                    result5 = null;
-                    if (reportFailures === 0) {
-                      matchFailed("\"]\"");
+                  result2 = [result2, result3, result4];
+                } else {
+                  result2 = null;
+                  pos = pos2;
+                }
+              } else {
+                result2 = null;
+                pos = pos2;
+              }
+            } else {
+              result2 = null;
+              pos = pos2;
+            }
+            result2 = result2 !== null ? result2 : "";
+            if (result2 !== null) {
+              if (input.charCodeAt(pos) === 93) {
+                result3 = "]";
+                pos++;
+              } else {
+                result3 = null;
+                if (reportFailures === 0) {
+                  matchFailed("\"]\"");
+                }
+              }
+              if (result3 !== null) {
+                result0 = [result0, result1, result2, result3];
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, properties) {
+        		return {
+        			type:       "keyBasedArrayLiteral",
+        			properties: properties !== "" ? properties[0] : []
+        		};
+        	})(pos0, result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        if (result0 === null) {
+          pos0 = pos;
+          pos1 = pos;
+          if (input.charCodeAt(pos) === 91) {
+            result0 = "[";
+            pos++;
+          } else {
+            result0 = null;
+            if (reportFailures === 0) {
+              matchFailed("\"[\"");
+            }
+          }
+          if (result0 !== null) {
+            result1 = parse____();
+            if (result1 !== null) {
+              result2 = parse_ElementList();
+              result2 = result2 !== null ? result2 : "";
+              if (result2 !== null) {
+                result3 = parse____();
+                if (result3 !== null) {
+                  pos2 = pos;
+                  result4 = parse_Elision();
+                  if (result4 !== null) {
+                    result5 = parse____();
+                    if (result5 !== null) {
+                      result4 = [result4, result5];
+                    } else {
+                      result4 = null;
+                      pos = pos2;
                     }
+                  } else {
+                    result4 = null;
+                    pos = pos2;
                   }
-                  if (result5 !== null) {
-                    result0 = [result0, result1, result2, result3, result4, result5];
+                  result4 = result4 !== null ? result4 : "";
+                  if (result4 !== null) {
+                    if (input.charCodeAt(pos) === 93) {
+                      result5 = "]";
+                      pos++;
+                    } else {
+                      result5 = null;
+                      if (reportFailures === 0) {
+                        matchFailed("\"]\"");
+                      }
+                    }
+                    if (result5 !== null) {
+                      result0 = [result0, result1, result2, result3, result4, result5];
+                    } else {
+                      result0 = null;
+                      pos = pos1;
+                    }
                   } else {
                     result0 = null;
                     pos = pos1;
@@ -10897,20 +11026,17 @@ mammouth.parser = (function(){
             result0 = null;
             pos = pos1;
           }
-        } else {
-          result0 = null;
-          pos = pos1;
-        }
-        if (result0 !== null) {
-          result0 = (function(offset, elements) {
-        		return {
-        			type:     "ArrayLiteral",
-        			elements: elements !== "" ? elements : []
-        		};
-        	})(pos0, result0[2]);
-        }
-        if (result0 === null) {
-          pos = pos0;
+          if (result0 !== null) {
+            result0 = (function(offset, elements) {
+          		return {
+          			type:     "ArrayLiteral",
+          			elements: elements !== "" ? elements : []
+          		};
+          	})(pos0, result0[2]);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
         }
         return result0;
       }
@@ -10924,7 +11050,7 @@ mammouth.parser = (function(){
         pos2 = pos;
         result0 = parse_Elision();
         if (result0 !== null) {
-          result1 = parse___();
+          result1 = parse____();
           if (result1 !== null) {
             result0 = [result0, result1];
           } else {
@@ -10941,7 +11067,7 @@ mammouth.parser = (function(){
           if (result1 !== null) {
             result2 = [];
             pos2 = pos;
-            result3 = parse___();
+            result3 = parse____();
             if (result3 !== null) {
               if (input.charCodeAt(pos) === 44) {
                 result4 = ",";
@@ -10958,7 +11084,7 @@ mammouth.parser = (function(){
                   result6 = parse_Elision();
                   result6 = result6 !== null ? result6 : "";
                   if (result6 !== null) {
-                    result7 = parse___();
+                    result7 = parse____();
                     if (result7 !== null) {
                       result8 = parse_AssignmentExpression();
                       if (result8 !== null) {
@@ -10990,7 +11116,7 @@ mammouth.parser = (function(){
             while (result3 !== null) {
               result2.push(result3);
               pos2 = pos;
-              result3 = parse___();
+              result3 = parse____();
               if (result3 !== null) {
                 if (input.charCodeAt(pos) === 44) {
                   result4 = ",";
@@ -11007,7 +11133,7 @@ mammouth.parser = (function(){
                     result6 = parse_Elision();
                     result6 = result6 !== null ? result6 : "";
                     if (result6 !== null) {
-                      result7 = parse___();
+                      result7 = parse____();
                       if (result7 !== null) {
                         result8 = parse_AssignmentExpression();
                         if (result8 !== null) {
@@ -11138,6 +11264,193 @@ mammouth.parser = (function(){
         } else {
           result0 = null;
           pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_PropertyNameAndValueList() {
+        var result0, result1, result2, result3, result4, result5;
+        var pos0, pos1, pos2;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_PropertyAssignment();
+        if (result0 === null) {
+          result0 = parse_AssignmentExpression();
+        }
+        if (result0 !== null) {
+          result1 = [];
+          pos2 = pos;
+          result2 = parse____();
+          if (result2 !== null) {
+            if (input.charCodeAt(pos) === 44) {
+              result3 = ",";
+              pos++;
+            } else {
+              result3 = null;
+              if (reportFailures === 0) {
+                matchFailed("\",\"");
+              }
+            }
+            if (result3 !== null) {
+              result4 = parse____();
+              if (result4 !== null) {
+                result5 = parse_PropertyAssignment();
+                if (result5 === null) {
+                  result5 = parse_AssignmentExpression();
+                }
+                if (result5 !== null) {
+                  result2 = [result2, result3, result4, result5];
+                } else {
+                  result2 = null;
+                  pos = pos2;
+                }
+              } else {
+                result2 = null;
+                pos = pos2;
+              }
+            } else {
+              result2 = null;
+              pos = pos2;
+            }
+          } else {
+            result2 = null;
+            pos = pos2;
+          }
+          while (result2 !== null) {
+            result1.push(result2);
+            pos2 = pos;
+            result2 = parse____();
+            if (result2 !== null) {
+              if (input.charCodeAt(pos) === 44) {
+                result3 = ",";
+                pos++;
+              } else {
+                result3 = null;
+                if (reportFailures === 0) {
+                  matchFailed("\",\"");
+                }
+              }
+              if (result3 !== null) {
+                result4 = parse____();
+                if (result4 !== null) {
+                  result5 = parse_PropertyAssignment();
+                  if (result5 === null) {
+                    result5 = parse_AssignmentExpression();
+                  }
+                  if (result5 !== null) {
+                    result2 = [result2, result3, result4, result5];
+                  } else {
+                    result2 = null;
+                    pos = pos2;
+                  }
+                } else {
+                  result2 = null;
+                  pos = pos2;
+                }
+              } else {
+                result2 = null;
+                pos = pos2;
+              }
+            } else {
+              result2 = null;
+              pos = pos2;
+            }
+          }
+          if (result1 !== null) {
+            result0 = [result0, result1];
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, head, tail) {
+              var result = [head];
+              for (var i = 0; i < tail.length; i++) {
+                result.push(tail[i][3]);
+              }
+              return result;
+            })(pos0, result0[0], result0[1]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_PropertyAssignment() {
+        var result0, result1, result2, result3, result4;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_PropertyName();
+        if (result0 !== null) {
+          result1 = parse____();
+          if (result1 !== null) {
+            if (input.charCodeAt(pos) === 58) {
+              result2 = ":";
+              pos++;
+            } else {
+              result2 = null;
+              if (reportFailures === 0) {
+                matchFailed("\":\"");
+              }
+            }
+            if (result2 !== null) {
+              result3 = parse____();
+              if (result3 !== null) {
+                result4 = parse_AssignmentExpression();
+                if (result4 !== null) {
+                  result0 = [result0, result1, result2, result3, result4];
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, name, value) {
+              return {
+                type:  "PropertyAssignment",
+                name:  name,
+                value: value
+              };
+            })(pos0, result0[0], result0[4]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_PropertyName() {
+        var result0;
+        
+        result0 = parse_IdentifierName();
+        if (result0 === null) {
+          result0 = parse_StringLiteral();
+          if (result0 === null) {
+            result0 = parse_NumericLiteral();
+          }
         }
         return result0;
       }

@@ -136,6 +136,30 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'keyBasedArrayLiteral':
+				var r = 'array(';
+				var elements = '';
+				if(seq.properties != '') {
+					for (var i = 0; i < seq.properties.length; i++) {
+						if( i != 0 ) {
+							elements += ', '
+						}
+						elements += evalStatement(seq.properties[i]);
+					};
+				}
+				r += elements + ')'; 
+				if(seq.only==true) {
+					r += ';';
+				}
+				return r;
+			case 'PropertyAssignment':
+				var n = '';
+				if( typeof seq.name == 'string') {
+					n = "'" + seq.name + "'";
+				} else {
+					n = seq.name;
+				}
+				return n + ' => ' + evalStatement(seq.value);
 			case 'EODLiteral':
 				r = '<<<EOD' + '\n';
 				r += seq.value + '\n';
@@ -143,8 +167,8 @@ mammouth.compile = function(code) {
 				if(seq.only == true) {
 					r += ';\n';
 				} else {
-          r += '\n';
-        }
+					r += '\n';
+				}
 				return r;
 			case 'EOTLiteral':
 				r = '<<<EOT' + '\n';
@@ -153,8 +177,8 @@ mammouth.compile = function(code) {
 				if(seq.only == true) {
 					r += ';\n';
 				} else {
-          r += '\n';
-        }
+					r += '\n';
+				}
 				return r;
 			case 'Variable':
 				var r = '$' + evalStatement(seq.name);

@@ -1010,6 +1010,8 @@ _
 
 __
 	= (WhiteSpace / Comment)*
+___
+	= (WhiteSpace / LineTerminator / Comment)*
 
 Literal
 	= BooleanLiteral
@@ -1129,7 +1131,13 @@ EOTString
 	= !("`") char_:SourceCharacter { return char_;     }
 
 ArrayLiteral
-	= "[" __ elements:ElementList? __ (Elision __)? "]" {
+	= "[" ___ properties:(PropertyNameAndValueList ___ ("," ___)?)? "]" {
+		return {
+			type:       "keyBasedArrayLiteral",
+			properties: properties !== "" ? properties[0] : []
+		};
+	}
+	/ "[" ___ elements:ElementList? ___ (Elision ___)? "]" {
 		return {
 			type:     "ArrayLiteral",
 			elements: elements !== "" ? elements : []
@@ -1137,9 +1145,9 @@ ArrayLiteral
 	}
 
 ElementList
-	= (Elision __)?
+	= (Elision ___)?
 	head:AssignmentExpression
-	tail:(__ "," __ Elision? __ AssignmentExpression)* {
+	tail:(___ "," __ Elision? ___ AssignmentExpression)* {
 		var result = [head];
 		for (var i = 0; i < tail.length; i++) {
 			result.push(tail[i][5]);
@@ -1149,6 +1157,29 @@ ElementList
 
 Elision
 	= "," (__ ",")*
+
+PropertyNameAndValueList
+  = head:(PropertyAssignment/AssignmentExpression) tail:(___ "," ___ (PropertyAssignment/AssignmentExpression))* {
+      var result = [head];
+      for (var i = 0; i < tail.length; i++) {
+        result.push(tail[i][3]);
+      }
+      return result;
+    }
+
+PropertyAssignment
+  = name:PropertyName ___ ":" ___ value:AssignmentExpression {
+      return {
+        type:  "PropertyAssignment",
+        name:  name,
+        value: value
+      };
+    }
+
+PropertyName
+	= IdentifierName
+	/ StringLiteral
+	/ NumericLiteral
 /*
  * Unicode Character Categories
  *
