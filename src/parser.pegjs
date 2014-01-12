@@ -951,12 +951,14 @@ Comment "comment"
 
 MultiLineComment
 	= "/*" (!"*/" SourceCharacter)* "*/"
+	/ "###" (!"###" SourceCharacter)* "###"
 
 MultiLineCommentNoLineTerminator
 	= "/*" (!("*/" / LineTerminator) SourceCharacter)* "*/"
+	/ "###" (!("###" / LineTerminator) SourceCharacter)* "###"
 
 SingleLineComment
-	= "//" (!LineTerminator SourceCharacter)*
+	= ("//"/'#') (!LineTerminator SourceCharacter)*
 
 Identifier "identifier"
 	= f:ReservedWord? name:IdentifierName { return f+name; }
