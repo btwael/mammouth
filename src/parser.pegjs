@@ -19,33 +19,17 @@ PrimaryExpression
 	/ NullLiteral
 	/ name:Identifier "?" {
 		return {
-			type:     "BinaryExpression",
-			operator: '&&',
-			left:     {
-				type: 'FunctionCall',
-				name: {
-					type: 'Variable',
-					name: 'isset'
-				},
-				arguments: [
-					{
-						type: 'Variable',
-						name: name
-					}
-				]
+			type: 'FunctionCall',
+			name: {
+				type: 'Variable',
+				name: 'isset'
 			},
-			right:    {
-				type:     "BinaryExpression",
-				operator: '===',
-				left: {
+			arguments: [
+				{
 					type: 'Variable',
 					name: name
-				},
-				right: {
-					type: 'BooleanLiteral',
-					value: true
 				}
-			}
+			]
 		};
 	}
 	/ name:Identifier { return { type: "Variable", name: name }; }

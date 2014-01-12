@@ -440,33 +440,17 @@ mammouth.parser = (function(){
             if (result0 !== null) {
               result0 = (function(offset, name) {
             		return {
-            			type:     "BinaryExpression",
-            			operator: '&&',
-            			left:     {
-            				type: 'FunctionCall',
-            				name: {
-            					type: 'Variable',
-            					name: 'isset'
-            				},
-            				arguments: [
-            					{
-            						type: 'Variable',
-            						name: name
-            					}
-            				]
+            			type: 'FunctionCall',
+            			name: {
+            				type: 'Variable',
+            				name: 'isset'
             			},
-            			right:    {
-            				type:     "BinaryExpression",
-            				operator: '===',
-            				left: {
+            			arguments: [
+            				{
             					type: 'Variable',
             					name: name
-            				},
-            				right: {
-            					type: 'BooleanLiteral',
-            					value: true
             				}
-            			}
+            			]
             		};
             	})(pos0, result0[0]);
             }
