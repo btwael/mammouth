@@ -17,6 +17,37 @@ code_block
 PrimaryExpression
 	= ThisToken       { return { type: "This" }; }
 	/ NullLiteral
+	/ name:Identifier "?" {
+		return {
+			type:     "BinaryExpression",
+			operator: '&&',
+			left:     {
+				type: 'FunctionCall',
+				name: {
+					type: 'Variable',
+					name: 'isset'
+				},
+				arguments: [
+					{
+						type: 'Variable',
+						name: name
+					}
+				]
+			},
+			right:    {
+				type:     "BinaryExpression",
+				operator: '===',
+				left: {
+					type: 'Variable',
+					name: name
+				},
+				right: {
+					type: 'BooleanLiteral',
+					value: true
+				}
+			}
+		};
+	}
 	/ name:Identifier { return { type: "Variable", name: name }; }
 	/ "@" name:Identifier {
 		return {

@@ -415,85 +415,149 @@ mammouth.parser = (function(){
           result0 = parse_NullLiteral();
           if (result0 === null) {
             pos0 = pos;
+            pos1 = pos;
             result0 = parse_Identifier();
             if (result0 !== null) {
-              result0 = (function(offset, name) { return { type: "Variable", name: name }; })(pos0, result0);
+              if (input.charCodeAt(pos) === 63) {
+                result1 = "?";
+                pos++;
+              } else {
+                result1 = null;
+                if (reportFailures === 0) {
+                  matchFailed("\"?\"");
+                }
+              }
+              if (result1 !== null) {
+                result0 = [result0, result1];
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+            if (result0 !== null) {
+              result0 = (function(offset, name) {
+            		return {
+            			type:     "BinaryExpression",
+            			operator: '&&',
+            			left:     {
+            				type: 'FunctionCall',
+            				name: {
+            					type: 'Variable',
+            					name: 'isset'
+            				},
+            				arguments: [
+            					{
+            						type: 'Variable',
+            						name: name
+            					}
+            				]
+            			},
+            			right:    {
+            				type:     "BinaryExpression",
+            				operator: '===',
+            				left: {
+            					type: 'Variable',
+            					name: name
+            				},
+            				right: {
+            					type: 'BooleanLiteral',
+            					value: true
+            				}
+            			}
+            		};
+            	})(pos0, result0[0]);
             }
             if (result0 === null) {
               pos = pos0;
             }
             if (result0 === null) {
               pos0 = pos;
-              pos1 = pos;
-              if (input.charCodeAt(pos) === 64) {
-                result0 = "@";
-                pos++;
-              } else {
-                result0 = null;
-                if (reportFailures === 0) {
-                  matchFailed("\"@\"");
-                }
-              }
+              result0 = parse_Identifier();
               if (result0 !== null) {
-                result1 = parse_Identifier();
-                if (result1 !== null) {
-                  result0 = [result0, result1];
-                } else {
-                  result0 = null;
-                  pos = pos1;
-                }
-              } else {
-                result0 = null;
-                pos = pos1;
-              }
-              if (result0 !== null) {
-                result0 = (function(offset, name) {
-              		return {
-              			type: "PropertyAccess",
-              			base: {type: "Variable", name: "this"},
-              			name: name
-              		};
-              	})(pos0, result0[1]);
+                result0 = (function(offset, name) { return { type: "Variable", name: name }; })(pos0, result0);
               }
               if (result0 === null) {
                 pos = pos0;
               }
               if (result0 === null) {
-                result0 = parse_NamespaceId();
+                pos0 = pos;
+                pos1 = pos;
+                if (input.charCodeAt(pos) === 64) {
+                  result0 = "@";
+                  pos++;
+                } else {
+                  result0 = null;
+                  if (reportFailures === 0) {
+                    matchFailed("\"@\"");
+                  }
+                }
+                if (result0 !== null) {
+                  result1 = parse_Identifier();
+                  if (result1 !== null) {
+                    result0 = [result0, result1];
+                  } else {
+                    result0 = null;
+                    pos = pos1;
+                  }
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+                if (result0 !== null) {
+                  result0 = (function(offset, name) {
+                		return {
+                			type: "PropertyAccess",
+                			base: {type: "Variable", name: "this"},
+                			name: name
+                		};
+                	})(pos0, result0[1]);
+                }
                 if (result0 === null) {
-                  result0 = parse_Literal();
+                  pos = pos0;
+                }
+                if (result0 === null) {
+                  result0 = parse_NamespaceId();
                   if (result0 === null) {
-                    result0 = parse_ArrayLiteral();
+                    result0 = parse_Literal();
                     if (result0 === null) {
-                      pos0 = pos;
-                      pos1 = pos;
-                      if (input.charCodeAt(pos) === 40) {
-                        result0 = "(";
-                        pos++;
-                      } else {
-                        result0 = null;
-                        if (reportFailures === 0) {
-                          matchFailed("\"(\"");
+                      result0 = parse_ArrayLiteral();
+                      if (result0 === null) {
+                        pos0 = pos;
+                        pos1 = pos;
+                        if (input.charCodeAt(pos) === 40) {
+                          result0 = "(";
+                          pos++;
+                        } else {
+                          result0 = null;
+                          if (reportFailures === 0) {
+                            matchFailed("\"(\"");
+                          }
                         }
-                      }
-                      if (result0 !== null) {
-                        result1 = parse___();
-                        if (result1 !== null) {
-                          result2 = parse_Expression();
-                          if (result2 !== null) {
-                            result3 = parse___();
-                            if (result3 !== null) {
-                              if (input.charCodeAt(pos) === 41) {
-                                result4 = ")";
-                                pos++;
-                              } else {
-                                result4 = null;
-                                if (reportFailures === 0) {
-                                  matchFailed("\")\"");
+                        if (result0 !== null) {
+                          result1 = parse___();
+                          if (result1 !== null) {
+                            result2 = parse_Expression();
+                            if (result2 !== null) {
+                              result3 = parse___();
+                              if (result3 !== null) {
+                                if (input.charCodeAt(pos) === 41) {
+                                  result4 = ")";
+                                  pos++;
+                                } else {
+                                  result4 = null;
+                                  if (reportFailures === 0) {
+                                    matchFailed("\")\"");
+                                  }
                                 }
-                              }
-                              if (result4 !== null) {
-                                result0 = [result0, result1, result2, result3, result4];
+                                if (result4 !== null) {
+                                  result0 = [result0, result1, result2, result3, result4];
+                                } else {
+                                  result0 = null;
+                                  pos = pos1;
+                                }
                               } else {
                                 result0 = null;
                                 pos = pos1;
@@ -510,15 +574,12 @@ mammouth.parser = (function(){
                           result0 = null;
                           pos = pos1;
                         }
-                      } else {
-                        result0 = null;
-                        pos = pos1;
-                      }
-                      if (result0 !== null) {
-                        result0 = (function(offset, expression) { return expression; })(pos0, result0[2]);
-                      }
-                      if (result0 === null) {
-                        pos = pos0;
+                        if (result0 !== null) {
+                          result0 = (function(offset, expression) { return expression; })(pos0, result0[2]);
+                        }
+                        if (result0 === null) {
+                          pos = pos0;
+                        }
                       }
                     }
                   }
