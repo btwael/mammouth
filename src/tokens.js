@@ -12,5 +12,7 @@ mammouth.Tokens = {
 	CatchToken: 'catch',
 	FinallyToken: 'finally',
 	NamespaceToken: 'namespace',
-	ClassToken: 'class'
+	ClassToken: 'class',
+	ContinueToken: 'continue',
+	BreakToken: 'break'
 };

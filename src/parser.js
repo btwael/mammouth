@@ -107,12 +107,15 @@ mammouth.parser = (function(){
         "ClassConstPropertyDeclaration": parse_ClassConstPropertyDeclaration,
         "ClassFunctionDeclaration": parse_ClassFunctionDeclaration,
         "PropertyVisibility": parse_PropertyVisibility,
+        "ContinueStatement": parse_ContinueStatement,
+        "BreakStatement": parse_BreakStatement,
         "AndToken": parse_AndToken,
         "BreakToken": parse_BreakToken,
         "CaseToken": parse_CaseToken,
         "CatchToken": parse_CatchToken,
         "ClassToken": parse_ClassToken,
         "ConstToken": parse_ConstToken,
+        "ContinueToken": parse_ContinueToken,
         "ElseToken": parse_ElseToken,
         "ElseIfToken": parse_ElseIfToken,
         "FalseToken": parse_FalseToken,
@@ -4737,11 +4740,17 @@ mammouth.parser = (function(){
                         pos = pos0;
                       }
                       if (result0 === null) {
-                        result0 = parse_FunctionInLineCall();
+                        result0 = parse_ContinueStatement();
                         if (result0 === null) {
-                          result0 = parse_ExpressionStatement();
+                          result0 = parse_BreakStatement();
                           if (result0 === null) {
-                            result0 = parse_blank();
+                            result0 = parse_FunctionInLineCall();
+                            if (result0 === null) {
+                              result0 = parse_ExpressionStatement();
+                              if (result0 === null) {
+                                result0 = parse_blank();
+                              }
+                            }
                           }
                         }
                       }
@@ -8287,6 +8296,86 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse_ContinueStatement() {
+        var result0, result1, result2;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_ContinueToken();
+        if (result0 !== null) {
+          result1 = parse___();
+          if (result1 !== null) {
+            result2 = parse_AssignmentExpression();
+            result2 = result2 !== null ? result2 : "";
+            if (result2 !== null) {
+              result0 = [result0, result1, result2];
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, label) {
+        		return {
+        			type:  "ContinueStatement",
+        			label: label !== "" ? label : null
+        		};
+        	})(pos0, result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_BreakStatement() {
+        var result0, result1, result2;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_BreakToken();
+        if (result0 !== null) {
+          result1 = parse___();
+          if (result1 !== null) {
+            result2 = parse_AssignmentExpression();
+            result2 = result2 !== null ? result2 : "";
+            if (result2 !== null) {
+              result0 = [result0, result1, result2];
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, label) {
+        		return {
+        			type:  "BreakStatement",
+        			label: label !== "" ? label : null
+        		};
+        	})(pos0, result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
       function parse_AndToken() {
         var result0;
         
@@ -8372,6 +8461,21 @@ mammouth.parser = (function(){
           result0 = null;
           if (reportFailures === 0) {
             matchFailed("\"const\"");
+          }
+        }
+        return result0;
+      }
+      
+      function parse_ContinueToken() {
+        var result0;
+        
+        if (input.substr(pos, 8) === "continue") {
+          result0 = "continue";
+          pos += 8;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"continue\"");
           }
         }
         return result0;

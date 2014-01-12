@@ -528,6 +528,8 @@ statement
 		{ return m; }
 	/ SAMEDENT m:ClassDeclaration EOL?
 		{ return m; }
+	/ ContinueStatement
+	/ BreakStatement
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -870,6 +872,22 @@ PropertyVisibility
 	/ ProtectedToken
 	/ PublicToken
 
+ContinueStatement
+	= ContinueToken __ label:AssignmentExpression? {
+		return {
+			type:  "ContinueStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
+BreakStatement
+	= BreakToken __ label:AssignmentExpression? {
+		return {
+			type:  "BreakStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
 /* ===== Tokens ===== */
 AndToken = 'and'
 BreakToken = 'break'
@@ -877,6 +895,7 @@ CaseToken = 'case'
 CatchToken = 'catch'
 ClassToken = "class"
 ConstToken = "const"
+ContinueToken = 'continue'
 ElseToken = 'else'
 ElseIfToken = 'else' __ 'if'
 FalseToken = 'false'

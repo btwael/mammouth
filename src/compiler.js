@@ -1094,6 +1094,24 @@ mammouth.compile = function(code) {
 				}
 				r += '}';
 				return r;
+			case 'ContinueStatement':
+				var r = Tokens.ContinueToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
+			case 'BreakStatement':
+				var r = Tokens.BreakToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
 		}
 	};
 	var interprete = function(code){
