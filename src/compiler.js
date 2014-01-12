@@ -138,19 +138,23 @@ mammouth.compile = function(code) {
 				return r;
 			case 'EODLiteral':
 				r = '<<<EOD' + '\n';
-				r += seq.value +'\n';
+				r += seq.value + '\n';
 				r += 'EOD';
 				if(seq.only == true) {
-					r += ';';
-				}
+					r += ';\n';
+				} else {
+          r += '\n';
+        }
 				return r;
 			case 'EOTLiteral':
 				r = '<<<EOT' + '\n';
 				r += seq.value +'\n';
 				r += 'EOT';
 				if(seq.only == true) {
-					r += ';';
-				}
+					r += ';\n';
+				} else {
+          r += '\n';
+        }
 				return r;
 			case 'Variable':
 				var r = '$' + evalStatement(seq.name);
