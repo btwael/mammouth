@@ -115,6 +115,7 @@ mammouth.parser = (function(){
         "PropertyVisibility": parse_PropertyVisibility,
         "ContinueStatement": parse_ContinueStatement,
         "BreakStatement": parse_BreakStatement,
+        "EchoStatement": parse_EchoStatement,
         "AndToken": parse_AndToken,
         "BreakToken": parse_BreakToken,
         "CaseToken": parse_CaseToken,
@@ -122,6 +123,7 @@ mammouth.parser = (function(){
         "ClassToken": parse_ClassToken,
         "ConstToken": parse_ConstToken,
         "ContinueToken": parse_ContinueToken,
+        "EchoToken": parse_EchoToken,
         "ElseToken": parse_ElseToken,
         "ElseIfToken": parse_ElseIfToken,
         "FalseToken": parse_FalseToken,
@@ -6047,11 +6049,14 @@ mammouth.parser = (function(){
                         if (result0 === null) {
                           result0 = parse_BreakStatement();
                           if (result0 === null) {
-                            result0 = parse_FunctionInLineCall();
+                            result0 = parse_EchoStatement();
                             if (result0 === null) {
-                              result0 = parse_ExpressionStatement();
+                              result0 = parse_FunctionInLineCall();
                               if (result0 === null) {
-                                result0 = parse_blank();
+                                result0 = parse_ExpressionStatement();
+                                if (result0 === null) {
+                                  result0 = parse_blank();
+                                }
                               }
                             }
                           }
@@ -9679,6 +9684,46 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse_EchoStatement() {
+        var result0, result1, result2;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_EchoToken();
+        if (result0 !== null) {
+          result1 = parse___();
+          if (result1 !== null) {
+            result2 = parse_AssignmentExpression();
+            result2 = result2 !== null ? result2 : "";
+            if (result2 !== null) {
+              result0 = [result0, result1, result2];
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, label) {
+        		return {
+        			type:  "EchoStatement",
+        			label: label !== "" ? label : null
+        		};
+        	})(pos0, result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
       function parse_AndToken() {
         var result0;
         
@@ -9779,6 +9824,21 @@ mammouth.parser = (function(){
           result0 = null;
           if (reportFailures === 0) {
             matchFailed("\"continue\"");
+          }
+        }
+        return result0;
+      }
+      
+      function parse_EchoToken() {
+        var result0;
+        
+        if (input.substr(pos, 4) === "echo") {
+          result0 = "echo";
+          pos += 4;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"echo\"");
           }
         }
         return result0;
@@ -10198,61 +10258,67 @@ mammouth.parser = (function(){
                 if (result0 === null) {
                   result0 = parse_ConstToken();
                   if (result0 === null) {
-                    result0 = parse_ElseToken();
+                    result0 = parse_ContinueToken();
                     if (result0 === null) {
-                      result0 = parse_FalseToken();
+                      result0 = parse_ElseToken();
                       if (result0 === null) {
-                        result0 = parse_finallyToken();
+                        result0 = parse_ElseToken();
                         if (result0 === null) {
-                          result0 = parse_ForToken();
+                          result0 = parse_FalseToken();
                           if (result0 === null) {
-                            result0 = parse_IfToken();
+                            result0 = parse_finallyToken();
                             if (result0 === null) {
-                              result0 = parse_InToken();
+                              result0 = parse_ForToken();
                               if (result0 === null) {
-                                result0 = parse_NamespaceToken();
+                                result0 = parse_IfToken();
                                 if (result0 === null) {
-                                  result0 = parse_NewToken();
+                                  result0 = parse_InToken();
                                   if (result0 === null) {
-                                    result0 = parse_NullToken();
+                                    result0 = parse_NamespaceToken();
                                     if (result0 === null) {
-                                      result0 = parse_OfToken();
+                                      result0 = parse_NewToken();
                                       if (result0 === null) {
-                                        result0 = parse_OrToken();
+                                        result0 = parse_NullToken();
                                         if (result0 === null) {
-                                          result0 = parse_PrivateToken();
+                                          result0 = parse_OfToken();
                                           if (result0 === null) {
-                                            result0 = parse_ProtectedToken();
+                                            result0 = parse_OrToken();
                                             if (result0 === null) {
-                                              result0 = parse_PublicToken();
+                                              result0 = parse_PrivateToken();
                                               if (result0 === null) {
-                                                result0 = parse_script_end();
+                                                result0 = parse_ProtectedToken();
                                                 if (result0 === null) {
-                                                  result0 = parse_script_start();
+                                                  result0 = parse_PublicToken();
                                                   if (result0 === null) {
-                                                    result0 = parse_SwitchToken();
+                                                    result0 = parse_script_end();
                                                     if (result0 === null) {
-                                                      result0 = parse_StaticToken();
+                                                      result0 = parse_script_start();
                                                       if (result0 === null) {
-                                                        result0 = parse_ThenToken();
+                                                        result0 = parse_SwitchToken();
                                                         if (result0 === null) {
-                                                          result0 = parse_ThisToken();
+                                                          result0 = parse_StaticToken();
                                                           if (result0 === null) {
-                                                            result0 = parse_TrueToken();
+                                                            result0 = parse_ThenToken();
                                                             if (result0 === null) {
-                                                              result0 = parse_TryToken();
+                                                              result0 = parse_ThisToken();
                                                               if (result0 === null) {
-                                                                if (input.substr(pos, 8) === "function") {
-                                                                  result0 = "function";
-                                                                  pos += 8;
-                                                                } else {
-                                                                  result0 = null;
-                                                                  if (reportFailures === 0) {
-                                                                    matchFailed("\"function\"");
-                                                                  }
-                                                                }
+                                                                result0 = parse_TrueToken();
                                                                 if (result0 === null) {
-                                                                  result0 = parse_WhileToken();
+                                                                  result0 = parse_TryToken();
+                                                                  if (result0 === null) {
+                                                                    if (input.substr(pos, 8) === "function") {
+                                                                      result0 = "function";
+                                                                      pos += 8;
+                                                                    } else {
+                                                                      result0 = null;
+                                                                      if (reportFailures === 0) {
+                                                                        matchFailed("\"function\"");
+                                                                      }
+                                                                    }
+                                                                    if (result0 === null) {
+                                                                      result0 = parse_WhileToken();
+                                                                    }
+                                                                  }
                                                                 }
                                                               }
                                                             }

@@ -1115,6 +1115,15 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'EchoStatement':
+				var r = Tokens.EchoToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
 		}
 	};
 	var interprete = function(code){

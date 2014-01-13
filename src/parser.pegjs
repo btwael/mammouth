@@ -658,6 +658,7 @@ statement
 		{ return m; }
 	/ ContinueStatement
 	/ BreakStatement
+	/ EchoStatement
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -1016,6 +1017,14 @@ BreakStatement
 		};
 	}
 
+EchoStatement
+	= EchoToken __ label:AssignmentExpression? {
+		return {
+			type:  "EchoStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
 /* ===== Tokens ===== */
 AndToken = 'and'
 BreakToken = 'break'
@@ -1024,6 +1033,7 @@ CatchToken = 'catch'
 ClassToken = "class"
 ConstToken = "const"
 ContinueToken = 'continue'
+EchoToken = 'echo'
 ElseToken = 'else'
 ElseIfToken = 'else' __ 'if'
 FalseToken = 'false'
@@ -1056,6 +1066,8 @@ ReservedWord
 	/ CatchToken
 	/ ClassToken
 	/ ConstToken
+	/ ContinueToken
+	/ ElseToken
 	/ ElseToken
 	/ FalseToken
 	/ finallyToken
