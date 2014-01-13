@@ -16,5 +16,9 @@ mammouth.Tokens = {
 	ContinueToken: 'continue',
 	BreakToken: 'break',
 	EchoToken: 'echo',
-	ReturnToken: 'return'
+	ReturnToken: 'return',
+	IncludeToken: 'include',
+	Include_onceToken: 'include_once',
+	RequireToken: 'require',
+	Require_onceToken: 'require_once'
 };

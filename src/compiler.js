@@ -1133,6 +1133,42 @@ mammouth.compile = function(code) {
 					r += ';';
 				}
 				return r;
+			case 'RequireStatement':
+				var r = Tokens.RequireToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
+			case 'Require_onceStatement':
+				var r = Tokens.Require_onceToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
+			case 'IncludeStatement':
+				var r = Tokens.IncludeToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
+			case 'Include_onceStatement':
+				var r = Tokens.Include_onceToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
 		}
 	};
 	var interprete = function(code){

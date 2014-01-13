@@ -660,6 +660,10 @@ statement
 	/ BreakStatement
 	/ EchoStatement
 	/ ReturnStatement
+	/ Include_onceStatement
+	/ Require_onceStatement
+	/ RequireStatement
+	/ IncludeStatement
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -1034,6 +1038,38 @@ ReturnStatement
 		};
 	}
 
+RequireStatement
+	= RequireToken __ label:AssignmentExpression? {
+		return {
+			type:  "RequireStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
+Require_onceStatement
+	= Require_onceToken __ label:AssignmentExpression? {
+		return {
+			type:  "Require_onceStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
+Include_onceStatement
+	= Include_onceToken __ label:AssignmentExpression? {
+		return {
+			type:  "Include_onceStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
+IncludeStatement
+	= IncludeToken __ label:AssignmentExpression? {
+		return {
+			type:  "IncludeStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
 /* ===== Tokens ===== */
 AndToken = 'and'
 BreakToken = 'break'
@@ -1049,6 +1085,8 @@ FalseToken = 'false'
 finallyToken = 'finally'
 ForToken = 'for'
 IfToken = 'if'
+IncludeToken = 'include'
+Include_onceToken = 'include_once'
 InToken = 'in'
 NamespaceToken = 'namespace'
 NewToken = 'new'
@@ -1056,6 +1094,8 @@ NullToken = 'NULL' / 'None'
 OfToken = 'of'
 OrToken = 'or'
 ReturnToken = 'return'
+RequireToken = 'require'
+Require_onceToken = 'require_once'
 PrivateToken = "private"
 ProtectedToken = "protected"
 PublicToken = "public"
@@ -1083,6 +1123,8 @@ ReservedWord
 	/ finallyToken
 	/ ForToken
 	/ IfToken
+	/ Include_onceToken
+	/ IncludeToken
 	/ InToken
 	/ NamespaceToken
 	/ NewToken
@@ -1090,6 +1132,8 @@ ReservedWord
 	/ OfToken
 	/ OrToken
 	/ ReturnToken
+	/ RequireToken
+	/ Require_onceToken
 	/ PrivateToken
 	/ ProtectedToken
 	/ PublicToken
