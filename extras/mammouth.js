@@ -117,6 +117,7 @@ mammouth.parser = (function(){
         "ContinueStatement": parse_ContinueStatement,
         "BreakStatement": parse_BreakStatement,
         "EchoStatement": parse_EchoStatement,
+        "ReturnStatement": parse_ReturnStatement,
         "AndToken": parse_AndToken,
         "BreakToken": parse_BreakToken,
         "CaseToken": parse_CaseToken,
@@ -137,6 +138,7 @@ mammouth.parser = (function(){
         "NullToken": parse_NullToken,
         "OfToken": parse_OfToken,
         "OrToken": parse_OrToken,
+        "ReturnToken": parse_ReturnToken,
         "PrivateToken": parse_PrivateToken,
         "ProtectedToken": parse_ProtectedToken,
         "PublicToken": parse_PublicToken,
@@ -6052,11 +6054,14 @@ mammouth.parser = (function(){
                           if (result0 === null) {
                             result0 = parse_EchoStatement();
                             if (result0 === null) {
-                              result0 = parse_FunctionInLineCall();
+                              result0 = parse_ReturnStatement();
                               if (result0 === null) {
-                                result0 = parse_ExpressionStatement();
+                                result0 = parse_FunctionInLineCall();
                                 if (result0 === null) {
-                                  result0 = parse_blank();
+                                  result0 = parse_ExpressionStatement();
+                                  if (result0 === null) {
+                                    result0 = parse_blank();
+                                  }
                                 }
                               }
                             }
@@ -9725,6 +9730,46 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse_ReturnStatement() {
+        var result0, result1, result2;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_ReturnToken();
+        if (result0 !== null) {
+          result1 = parse___();
+          if (result1 !== null) {
+            result2 = parse_AssignmentExpression();
+            result2 = result2 !== null ? result2 : "";
+            if (result2 !== null) {
+              result0 = [result0, result1, result2];
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, label) {
+        		return {
+        			type:  "ReturnStatement",
+        			label: label !== "" ? label : null
+        		};
+        	})(pos0, result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
       function parse_AndToken() {
         var result0;
         
@@ -10064,6 +10109,21 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse_ReturnToken() {
+        var result0;
+        
+        if (input.substr(pos, 6) === "return") {
+          result0 = "return";
+          pos += 6;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"return\"");
+          }
+        }
+        return result0;
+      }
+      
       function parse_PrivateToken() {
         var result0;
         
@@ -10285,39 +10345,42 @@ mammouth.parser = (function(){
                                           if (result0 === null) {
                                             result0 = parse_OrToken();
                                             if (result0 === null) {
-                                              result0 = parse_PrivateToken();
+                                              result0 = parse_ReturnToken();
                                               if (result0 === null) {
-                                                result0 = parse_ProtectedToken();
+                                                result0 = parse_PrivateToken();
                                                 if (result0 === null) {
-                                                  result0 = parse_PublicToken();
+                                                  result0 = parse_ProtectedToken();
                                                   if (result0 === null) {
-                                                    result0 = parse_script_end();
+                                                    result0 = parse_PublicToken();
                                                     if (result0 === null) {
-                                                      result0 = parse_script_start();
+                                                      result0 = parse_script_end();
                                                       if (result0 === null) {
-                                                        result0 = parse_SwitchToken();
+                                                        result0 = parse_script_start();
                                                         if (result0 === null) {
-                                                          result0 = parse_StaticToken();
+                                                          result0 = parse_SwitchToken();
                                                           if (result0 === null) {
-                                                            result0 = parse_ThenToken();
+                                                            result0 = parse_StaticToken();
                                                             if (result0 === null) {
-                                                              result0 = parse_ThisToken();
+                                                              result0 = parse_ThenToken();
                                                               if (result0 === null) {
-                                                                result0 = parse_TrueToken();
+                                                                result0 = parse_ThisToken();
                                                                 if (result0 === null) {
-                                                                  result0 = parse_TryToken();
+                                                                  result0 = parse_TrueToken();
                                                                   if (result0 === null) {
-                                                                    if (input.substr(pos, 8) === "function") {
-                                                                      result0 = "function";
-                                                                      pos += 8;
-                                                                    } else {
-                                                                      result0 = null;
-                                                                      if (reportFailures === 0) {
-                                                                        matchFailed("\"function\"");
-                                                                      }
-                                                                    }
+                                                                    result0 = parse_TryToken();
                                                                     if (result0 === null) {
-                                                                      result0 = parse_WhileToken();
+                                                                      if (input.substr(pos, 8) === "function") {
+                                                                        result0 = "function";
+                                                                        pos += 8;
+                                                                      } else {
+                                                                        result0 = null;
+                                                                        if (reportFailures === 0) {
+                                                                          matchFailed("\"function\"");
+                                                                        }
+                                                                      }
+                                                                      if (result0 === null) {
+                                                                        result0 = parse_WhileToken();
+                                                                      }
                                                                     }
                                                                   }
                                                                 }
@@ -14129,7 +14192,8 @@ mammouth.parser = (function(){
 	ClassToken: 'class',
 	ContinueToken: 'continue',
 	BreakToken: 'break',
-	EchoToken: 'echo'
+	EchoToken: 'echo',
+	ReturnToken: 'return'
 };
 mammouth.helpers = {
 	slice_php_function: "function _m_slice($var, $start, $end) {if(gettype($var)=='string') {return substr($var, $start, $end);} elseif(gettype($var)=='array') {return array_slice($var, $start, $end);}}",
@@ -15254,6 +15318,15 @@ mammouth.compile = function(code) {
 				return r;
 			case 'EchoStatement':
 				var r = Tokens.EchoToken;
+				if(typeof seq.label !== "undefined" && seq.label !== null) {
+					r += ' ' + evalStatement(seq.label)
+				}
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
+			case 'ReturnStatement':
+				var r = Tokens.ReturnToken;
 				if(typeof seq.label !== "undefined" && seq.label !== null) {
 					r += ' ' + evalStatement(seq.label)
 				}

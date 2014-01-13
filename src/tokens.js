@@ -15,5 +15,6 @@ mammouth.Tokens = {
 	ClassToken: 'class',
 	ContinueToken: 'continue',
 	BreakToken: 'break',
-	EchoToken: 'echo'
+	EchoToken: 'echo',
+	ReturnToken: 'return'
 };

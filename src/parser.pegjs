@@ -659,6 +659,7 @@ statement
 	/ ContinueStatement
 	/ BreakStatement
 	/ EchoStatement
+	/ ReturnStatement
 	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
@@ -1025,6 +1026,14 @@ EchoStatement
 		};
 	}
 
+ReturnStatement
+	= ReturnToken __ label:AssignmentExpression? {
+		return {
+			type:  "ReturnStatement",
+			label: label !== "" ? label : null
+		};
+	}
+
 /* ===== Tokens ===== */
 AndToken = 'and'
 BreakToken = 'break'
@@ -1046,6 +1055,7 @@ NewToken = 'new'
 NullToken = 'NULL' / 'None'
 OfToken = 'of'
 OrToken = 'or'
+ReturnToken = 'return'
 PrivateToken = "private"
 ProtectedToken = "protected"
 PublicToken = "public"
@@ -1079,6 +1089,7 @@ ReservedWord
 	/ NullToken
 	/ OfToken
 	/ OrToken
+	/ ReturnToken
 	/ PrivateToken
 	/ ProtectedToken
 	/ PublicToken
