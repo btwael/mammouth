@@ -17,7 +17,7 @@ code_block
 PrimaryExpression
 	= ThisToken       { return { type: "This" }; }
 	/ NullLiteral
-	/ name:Identifier "?" {
+	/ name:(LeftHandSideExpressionWP) "?" {
 		return {
 			type: 'FunctionCall',
 			name: {
@@ -25,13 +25,26 @@ PrimaryExpression
 				name: 'isset'
 			},
 			arguments: [
-				{
-					type: 'Variable',
-					name: name
-				}
+				name
 			]
 		};
 	}
+	/ name:Identifier { return { type: "Variable", name: name }; }
+	/ "@" name:Identifier {
+		return {
+			type: "PropertyAccess",
+			base: {type: "Variable", name: "this"},
+			name: name
+		};
+	}
+	/ NamespaceId
+	/ Literal
+	/ ArrayLiteral
+	/ "(" __ expression:Expression __ ")" { return expression; }
+
+PrimaryExpressionW
+	= ThisToken       { return { type: "This" }; }
+	/ NullLiteral
 	/ name:Identifier { return { type: "Variable", name: name }; }
 	/ "@" name:Identifier {
 		return {
@@ -76,6 +89,16 @@ AssignmentExpression
 
 SliceExpression
 	= slicer:MemberExpression __ "[" __ start:Expression? __ ':' __ end:Expression? __ "]" {
+		return {
+			type:   "SliceExpression",
+			slicer: slicer,
+			start:  start !== '' ? start:0,
+			end:    end !== '' ? end:null 
+		};
+	}
+
+SliceExpressionWP
+	= slicer:MemberExpressionWP __ "[" __ start:Expression? __ ':' __ end:Expression? __ "]" {
 		return {
 			type:   "SliceExpression",
 			slicer: slicer,
@@ -143,8 +166,23 @@ LeftHandSideExpression
 	/ SliceExpression
 	/ NewExpression
 
+LeftHandSideExpressionWP
+	= CallExpressionWP
+	/ SliceExpressionWP
+	/ NewExpressionWP
+
 NewExpression
 	= MemberExpression
+	/ NewToken __ constructor:(NamespaceId/Identifier) {
+		return {
+			type:        "NewOperator",
+			constructor: constructor,
+			arguments:   []
+		};
+	}
+
+NewExpressionWP
+	= MemberExpressionWP
 	/ NewToken __ constructor:(NamespaceId/Identifier) {
 		return {
 			type:        "NewOperator",
@@ -186,9 +224,98 @@ MemberExpression
 		return result;
 	}
 
+MemberExpressionWP
+	= base:(
+		PrimaryExpressionW
+		/ NewToken __ constructor:(NamespaceId/Identifier) __ arguments:Arguments {
+			return {
+				type:        "NewOperator",
+				constructor: constructor,
+				arguments:   arguments
+			};
+		}
+	)
+	accessors:(
+		__ "[" __ name:Expression __ "]" { return name; }
+		/ __ "." __ name:(IdentifierName)    { return name; }
+		/ __ '{' __ name:Expression __ '}'{
+			return {
+				type: 'PropertyFields',
+				name: name
+			}
+		}
+		/ __ "::" __ name:IdentifierName    { return [name, '::']; }
+	)* {
+		var result = base;
+		for (var i = 0; i < accessors.length; i++) {
+			result = {
+				type: "PropertyAccess",
+				base: result,
+				name: accessors[i]
+			};
+		}
+		return result;
+	}
+
 CallExpression
 	= base:(
 		name:MemberExpression __ arguments:Arguments {
+			return {
+				type:      "FunctionCall",
+				name:      name,
+				arguments: arguments
+			};
+		}
+	)
+	argumentsOrAccessors:(
+		__ arguments:Arguments {
+			return {
+				type:      "FunctionCallArguments",
+				arguments: arguments
+			};
+		}
+		/ __ "[" __ name:Expression __ "]" {
+			return {
+				type: "PropertyAccessProperty",
+				name: name
+			};
+		}
+		/ __ "." __ name:(IdentifierName) {
+			return {
+				type: "PropertyAccessProperty",
+				name: name
+			};
+		}
+	)* {
+		var result = base;
+		for (var i = 0; i < argumentsOrAccessors.length; i++) {
+			switch (argumentsOrAccessors[i].type) {
+				case "FunctionCallArguments":
+					result = {
+						type:      "FunctionCall",
+						name:      result,
+						arguments: argumentsOrAccessors[i].arguments
+					};
+					break;
+				case "PropertyAccessProperty":
+					result = {
+						type: "PropertyAccess",
+						base: result,
+						name: argumentsOrAccessors[i].name
+					};
+					break;
+				default:
+					throw new Error(
+						"Invalid expression type: " + argumentsOrAccessors[i].type
+					);
+			}
+		}
+		return result;
+	}
+
+CallExpressionWP
+	= base:(
+		name:MemberExpressionWP __ arguments:Arguments {
 			return {
 				type:      "FunctionCall",
 				name:      name,
