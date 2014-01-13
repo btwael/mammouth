@@ -203,7 +203,8 @@ MemberExpression
 		}
 	)
 	accessors:(
-		__ "[" __ name:Expression __ "]" { return name; }
+		__ "[" __ "]" { return ['PushArray']; }
+		/ __ "[" __ name:Expression __ "]" { return name; }
 		/ __ "." __ name:(IdentifierName)    { return name; }
 		/ __ '{' __ name:Expression __ '}'{
 			return {

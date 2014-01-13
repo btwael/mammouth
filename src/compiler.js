@@ -213,6 +213,9 @@ mammouth.compile = function(code) {
 				if(typeof seq.name == 'object' && seq.name[1] == '::') {
 					n = seq.name;
 					r = b + '::' + n[0];
+				} else if(typeof seq.name == 'object' && seq.name[0] == 'PushArray') {
+					n = '[]'
+					r = b + n;
 				} else if(typeof seq.name == 'string') {
 					n = seq.name;
 					r = b + '->' + n;
