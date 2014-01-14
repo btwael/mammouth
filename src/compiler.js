@@ -180,6 +180,13 @@ mammouth.compile = function(code) {
 					r += '\n';
 				}
 				return r;
+			case 'PHPLiteral':
+				r = '';
+				r += seq.value;
+				if(seq.only == true) {
+					r += ';';
+				}
+				return r;
 			case 'Variable':
 				var r = '$' + evalStatement(seq.name);
 				if(seq.only==true) {

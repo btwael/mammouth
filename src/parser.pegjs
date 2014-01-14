@@ -1249,6 +1249,12 @@ Literal
 			value: value
 		};
 	}
+	/ value:PHPLiteral {
+		return {
+			type: "PHPLiteral",
+			value: value
+		}
+	}
 	/ value:EODLiteral {
 		return {
 			type: "EODLiteral",
@@ -1402,6 +1408,14 @@ PropertyName
 	= IdentifierName
 	/ StringLiteral
 	/ NumericLiteral
+
+PHPLiteral
+	= '``' RAW:RAWString+ '``' {
+		return RAW.join("");
+	}
+
+RAWString
+	= !("``") char_:SourceCharacter { return char_; }
 /*
  * Unicode Character Categories
  *

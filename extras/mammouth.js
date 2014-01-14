@@ -206,6 +206,8 @@ mammouth.parser = (function(){
         "PropertyNameAndValueList": parse_PropertyNameAndValueList,
         "PropertyAssignment": parse_PropertyAssignment,
         "PropertyName": parse_PropertyName,
+        "PHPLiteral": parse_PHPLiteral,
+        "RAWString": parse_RAWString,
         "Ll": parse_Ll,
         "Lm": parse_Lm,
         "Lo": parse_Lo,
@@ -11830,11 +11832,11 @@ mammouth.parser = (function(){
             }
             if (result0 === null) {
               pos0 = pos;
-              result0 = parse_EODLiteral();
+              result0 = parse_PHPLiteral();
               if (result0 !== null) {
                 result0 = (function(offset, value) {
               		return {
-              			type: "EODLiteral",
+              			type: "PHPLiteral",
               			value: value
               		}
               	})(pos0, result0);
@@ -11844,17 +11846,32 @@ mammouth.parser = (function(){
               }
               if (result0 === null) {
                 pos0 = pos;
-                result0 = parse_EOTLiteral();
+                result0 = parse_EODLiteral();
                 if (result0 !== null) {
                   result0 = (function(offset, value) {
                 		return {
-                			type: "EOTLiteral",
+                			type: "EODLiteral",
                 			value: value
                 		}
                 	})(pos0, result0);
                 }
                 if (result0 === null) {
                   pos = pos0;
+                }
+                if (result0 === null) {
+                  pos0 = pos;
+                  result0 = parse_EOTLiteral();
+                  if (result0 !== null) {
+                    result0 = (function(offset, value) {
+                  		return {
+                  			type: "EOTLiteral",
+                  			value: value
+                  		}
+                  	})(pos0, result0);
+                  }
+                  if (result0 === null) {
+                    pos = pos0;
+                  }
                 }
               }
             }
@@ -13460,6 +13477,112 @@ mammouth.parser = (function(){
         return result0;
       }
       
+      function parse_PHPLiteral() {
+        var result0, result1, result2;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        if (input.substr(pos, 2) === "``") {
+          result0 = "``";
+          pos += 2;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"``\"");
+          }
+        }
+        if (result0 !== null) {
+          result2 = parse_RAWString();
+          if (result2 !== null) {
+            result1 = [];
+            while (result2 !== null) {
+              result1.push(result2);
+              result2 = parse_RAWString();
+            }
+          } else {
+            result1 = null;
+          }
+          if (result1 !== null) {
+            if (input.substr(pos, 2) === "``") {
+              result2 = "``";
+              pos += 2;
+            } else {
+              result2 = null;
+              if (reportFailures === 0) {
+                matchFailed("\"``\"");
+              }
+            }
+            if (result2 !== null) {
+              result0 = [result0, result1, result2];
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, RAW) {
+        		return RAW.join("");
+        	})(pos0, result0[1]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_RAWString() {
+        var result0, result1;
+        var pos0, pos1, pos2;
+        
+        pos0 = pos;
+        pos1 = pos;
+        pos2 = pos;
+        reportFailures++;
+        if (input.substr(pos, 2) === "``") {
+          result0 = "``";
+          pos += 2;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"``\"");
+          }
+        }
+        reportFailures--;
+        if (result0 === null) {
+          result0 = "";
+        } else {
+          result0 = null;
+          pos = pos2;
+        }
+        if (result0 !== null) {
+          result1 = parse_SourceCharacter();
+          if (result1 !== null) {
+            result0 = [result0, result1];
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, char_) { return char_; })(pos0, result0[1]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
       function parse_Ll() {
         var result0;
         
@@ -14851,6 +14974,13 @@ mammouth.compile = function(code) {
 					r += ';\n';
 				} else {
 					r += '\n';
+				}
+				return r;
+			case 'PHPLiteral':
+				r = '';
+				r += seq.value;
+				if(seq.only == true) {
+					r += ';';
 				}
 				return r;
 			case 'Variable':
