@@ -1,0 +1,11 @@
+{{
+
+class Test ->
+  yy = 'ss'
+  xx ->
+    return 'pa' @yy
+
+test = new Test()
+echo test.xx()
+
+}}
