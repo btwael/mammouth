@@ -50,10 +50,11 @@ function doTheTests(callback) {
           sys.print('stderr: ' + stderr + '\n');
         }
         if (error === null) {
-          if(typeof stdout == 'string' && stdout.trim() == 'pass') {
+          var result = stdout.toString();
+          if(result.toLowerCase() === 'pass') {
             sys.print('PASS | ' + ctn[i] + '\n');
           } else {
-            sys.print('FAIL | ' + ctn[i] + ' | "pass" !== "' + stdout + '"\n');
+            sys.print('FAIL | ' + ctn[i] + ' | "pass" !== "' + result + '"\n');
           }
         } else {
           sys.print(phpFileName + ' execution error: ' + error + '\n');

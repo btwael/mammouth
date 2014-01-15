@@ -1,0 +1,10 @@
+{{
+  var1 = 's'
+  result = [
+    'p',
+    'test': 'a',
+    var1,
+    -100: 's' # TODO: fix for minus values in array keys
+  ]
+  echo implode(result, '')
+}}
