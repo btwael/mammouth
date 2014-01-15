@@ -1,4 +1,4 @@
-﻿mammouth.VERSION = '0.2.2';
+﻿mammouth.VERSION = '0.2.3';
 mammouth.compile = function(code) {
 	Tokens = mammouth.Tokens;
 	var Use_Slice_Function = false;

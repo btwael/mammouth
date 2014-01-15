@@ -4,7 +4,7 @@ var program = require('commander'),
 	mammouth = require('../extras/mammouth-nodejs.js'),
 	patch = require('path');
 program
-	.version('0.2.0')
+	.version('0.2.3')
 	.usage('[options] <file ...>')
 	.option('-c, --compile', '')
 	.option('-o, --output [DIR]', 'Write out all compiled PHP files into the specified directory. Use in conjunction with --compile', './');
