@@ -23,10 +23,16 @@ function removePhpFiles(callback) {
 }
 
 function compileMammouth(callback) {
+  sys.print(color.cyan + '\n===COMPILATION START===\n' + color.default);
   child = exec("node ./bin/mammouth --compile --output ./tests ./tests", function(error, stdout, stderr) {
-    sys.print('stdout: ' + stdout);
-    sys.print('stderr: ' + stderr);
+    if(stdout) {
+      sys.print('stdout: ' + stdout);
+    }
+    if(stderr) {
+      sys.print('stderr: ' + stderr);
+    }
     if (error === null) {
+      sys.print(color.cyan + '===COMPILATION END===\n' + color.default);
       callback && callback();
     } else {
       sys.print('compileMammouth error: ' + error + '\n');
@@ -39,7 +45,7 @@ function doTheTests(callback) {
       fileLoop,
       path = './tests/',
       ctn = fs.readdirSync(path);
-  console.log(ctn);
+  console.log('Files in ./test/ directory after compilation: ', ctn);
   sys.print(color.cyan + '\n===TEST BEGIN===\n' + color.default);
 
   (fileLoop = function(i) {
