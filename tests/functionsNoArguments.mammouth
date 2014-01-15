@@ -1,0 +1,6 @@
+{{
+someFunction ->
+  return 'PASS'
+
+echo(someFunction())
+}}
