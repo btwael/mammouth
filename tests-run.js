@@ -1,7 +1,17 @@
 var sys = require('sys'),
     exec = require('child_process').exec,
     fs = require('fs'),
-    child;
+    child,
+    color = {
+      default: '\033[0m',
+      red: '\033[0;31m',
+      green: '\033[0;32m',
+      brown: '\033[0;33m',
+      blue: '\033[0;34m',
+      magenta: '\033[0;35m',
+      cyan: '\033[0;36m',
+      lightgray: '\033[0;37m',
+    };
 
 function removePhpFiles(callback) {
   exec("rm ./tests/*.php", function(error) {
@@ -30,7 +40,7 @@ function doTheTests(callback) {
       path = './tests/',
       ctn = fs.readdirSync(path);
   console.log(ctn);
-  sys.print('\n===TEST BEGIN===\n');
+  sys.print(color.cyan + '\n===TEST BEGIN===\n' + color.default);
 
   (fileLoop = function(i) {
     if(ctn.length === i) {
@@ -42,7 +52,7 @@ function doTheTests(callback) {
     }
     phpFileName = ctn[i].replace(/.mammouth$/, '') + '.php';
     if(ctn.indexOf(phpFileName) === -1) {
-      sys.print('FAIL | ' + ctn[i] + ' | (not even compiled)\n');
+      sys.print(color.red + 'FAIL'+ color.default +' | ' + ctn[i] + ' | (not even compiled)\n');
       return fileLoop(i ? ++i : 1);
     } else {
       exec('php -f ' + path + phpFileName, function(error, stdout, stderr) {
@@ -52,9 +62,9 @@ function doTheTests(callback) {
         if (error === null) {
           var result = stdout.toString();
           if(result.toLowerCase() === 'pass') {
-            sys.print('PASS | ' + ctn[i] + '\n');
+            sys.print(color.green + 'PASS'+ color.default +' | ' + ctn[i] + '\n');
           } else {
-            sys.print('FAIL | ' + ctn[i] + ' | "pass" !== "' + result + '"\n');
+            sys.print(color.red + 'FAIL'+ color.default +' | ' + ctn[i] + ' | "pass" !== "' + result + '"\n');
           }
         } else {
           sys.print(phpFileName + ' execution error: ' + error + '\n');
@@ -66,7 +76,7 @@ function doTheTests(callback) {
 }
 
 function finishTest() {
-  sys.print('===TEST END===\n');
+  sys.print(color.cyan + '===TEST END===\n' + color.default);
 };
 
 removePhpFiles(function() {
