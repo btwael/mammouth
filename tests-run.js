@@ -10,14 +10,11 @@ var sys = require('sys'),
       blue: '\033[0;34m',
       magenta: '\033[0;35m',
       cyan: '\033[0;36m',
-      lightgray: '\033[0;37m',
+      lightgray: '\033[0;37m'
     };
 
 function removePhpFiles(callback) {
   exec("rm ./tests/*.php", function(error) {
-    // if(error !== null) {
-    //  sys.print('removePhpFiles error: ' + error + '\n');
-    // }
     callback && callback();
   });
 }
@@ -45,21 +42,21 @@ function doTheTests(callback) {
       fileLoop,
       path = './tests/',
       ctn = fs.readdirSync(path);
-  console.log('Files in ./test/ directory after compilation: ', ctn);
+  console.log('Files in ./test/ directory after compilation: \n', ctn);
   sys.print(color.cyan + '\n===TEST BEGIN===\n' + color.default);
 
   (fileLoop = function(i) {
     if(ctn.length === i) {
-      return callback && callback();;
+      return callback && callback();
     }
     if(ctn[i].substr(-9).toLowerCase() !== '.mammouth') {
       // ommit php files from list
-      return fileLoop(i ? ++i : 1);
+      return fileLoop(++i);
     }
     phpFileName = ctn[i].replace(/.mammouth$/, '') + '.php';
     if(ctn.indexOf(phpFileName) === -1) {
       sys.print(color.red + 'FAIL'+ color.default +' | ' + ctn[i] + ' | (not even compiled)\n');
-      return fileLoop(i ? ++i : 1);
+      return fileLoop(++i);
     } else {
       exec('php -f ' + path + phpFileName, function(error, stdout, stderr) {
         if(stderr) {
@@ -75,7 +72,7 @@ function doTheTests(callback) {
         } else {
           sys.print(phpFileName + ' execution error: ' + error + '\n');
         }
-        return fileLoop(i ? ++i : 1);
+        return fileLoop(++i);
       });
     }
   })(0);
@@ -83,13 +80,13 @@ function doTheTests(callback) {
 
 function finishTest() {
   sys.print(color.cyan + '===TEST END===\n' + color.default);
-};
+}
 
 removePhpFiles(function() {
   compileMammouth(function() {
     doTheTests(function() {
       removePhpFiles();
       finishTest();
-    })
+    });
   });
 });
