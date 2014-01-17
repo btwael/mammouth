@@ -650,6 +650,7 @@ statement
 		{ return m; }
 	/ m:TryStatement
 		{ return m; }
+	/ FunctionInLineCall
 	/ SAMEDENT m:FunctionDeclaration EOL?
 		{ return m; }
 	/ SAMEDENT m:NamespaceDeclaration EOL?
@@ -672,7 +673,6 @@ statement
 		{ return m; }
 	/ SAMEDENT m:IncludeStatement EOL?
 		{ return m; }
-	/ FunctionInLineCall
 	/ ExpressionStatement
 	/ blank
 
@@ -690,7 +690,7 @@ FunctionInLineCall
 
 CallExpression
 	= base:(
-		name:MemberExpression __ arguments:ArgumentsForInline {
+		name:(Literal? n:MemberExpression) __ arguments:ArgumentsForInline {
 			return {
 				type:      "FunctionCall",
 				name:      name,

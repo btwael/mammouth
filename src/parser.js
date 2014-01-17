@@ -5970,40 +5970,13 @@ mammouth.parser = (function(){
                   pos = pos0;
                 }
                 if (result0 === null) {
-                  pos0 = pos;
-                  pos1 = pos;
-                  result0 = parse_SAMEDENT();
-                  if (result0 !== null) {
-                    result1 = parse_FunctionDeclaration();
-                    if (result1 !== null) {
-                      result2 = parse_EOL();
-                      result2 = result2 !== null ? result2 : "";
-                      if (result2 !== null) {
-                        result0 = [result0, result1, result2];
-                      } else {
-                        result0 = null;
-                        pos = pos1;
-                      }
-                    } else {
-                      result0 = null;
-                      pos = pos1;
-                    }
-                  } else {
-                    result0 = null;
-                    pos = pos1;
-                  }
-                  if (result0 !== null) {
-                    result0 = (function(offset, m) { return m; })(pos0, result0[1]);
-                  }
-                  if (result0 === null) {
-                    pos = pos0;
-                  }
+                  result0 = parse_FunctionInLineCall();
                   if (result0 === null) {
                     pos0 = pos;
                     pos1 = pos;
                     result0 = parse_SAMEDENT();
                     if (result0 !== null) {
-                      result1 = parse_NamespaceDeclaration();
+                      result1 = parse_FunctionDeclaration();
                       if (result1 !== null) {
                         result2 = parse_EOL();
                         result2 = result2 !== null ? result2 : "";
@@ -6032,7 +6005,7 @@ mammouth.parser = (function(){
                       pos1 = pos;
                       result0 = parse_SAMEDENT();
                       if (result0 !== null) {
-                        result1 = parse_ClassDeclaration();
+                        result1 = parse_NamespaceDeclaration();
                         if (result1 !== null) {
                           result2 = parse_EOL();
                           result2 = result2 !== null ? result2 : "";
@@ -6061,7 +6034,7 @@ mammouth.parser = (function(){
                         pos1 = pos;
                         result0 = parse_SAMEDENT();
                         if (result0 !== null) {
-                          result1 = parse_ContinueStatement();
+                          result1 = parse_ClassDeclaration();
                           if (result1 !== null) {
                             result2 = parse_EOL();
                             result2 = result2 !== null ? result2 : "";
@@ -6090,7 +6063,7 @@ mammouth.parser = (function(){
                           pos1 = pos;
                           result0 = parse_SAMEDENT();
                           if (result0 !== null) {
-                            result1 = parse_BreakStatement();
+                            result1 = parse_ContinueStatement();
                             if (result1 !== null) {
                               result2 = parse_EOL();
                               result2 = result2 !== null ? result2 : "";
@@ -6119,7 +6092,7 @@ mammouth.parser = (function(){
                             pos1 = pos;
                             result0 = parse_SAMEDENT();
                             if (result0 !== null) {
-                              result1 = parse_EchoStatement();
+                              result1 = parse_BreakStatement();
                               if (result1 !== null) {
                                 result2 = parse_EOL();
                                 result2 = result2 !== null ? result2 : "";
@@ -6148,7 +6121,7 @@ mammouth.parser = (function(){
                               pos1 = pos;
                               result0 = parse_SAMEDENT();
                               if (result0 !== null) {
-                                result1 = parse_ReturnStatement();
+                                result1 = parse_EchoStatement();
                                 if (result1 !== null) {
                                   result2 = parse_EOL();
                                   result2 = result2 !== null ? result2 : "";
@@ -6177,7 +6150,7 @@ mammouth.parser = (function(){
                                 pos1 = pos;
                                 result0 = parse_SAMEDENT();
                                 if (result0 !== null) {
-                                  result1 = parse_Include_onceStatement();
+                                  result1 = parse_ReturnStatement();
                                   if (result1 !== null) {
                                     result2 = parse_EOL();
                                     result2 = result2 !== null ? result2 : "";
@@ -6206,7 +6179,7 @@ mammouth.parser = (function(){
                                   pos1 = pos;
                                   result0 = parse_SAMEDENT();
                                   if (result0 !== null) {
-                                    result1 = parse_Require_onceStatement();
+                                    result1 = parse_Include_onceStatement();
                                     if (result1 !== null) {
                                       result2 = parse_EOL();
                                       result2 = result2 !== null ? result2 : "";
@@ -6235,7 +6208,7 @@ mammouth.parser = (function(){
                                     pos1 = pos;
                                     result0 = parse_SAMEDENT();
                                     if (result0 !== null) {
-                                      result1 = parse_RequireStatement();
+                                      result1 = parse_Require_onceStatement();
                                       if (result1 !== null) {
                                         result2 = parse_EOL();
                                         result2 = result2 !== null ? result2 : "";
@@ -6264,7 +6237,7 @@ mammouth.parser = (function(){
                                       pos1 = pos;
                                       result0 = parse_SAMEDENT();
                                       if (result0 !== null) {
-                                        result1 = parse_IncludeStatement();
+                                        result1 = parse_RequireStatement();
                                         if (result1 !== null) {
                                           result2 = parse_EOL();
                                           result2 = result2 !== null ? result2 : "";
@@ -6289,7 +6262,34 @@ mammouth.parser = (function(){
                                         pos = pos0;
                                       }
                                       if (result0 === null) {
-                                        result0 = parse_FunctionInLineCall();
+                                        pos0 = pos;
+                                        pos1 = pos;
+                                        result0 = parse_SAMEDENT();
+                                        if (result0 !== null) {
+                                          result1 = parse_IncludeStatement();
+                                          if (result1 !== null) {
+                                            result2 = parse_EOL();
+                                            result2 = result2 !== null ? result2 : "";
+                                            if (result2 !== null) {
+                                              result0 = [result0, result1, result2];
+                                            } else {
+                                              result0 = null;
+                                              pos = pos1;
+                                            }
+                                          } else {
+                                            result0 = null;
+                                            pos = pos1;
+                                          }
+                                        } else {
+                                          result0 = null;
+                                          pos = pos1;
+                                        }
+                                        if (result0 !== null) {
+                                          result0 = (function(offset, m) { return m; })(pos0, result0[1]);
+                                        }
+                                        if (result0 === null) {
+                                          pos = pos0;
+                                        }
                                         if (result0 === null) {
                                           result0 = parse_ExpressionStatement();
                                           if (result0 === null) {
@@ -6397,13 +6397,27 @@ mammouth.parser = (function(){
       
       function parse_CallExpression() {
         var result0, result1, result2, result3, result4, result5, result6, result7;
-        var pos0, pos1, pos2, pos3;
+        var pos0, pos1, pos2, pos3, pos4;
         
         pos0 = pos;
         pos1 = pos;
         pos2 = pos;
         pos3 = pos;
-        result0 = parse_MemberExpression();
+        pos4 = pos;
+        result0 = parse_Literal();
+        result0 = result0 !== null ? result0 : "";
+        if (result0 !== null) {
+          result1 = parse_MemberExpression();
+          if (result1 !== null) {
+            result0 = [result0, result1];
+          } else {
+            result0 = null;
+            pos = pos4;
+          }
+        } else {
+          result0 = null;
+          pos = pos4;
+        }
         if (result0 !== null) {
           result1 = parse___();
           if (result1 !== null) {
