@@ -9116,6 +9116,17 @@ mammouth.parser = (function(){
             matchFailed("\"\\\\\"");
           }
         }
+        if (result0 === null) {
+          if (input.charCodeAt(pos) === 47) {
+            result0 = "/";
+            pos++;
+          } else {
+            result0 = null;
+            if (reportFailures === 0) {
+              matchFailed("\"/\"");
+            }
+          }
+        }
         result0 = result0 !== null ? result0 : "";
         if (result0 !== null) {
           result1 = parse_Identifier();
@@ -9129,6 +9140,17 @@ mammouth.parser = (function(){
               result3 = null;
               if (reportFailures === 0) {
                 matchFailed("\"\\\\\"");
+              }
+            }
+            if (result3 === null) {
+              if (input.charCodeAt(pos) === 47) {
+                result3 = "/";
+                pos++;
+              } else {
+                result3 = null;
+                if (reportFailures === 0) {
+                  matchFailed("\"/\"");
+                }
               }
             }
             if (result3 !== null) {
@@ -9153,6 +9175,17 @@ mammouth.parser = (function(){
                 result3 = null;
                 if (reportFailures === 0) {
                   matchFailed("\"\\\\\"");
+                }
+              }
+              if (result3 === null) {
+                if (input.charCodeAt(pos) === 47) {
+                  result3 = "/";
+                  pos++;
+                } else {
+                  result3 = null;
+                  if (reportFailures === 0) {
+                    matchFailed("\"/\"");
+                  }
                 }
               }
               if (result3 !== null) {
