@@ -40,6 +40,8 @@ exports.rewrite = (tree, context) ->
 			when 'Parens' then return '(' + compile(element.expression) + ')'
 			when 'Identifier'
 				return context.Identify(element.name)
+			when 'PassingIdentifier'
+				return '&' + context.Identify(element.name)
 			when 'Literal'
 				if typeof element.value is 'number'
 					return element.value

@@ -1,4 +1,5 @@
-- [ ] Support for passing variable to function with &
+- [x] Support for passing variable to function with &
+- [ ] FIX arguments name in context
 - [ ] Fix in anonymous function in call
 - [ ] Support for python slicing
 - [ ] "for loops"

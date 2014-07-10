@@ -43,6 +43,10 @@ exports.Identifier = class Identifier
 	constructor: (@name) ->
 		@type = 'Identifier'
 
+exports.PassingIdentifier = class PassingIdentifier
+	constructor: (@name) ->
+		@type = 'PassingIdentifier'
+
 exports.Literal = class Literal
 	constructor: (@value) ->
 		@type = 'Literal'

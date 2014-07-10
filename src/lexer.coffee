@@ -195,7 +195,7 @@ lexer.addRule /\|/, (lexeme) ->
 lexer.addRule /&/, (lexeme) ->
 	col += lexeme.length;
 	@yytext = 'and'
-	return "LOGIC";
+	return "&";
 
 # ~ or !
 lexer.addRule /!|~/, (lexeme) ->

@@ -92,6 +92,7 @@ grammar =
 
 	Identifier: [
 		o 'IDENTIFIER', '$$ = new yy.Identifier(yytext)'
+		o '& IDENTIFIER', '$$ = new yy.PassingIdentifier(yytext)'
 	]
 
 	Literal: [
@@ -187,6 +188,7 @@ grammar =
 
 		o 'Expression SHIFT Expression', '$$ = new yy.Operation($2, $1, $3)'
 		o 'Expression LOGIC Expression', '$$ = new yy.Operation($2, $1, $3)'
+		o 'Expression LOGIC Expression', '$$ = new yy.Operation("&", $1, $3)'
 		o 'Expression COMPARE Expression', '$$ = new yy.Operation($2, $1, $3)'
 
 		o 'SimpleAssignable ASSIGN Expression', '$$ = new yy.Assign($2, $1, $3)'
@@ -287,7 +289,7 @@ grammar =
 operators = [
 	['left', '+', '-', '<->']
 	['left', '*', '/', '%', '**']
-	['left', 'SHIFT', 'LOGIC', 'COMPARE', 'RELATION']
+	['left', 'SHIFT', 'LOGIC', '&', 'COMPARE', 'RELATION']
 	['left', '.']
 	['nonassoc', '++', '--', 'NOT', 'cte']
 	['left', '?']
