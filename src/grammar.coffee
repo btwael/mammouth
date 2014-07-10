@@ -47,9 +47,9 @@ grammar =
 		o 'SAMEDENT OptionalLineTerminator', '$$ = new yy.BlankLine()'
 		o 'SAMEDENT SimpleStatement OptionalLineTerminator', 2
 		o 'SAMEDENT Expression OptionalLineTerminator', '$$ = new yy.Expression($2)'
+		o 'SAMEDENT FunctionCode OptionalLineTerminator', 2
 		o 'If'
 		o 'SAMEDENT While OptionalLineTerminator', '$$ = new yy.Expression($2)'
-		o 'SAMEDENT FunctionCode OptionalLineTerminator' 
 	]
 
 	Expression: [
@@ -269,8 +269,8 @@ grammar =
 
 	# Function Code
 	FunctionCode: [
-		o 'Identifier ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($3, $6, true, $1)'
-		o 'Identifier FuncGlyph Block', '$$ = new yy.Code([], $3, true, $1)'
+		o 'DEF IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2)'
+		o 'DEF IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $3, true, $1)'
 	]
 
 	# Comma

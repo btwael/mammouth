@@ -376,6 +376,8 @@ lexer.addRule RegularExpression.IDENTIFIER, (lexeme) ->
 		return 'THEN'
 	else if lexeme is 'while'
 		return 'WHILE'
+	else if lexeme is 'def'
+		return 'DEF'
 	else
 		@yytext = lexeme;
 		return "IDENTIFIER";
