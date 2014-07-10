@@ -1,6 +1,0 @@
-{{
-someFunction (a, b)->
-  return a b 's' 's'
-
-echo(someFunction('p','a'))
-}}
