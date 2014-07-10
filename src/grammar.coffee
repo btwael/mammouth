@@ -272,7 +272,7 @@ grammar =
 	# Function Code
 	FunctionCode: [
 		o 'DEF IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2)'
-		o 'DEF IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $3, true, $2)'
+		o 'DEF IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2)'
 	]
 
 	# Comma

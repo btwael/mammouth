@@ -1,4 +1,4 @@
-v = "sdf{{\ndef waevl(&wael)->\n def gf()->\n  l\n gf\nsf}}"
+v = "sdf{{\ndef waevl(&wael)->\n def gf->\n  l\n gf\nsf}}"
 mammouth = require('./lib/mammouth')
 //console.log(mammouth.parse(v)[1])
 console.log(mammouth.compile(v))
