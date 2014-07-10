@@ -9,5 +9,5 @@
 - [ ] Heredoc strings
 - [ ] Switch/Case/Else
 - [ ] Embedded PHP
-- [ ] Try/catch
+- [x] Try/catch
 - [ ] Comments
