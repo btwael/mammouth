@@ -91,7 +91,7 @@ grammar =
 	]
 
 	Identifier: [
-		o 'IDENTIFIER', '$$ = new yy.Identifier(yytext)'
+		o 'IDENTIFIER', '$$ = new yy.Identifier(yytext, true)'
 		o '& IDENTIFIER', '$$ = new yy.PassingIdentifier(yytext)'
 	]
 

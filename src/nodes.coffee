@@ -40,7 +40,7 @@ exports.Parens = class Parens
 		@type = 'Parens'
 
 exports.Identifier = class Identifier
-	constructor: (@name) ->
+	constructor: (@name, @as_arguments = false) ->
 		@type = 'Identifier'
 
 exports.PassingIdentifier = class PassingIdentifier
