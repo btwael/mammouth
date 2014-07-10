@@ -72,8 +72,7 @@ exports.rewrite = (tree, context) ->
 			when 'Code'
 				if element.normal
 					r = 'function ' + element.name + '('
-					context.Add {
-						'name': element.name
+					context.elements[element.name] = {
 						'type': 'function'
 					}
 				else
@@ -169,11 +168,11 @@ exports.rewrite = (tree, context) ->
 					for elsei in element.Elses
 						if elsei.type is 'Else'
 							r += ' else {'
-							r += compile(element.body)
+							r += compile(elsei.body)
 							r += '}'
 						else if elsei.type is 'ElseIf'
 							r += ' elseif(' + compile(elsei.condition) + ') {'
-							r += compile(element.body)
+							r += compile(elsei.body)
 							r += '}'
 				return r
 			# While

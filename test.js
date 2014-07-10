@@ -1,4 +1,4 @@
-v = 'sdf{{\ndef call(id)->\n dsfds\nsd=12\nvall()}}'
+v = "sdf{{\nif happy and knowsIt\n clapsHands()\n chaChaCha()\nelse\n showIt()}}"
 mammouth = require('./lib/mammouth')
 //console.log(mammouth.parse(v)[1])
 console.log(mammouth.compile(v))
