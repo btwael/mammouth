@@ -108,7 +108,7 @@ exports.rewrite = (tree, context) ->
 					UseSuperMammouth = true
 					r = '$Mammouth("+", ' + compile(element.left) + ', ' + compile(element.right) + ')'
 				else if element.operator is 'IN'
-					r = 'in_array(' + compile(element.left) + ', ' + compile(element.right) + ')'
+					r = '$Mammouth("in_array",' + compile(element.left) + ', ' + compile(element.right) + ')'
 				else
 					r = compile(element.left) + ' ' + element.operator + ' ' + compile(element.right)
 				return r
@@ -185,6 +185,19 @@ exports.rewrite = (tree, context) ->
 				r = 'while(' + compile(element.condition) + ') {'
 				r += compile(element.body)
 				r += '}'
+				return r
+			# Try
+			when 'Try'
+				r = 'try {'
+				r += compile(element.TryBody)
+				r += '}'
+				r += ' catch(Exception ' + compile(element.CatchIdentifier) + ') {'
+				r += compile(element.CatchBody)
+				r += '}'
+				if element.Finally
+					r += ' finally {'
+					r += compile(element.FinallyBody)
+					r += '}'
 				return r
 
 	for doc in tree

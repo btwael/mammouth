@@ -49,6 +49,7 @@ grammar =
 		o 'SAMEDENT Expression OptionalLineTerminator', '$$ = new yy.Expression($2)'
 		o 'SAMEDENT FunctionCode OptionalLineTerminator', 2
 		o 'If'
+		o 'Try'
 		o 'SAMEDENT While OptionalLineTerminator', '$$ = new yy.Expression($2)'
 	]
 
@@ -91,8 +92,7 @@ grammar =
 	]
 
 	Identifier: [
-		o 'IDENTIFIER', '$$ = new yy.Identifier(yytext, true)'
-		o '& IDENTIFIER', '$$ = new yy.PassingIdentifier(yytext)'
+		o 'IDENTIFIER', '$$ = new yy.Identifier(yytext)'
 	]
 
 	Literal: [
@@ -155,7 +155,8 @@ grammar =
 	]
 
 	ParamVar: [
-		o 'Identifier'
+		o 'IDENTIFIER', '$$ = new yy.Identifier(yytext, true)'
+		o '& IDENTIFIER', '$$ = new yy.PassingIdentifier(yytext)'
 	]
 
 	# Assign
@@ -264,6 +265,19 @@ grammar =
 		o 'Expression IF Expression', '$$ = new yy.If($3, $1, true)'
 	]
 
+	# Try/catch/finally
+	Try: [
+		o 'TryBlock'
+		o 'TryBlock SAMEDENT FINALLY Block OptionalLineTerminator', '$1.addFinally($4); $$ = $1'
+	]
+
+	TryBlock: [
+		o 'SAMEDENT TRY Block OptionalLineTerminator CatchBlock', '$$ = new yy.Try($3, $5[0], $5[1])'
+	]
+
+	CatchBlock: [
+		o 'SAMEDENT CATCH Identifier Block OptionalLineTerminator', '$$ = [$3, $4]'
+	]
 	# While
 	While: [
 		o 'WHILE Expression Block', '$$ = new yy.While($2, $3)'

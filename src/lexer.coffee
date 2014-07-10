@@ -378,6 +378,12 @@ lexer.addRule RegularExpression.IDENTIFIER, (lexeme) ->
 		return 'WHILE'
 	else if lexeme is 'def'
 		return 'DEF'
+	else if lexeme is 'try'
+		return 'TRY'
+	else if lexeme is 'catch'
+		return 'CATCH'
+	else if lexeme is 'finally'
+		return 'FINALLY'
 	else
 		@yytext = lexeme;
 		return "IDENTIFIER";

@@ -141,3 +141,12 @@ exports.If = class If
 exports.While = class While
 	constructor: (@condition, @body) ->
 		@type = 'While'
+
+exports.Try = class Try
+	constructor: (@TryBody, @CatchIdentifier, @CatchBody, @Finally = false) ->
+		@type = 'Try'
+		@Elses = []
+
+	addFinally: (body) ->
+		@Finally = true
+		@FinallyBody = body
