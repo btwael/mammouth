@@ -16,12 +16,14 @@ Levels = [
 
 lastIsIdentifier = false
 ShouldCloseCall = false
+tokenStack = []
 
 setToken = (token) ->
-	if token is 'IDENTIFIER'
+	if token is 'IDENTIFIER' and tokenStack[0] isnt 'FUNC'
 		lastIsIdentifier = true
 	else
 		lastIsIdentifier = false
+	tokenStack.unshift(token)
 
 CloseIndents = (tokens) ->
 	while Levels[0].OpenedIndent > 0

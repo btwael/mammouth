@@ -1,4 +1,4 @@
-v = "sdf{{\nswitch i\n case 1\n  echo(12)\n else\n  ssfOptLineTerminator}}"
+v = "sdf{{\nfunc wael(use fgd)->\n sdfsd\nwael()}}"
 mammouth = require('./lib/mammouth')
 //console.log(mammouth.parse(v)[1])
 console.log(mammouth.compile(v))

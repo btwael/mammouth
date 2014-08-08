@@ -55,6 +55,7 @@ grammar =
 	]
 
 	Statement: [
+		o 'Function'
 		o 'If'
 		o 'While'
 		o 'Try'
@@ -144,7 +145,12 @@ grammar =
 		o 'CALL_START ArgList OptComma CALL_END', 2
 	]
 
-	# Variable Function
+	# Function
+	Function: [
+		o 'FUNC IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2)'
+		o 'FUNC IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2)'
+	]
+
 	Code: [
 		o 'FUNC ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($3, $6)'
 		o 'FUNC FuncGlyph Block', '$$ = new yy.Code([], $3)'
