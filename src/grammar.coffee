@@ -34,23 +34,31 @@ grammar =
 	]
 
 	Block: [
-		o 'LineTerminator INDENT Lines DEDENT', '$$ = new yy.Block($3)'
+		o 'INDENT Lines OUTDENT', '$$ = new yy.Block($2)'
+		o 'LineTerminator INDENT Lines OUTDENT', '$$ = new yy.Block($3)'
 	]
 
 	Lines: [
 		o 'Line', '$$ = [$1]'
-		o 'Lines Line', '$$ = $1.concat($2);'
+		o 'Lines OptLineTerminator Line', '$$ = $1.concat($3);'
+		o 'Lines LineTerminator'
 	]
-	
+
+	OptLineTerminator: [
+		o '', false
+		o 'LineTerminator', 'false'
+	]
+
 	Line: [
-		o 'BLANKLINE', '$$ = new yy.BlankLine()'
-		o 'SAMEDENT OptionalLineTerminator', '$$ = new yy.BlankLine()'
-		o 'SAMEDENT SimpleStatement OptionalLineTerminator', 2
-		o 'SAMEDENT Expression OptionalLineTerminator', '$$ = new yy.Expression($2)'
-		o 'SAMEDENT FunctionCode OptionalLineTerminator', 2
+		o 'Expression', '$$ = new yy.Expression($1)'
+		o 'Statement'
+	]
+
+	Statement: [
 		o 'If'
+		o 'While'
 		o 'Try'
-		o 'SAMEDENT While OptionalLineTerminator', '$$ = new yy.Expression($2)'
+		o 'Switch'
 	]
 
 	Expression: [
@@ -59,14 +67,12 @@ grammar =
 		o 'Code'
 		o 'Operation'
 		o 'Assign'
-		o 'IfExpression'
 	]
 
-	######## Values
 	Value: [
 		o 'Assignable'
 		o 'Literal'
-		o 'Parenthetical'
+		o 'Parenthetical', '$$ = new yy.Value($1)'
 	]
 
 	Parenthetical: [
@@ -84,9 +90,8 @@ grammar =
 	]
 
 	Accessor: [
-		o '.. Identifier', '$$ = new yy.Access($2, "..")'
 		o '. Identifier', '$$ = new yy.Access($2)'
-		o '-> Identifier', '$$ = new yy.Access($2, "->")'
+		o '.. Identifier', '$$ = new yy.Access($2, "..")'
 		o ':: Identifier', '$$ = new yy.Access($2, "::")'
 		o '[ Expression ]', '$$ = new yy.Access($2, "[]")'
 	]
@@ -108,38 +113,45 @@ grammar =
 	# Array
 	Array: [
 		o '[ ]', '$$ = new yy.Array()'
-		o '[ ArgList OptionalComma ]', '$$ = new yy.Array($2)'
+		o '[ ArgList OptComma ]', '$$ = new yy.Array($2)'
 	]
 
 	ArgList: [
 		o 'Arg', '$$ = [$1]'
-		o 'ArgList , Arg', '$$ = $1.concat($3)'
-		o 'ArgList OptionalComma LineTerminator Arg', '$$ = $1.concat($4)'
+		o 'ArgList , Arg', '$$ = $1.concat($3);'
+		o 'ArgList OptComma LineTerminator Arg', '$$ = $1.concat($4)'
+		o 'INDENT ArgList OptComma OUTDENT', 2
+		o 'ArgList OptComma LineTerminator INDENT ArgList OptComma OUTDENT', '$$ = $1.concat($5)'
+		o 'LineTerminator INDENT ArgList OptComma OUTDENT', 3
 	]
 
 	Arg: [
-		o 'Expression : Expression', '$$ = new yy.ArrayKey($1, $3)'
 		o 'Expression'
+		o 'Expression : Expression', '$$ = new yy.ArrayKey($1, $3)'
+	]
+
+	OptComma: [
+		o ''
+		o ','
 	]
 
 	# Invocation
 	Invocation: [
 		o 'Value Arguments', '$$ = new yy.Call($1, $2)'
 	]
-
 	Arguments: [
-		o '( )', '$$ = []'
-		o '( ArgList OptionalComma )', 2
+		o 'CALL_START CALL_END', '$$ = []'
+		o 'CALL_START ArgList OptComma CALL_END', 2
 	]
 
 	# Variable Function
 	Code: [
-		o '( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($2, $5)'
-		o 'FuncGlyph Block', '$$ = new yy.Code([], $2)'
+		o 'FUNC ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($3, $6)'
+		o 'FUNC FuncGlyph Block', '$$ = new yy.Code([], $3)'
 	]
 
 	FuncGlyph: [
-		o '->', '$$ = "->"'
+		o '->', false
 	]
 
 	ParametersList: [
@@ -150,19 +162,69 @@ grammar =
 
 	Param: [
 		o 'ParamVar'
-		o 'use ParamVar', '$2.and = true, $$ = $2'
+		o 'USE ParamVar', '$2.passing = true, $$ = $2'
 		o 'ParamVar = Expression', '$$ = new yy.Assign("=", $1, $3)'
 	]
 
 	ParamVar: [
+		o '& IDENTIFIER', '$$ = new yy.Identifier(yytext, true, true)'
 		o 'IDENTIFIER', '$$ = new yy.Identifier(yytext, true)'
-		o '& IDENTIFIER', '$$ = new yy.PassingIdentifier(yytext)'
 	]
 
-	# Assign
 	Assign: [
 		o 'Assignable = Expression', '$$ = new yy.Assign("=", $1, $3)'
-		o 'cte Identifier = Expression', '$$ = new yy.Constant($2, $4)'
+		o 'CTE Identifier = Expression', '$$ = new yy.Constant($2, $4)'
+	]
+
+	# If
+	If: [
+		o 'IfBlock'
+		o 'IfBlock ELSE Block', '$1.addElse(new yy.Else($3)); $$ = $1'
+	]
+
+	IfBlock: [
+		o 'IF Expression Block', '$$ = new yy.If($2, $3)'
+		o 'IfBlock ELSE IF Expression Block', '$1.addElse(new yy.ElseIf($4, $5)); $$ = $1'
+	]
+
+	# While
+	While: [
+		o 'WHILE Expression Block', '$$ = new yy.While($2, $3)'
+	]
+
+	# Try/catch/finally
+	Try: [
+		o 'TryBlock'
+		o 'TryBlock FINALLY Block', '$1.addFinally($3); $$ = $1'
+	]
+
+	TryBlock: [
+		o 'TRY Block CatchBlock', '$$ = new yy.Try($2, $3[0], $3[1])'
+	]
+
+	CatchBlock: [
+		o 'CATCH Identifier Block', '$$ = [$2, $3]'
+	]
+
+	# Switch
+	Switch: [
+		o 'SWITCH Expression LineTerminator INDENT Whens OUTDENT', '$$ = new yy.Switch($2, $5)'
+		o 'SWITCH Expression LineTerminator INDENT Whens ELSE Block OUTDENT', '$5.push(new yy.SwitchElse($7)); $$ = new yy.Switch($2, $5)'
+	]
+
+	Whens: [
+		o 'When', '$$ = [$1]'
+		o 'Whens OptLineTerminator When', '$$ = $1.concat($2)'
+		o 'Whens LineTerminator'
+	]
+
+	When: [
+		o 'WhenTok Expression Block', '$$ = new yy.When($2, $3)'
+	]
+
+	WhenTok: [
+		o 'CASE', false
+		o 'WHEN', false
 	]
 
 	# Operation
@@ -171,14 +233,10 @@ grammar =
 		o '++ Expression', '$$ = new yy.Update("++", $2)'
 		o 'SimpleAssignable --', '$$ = new yy.Update("--", $1, false)'
 		o 'SimpleAssignable ++', '$$ = new yy.Update("++", $1, false)'
-
-		o 'NOT Expression', '$$ = new yy.Unary($1, $2)'
-
+		o 'NOT Expression', '$$ = new yy.Unary("!", $2)'
 		o '- Expression', '$$ = new yy.Unary("-", $2)'
 		o '+ Expression', '$$ = new yy.Unary("+", $2)'
-
 		o 'Expression ?', '$$ = new yy.Existence($1)'
-
 		o 'Expression + Expression', '$$ = new yy.Operation("+", $1, $3)'
 		o 'Expression <-> Expression', '$$ = new yy.Operation("<->", $1, $3)'
 		o 'Expression - Expression', '$$ = new yy.Operation("-", $1, $3)'
@@ -186,132 +244,33 @@ grammar =
 		o 'Expression ** Expression', '$$ = new yy.Operation("**", $1, $3)'
 		o 'Expression / Expression', '$$ = new yy.Operation("/", $1, $3)'
 		o 'Expression % Expression', '$$ = new yy.Operation("%", $1, $3)'
-
 		o 'Expression SHIFT Expression', '$$ = new yy.Operation($2, $1, $3)'
 		o 'Expression LOGIC Expression', '$$ = new yy.Operation($2, $1, $3)'
-		o 'Expression LOGIC Expression', '$$ = new yy.Operation("&", $1, $3)'
+		o 'Expression & Expression', '$$ = new yy.Operation("&", $1, $3)'
 		o 'Expression COMPARE Expression', '$$ = new yy.Operation($2, $1, $3)'
-
 		o 'SimpleAssignable ASSIGN Expression', '$$ = new yy.Assign($2, $1, $3)'
-
-		o 'Expression RELATION Expression', '$$ = new yy.Operation($2, $1, $3)'
-	]
-
-	######## Statement
-	Statement: [
-		o 'SimpleStatement'
-	]
-
-	SimpleStatement: [
-		o 'EchoStatement'
-		o 'ReturnStatement'
-		o 'BreakStatement'
-		o 'ContinueStatement'
-		o 'IncludeStatement'
-		o 'RequireStatement'
-	]
-
-	EchoStatement: [
-		o 'ECHO ( Expression )', '$$ = new yy.EchoStatement($3)'
-		o 'ECHO Expression', '$$ = new yy.EchoStatement($2)'
-	]
-
-	ReturnStatement: [
-		o 'RETURN', '$$ = new yy.ReturnStatement()'
-		o 'RETURN Expression', '$$ = new yy.ReturnStatement($2)'
-	]
-
-	BreakStatement: [
-		o 'BREAK', '$$ = new yy.BreakStatement()'
-		o 'BREAK Expression', '$$ = new yy.BreakStatement($2)'
-	]
-
-	ContinueStatement: [
-		o 'CONTINUE', '$$ = new yy.ContinueStatement()'
-		o 'CONTINUE Expression', '$$ = new yy.ContinueStatement($2)'
-	]
-
-	IncludeStatement: [
-		o 'INCLUDE isOnce Expression', '$$ = new yy.IncludeStatement($3, $2)'
-	]
-
-	RequireStatement: [
-		o 'REQUIRE isOnce Expression', '$$ = new yy.RequireStatement($3, $2)'
-	]
-
-	isOnce: [
-		o '', '$$ = false'
-		o 'ONCE', '$$ = true'
-	]
-
-	# IF
-	If: [
-		o 'IfBlock'
-		o 'IfBlock SAMEDENT ELSE Block OptionalLineTerminator', '$1.addElse($4); $$ = $1'
-	]
-
-	IfBlock: [
-		o 'SAMEDENT IF Expression Block OptionalLineTerminator', '$$ = new yy.If($3, $4)'
-		o 'IfBlock SAMEDENT ELSE IF Expression Block OptionalLineTerminator', '$1.addElseIf($5, $6); $$ = $1' 
-	]
-
-	IfExpression: [
-		o 'IfBlockExpression'
-		o 'IfBlockExpression ELSE Expression', '$1.Elses = $3; $$ = $1'
-	]
-
-	IfBlockExpression: [
-		o 'IF Expression THEN Expression', '$$ = new yy.If($2, $4, true)'
-		o 'Expression IF Expression', '$$ = new yy.If($3, $1, true)'
-	]
-
-	# Try/catch/finally
-	Try: [
-		o 'TryBlock'
-		o 'TryBlock SAMEDENT FINALLY Block OptionalLineTerminator', '$1.addFinally($4); $$ = $1'
-	]
-
-	TryBlock: [
-		o 'SAMEDENT TRY Block OptionalLineTerminator CatchBlock', '$$ = new yy.Try($3, $5[0], $5[1])'
-	]
-
-	CatchBlock: [
-		o 'SAMEDENT CATCH Identifier Block OptionalLineTerminator', '$$ = [$3, $4]'
-	]
-	# While
-	While: [
-		o 'WHILE Expression Block', '$$ = new yy.While($2, $3)'
-	]
-
-	# Function Code
-	FunctionCode: [
-		o 'DEF IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2)'
-		o 'DEF IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2)'
-	]
-
-	# Comma
-	OptionalComma: [
-		o '', false
-		o ',', false
-	]
-	# Optional Line Terminator
-	OptionalLineTerminator: [
-		o '', false
-		o 'LineTerminator', false
+		o 'Expression IN Expression', '$$ = new yy.In($1, $3)'
 	]
 
 operators = [
-	['left', '+', '-', '<->']
-	['left', '*', '/', '%', '**']
-	['left', 'SHIFT', 'LOGIC', '&', 'COMPARE', 'RELATION']
-	['left', '.']
-	['nonassoc', '++', '--', 'NOT', 'cte']
+	['left', '..', '.', '::', '->']
+	['left', 'CALL_START', 'CALL_END']
+	['nonassoc',  '++', '--']
 	['left', '?']
-	['right', '=', 'ASSIGN']
-	['right', 'IF', 'THEN', 'ELSE', 'WHILE']
+	['right', '**']
+	['left', '*', '/', '%']
+	['left', 'NOT', '+', '-', '<->']
+	['left', 'SHIFT']
+	['left', 'IN']
+	['left', 'COMPARE']
+	['left', 'LOGIC', '&']
+	['nonassoc', 'INDENT', 'OUTDENT', 'LineTerminator']
+	['right', '=', ':', 'ASSIGN']
+	['right', 'func', 'IF', 'ELSE']
 ]
+
 {Parser} = require 'jison'
 
 module.exports = new Parser
 	bnf : grammar
-	operators: operators
+	operators: operators.reverse()

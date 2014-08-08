@@ -20,7 +20,6 @@ exports.rewrite = (tree, context) ->
 							r += '\n'
 					return '\n' + r + '\n'
 			when 'Expression' then return compile(element.expression) + ';'
-			when 'BlankLine' then return ''
 
 			# Values
 			when 'Value'
@@ -40,16 +39,17 @@ exports.rewrite = (tree, context) ->
 			when 'Parens' then return '(' + compile(element.expression) + ')'
 			when 'Identifier'
 				if element.as_arguments
-					return '$' + element.name
+					r = '$' + element.name
 				else
-					return context.Identify(element.name)
-			when 'PassingIdentifier'
-				return '&' + context.Identify(element.name)
+					r = context.Identify(element.name)
+				if element.passing
+					r = '&' + r
+				return r
 			when 'Literal'
 				if typeof element.value is 'number'
 					return element.value
 				else
-					return '"' + element.value + '"'
+					return element.value
 			when 'Bool'
 				if element.value
 					return 'true'
@@ -107,8 +107,6 @@ exports.rewrite = (tree, context) ->
 				else if element.operator is '+'
 					UseSuperMammouth = true
 					r = '$Mammouth("+", ' + compile(element.left) + ', ' + compile(element.right) + ')'
-				else if element.operator is 'IN'
-					r = '$Mammouth("in_array",' + compile(element.left) + ', ' + compile(element.right) + ')'
 				else
 					r = compile(element.left) + ' ' + element.operator + ' ' + compile(element.right)
 				return r
@@ -132,60 +130,33 @@ exports.rewrite = (tree, context) ->
 			when 'Existence'
 				r = 'isset(' + compile(element.expression) + ')'
 				return r
+			when 'In'
+				r = '$Mammouth("in_array", ' + compile(element.left) + ', ' + compile(element.right) + ')'
+				return r
 
-			# Statements
-			when 'EchoStatement'
-				return 'echo ' + compile(element.expression) + ';'
-			when 'ReturnStatement'
-				if element.expression is null
-					return 'return;'
-				else
-					return 'return ' + compile(element.expression) + ';'
-			when 'BreakStatement'
-				if element.expression is null
-					return 'break;'
-				else
-					return 'break ' + compile(element.expression) + ';'
-			when 'ContinueStatement'
-				if element.expression is null
-					return 'continue;'
-				else
-					return 'continue ' + compile(element.expression) + ';'
-			when 'IncludeStatement'
-				r = 'include'
-				r += '_once' if element.once
-				r += ' ' + compile(element.expression) + ';'
-				return r
-			when 'RequireStatement'
-				r = 'require'
-				r += '_once' if element.once
-				r += ' ' + compile(element.expression) + ';'
-				return r
-			# IF
+			# If
 			when 'If'
-				if element.expression
-					r = compile(element.condition) + ' ? ' + compile(element.body) + ' : ' 
-					r += compile(element.Elses)
-				else
-					r = 'if(' + compile(element.condition) + ') {'
-					r += compile(element.body)
-					r += '}'
-					for elsei in element.Elses
-						if elsei.type is 'Else'
-							r += ' else {'
-							r += compile(elsei.body)
-							r += '}'
-						else if elsei.type is 'ElseIf'
-							r += ' elseif(' + compile(elsei.condition) + ') {'
-							r += compile(elsei.body)
-							r += '}'
+				r = 'if(' + compile(element.condition) + ') {'
+				r += compile(element.body)
+				r += '}'
+				for elsei in element.Elses
+					if elsei.type is 'Else'
+						r += ' else {'
+						r += compile(elsei.body)
+						r += '}'
+					else if elsei.type is 'ElseIf'
+						r += ' elseif(' + compile(elsei.condition) + ') {'
+						r += compile(elsei.body)
+						r += '}'
 				return r
+
 			# While
 			when 'While'
-				r = 'while(' + compile(element.condition) + ') {'
+				r = 'while(' + compile(element.test) + ') {'
 				r += compile(element.body)
 				r += '}'
 				return r
+
 			# Try
 			when 'Try'
 				r = 'try {'
@@ -198,6 +169,22 @@ exports.rewrite = (tree, context) ->
 					r += ' finally {'
 					r += compile(element.FinallyBody)
 					r += '}'
+				return r
+
+			# Switch
+			when 'Switch'
+				r = 'switch (' + compile(element.variable) + ') {\n'
+				for Scase in element.cases
+					if Scase.type is 'When'
+						r += 'case ' + compile(Scase.condition) + ': {'
+						r += compile(Scase.body)
+						r += '}'
+					else if Scase.type is 'SwitchElse'
+						r += 'default: {'
+						r += compile(Scase.body)
+						r += '}'
+					r += '\n'
+				r += '}'
 				return r
 
 	for doc in tree

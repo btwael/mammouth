@@ -19,10 +19,6 @@ exports.Expression = class Expression
 	constructor: (@expression) ->
 		@type = 'Expression'
 
-exports.BlankLine = class BlankLine
-	constructor: () ->
-		@type = 'BlankLine'
-
 # Values, types and variables
 exports.Value = class Value
 	constructor: (@value, @properties = []) ->
@@ -40,12 +36,8 @@ exports.Parens = class Parens
 		@type = 'Parens'
 
 exports.Identifier = class Identifier
-	constructor: (@name, @as_arguments = false) ->
+	constructor: (@name, @as_arguments = false, @passing = false) ->
 		@type = 'Identifier'
-
-exports.PassingIdentifier = class PassingIdentifier
-	constructor: (@name) ->
-		@type = 'PassingIdentifier'
 
 exports.Literal = class Literal
 	constructor: (@value) ->
@@ -79,6 +71,7 @@ exports.Assign = class Assign
 exports.Constant = class Constant
 	constructor: (@left, @right) ->
 		@type = 'Constant'
+
 exports.Unary = class Unary
 	constructor: (@operator, @expression) ->
 		@type = 'Unary'
@@ -95,58 +88,50 @@ exports.Operation = class Operation
 	constructor: (@operator, @left, @right) ->
 		@type = 'Operation'
 
-# Statements
-exports.EchoStatement = class EchoStatement
-	constructor: (@expression) ->
-		@type = 'EchoStatement'
+exports.In = class In
+	constructor: (@left, @right) ->
+		@type = 'In'
 
-exports.ReturnStatement = class ReturnStatement
-	constructor: (@expression = null) ->
-		@type = 'ReturnStatement'
-
-exports.BreakStatement = class BreakStatement
-	constructor: (@expression = null) ->
-		@type = 'BreakStatement'
-
-exports.ContinueStatement = class ContinueStatement
-	constructor: (@expression = null) ->
-		@type = 'ContinueStatement'
-
-exports.IncludeStatement = class IncludeStatement
-	constructor: (@expression, @once = false) ->
-		@type = 'IncludeStatement'
-
-exports.RequireStatement = class RequireStatement
-	constructor: (@expression, @once = false) ->
-		@type = 'RequireStatement'
-
+# If
 exports.If = class If
-	constructor: (@condition, @body, @expression = false) ->
+	constructor: (@condition, @body) ->
 		@type = 'If'
 		@Elses = []
 
-	addElse: (body) ->
-		@Elses.push {
-			type: 'Else'
-			body: body
-		}
+	addElse: (element) ->
+		@Elses.push(element)
 
-	addElseIf: (condition, body) ->
-		@Elses.push {
-			type: 'ElseIf'
-			condition: condition
-			body: body
-		}
-
-exports.While = class While
+exports.ElseIf = class ElseIf
 	constructor: (@condition, @body) ->
+		@type = 'ElseIf'
+
+exports.Else = class Else
+	constructor: (@body) ->
+		@type = 'Else'
+
+# While
+exports.While = class While
+	constructor: (@test, @body) ->
 		@type = 'While'
 
+# Try
 exports.Try = class Try
 	constructor: (@TryBody, @CatchIdentifier, @CatchBody, @Finally = false) ->
 		@type = 'Try'
-		@Elses = []
 
 	addFinally: (body) ->
 		@Finally = true
 		@FinallyBody = body
+
+# Switch
+exports.Switch = class Switch
+	constructor: (@variable, @cases) ->
+		@type = 'Switch'
+
+exports.When = class When
+	constructor: (@condition, @body) ->
+		@type = 'When'
+
+exports.SwitchElse = class SwitchElse
+	constructor: (@body) ->
+		@type = 'SwitchElse'
