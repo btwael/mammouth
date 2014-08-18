@@ -1,4 +1,8 @@
+nodes = require './nodes'
+{IdCounter} = require './helpers'
+
 exports.rewrite = (tree, context) ->
+	IdCounter = new IdCounter
 	UseSuperMammouth = false
 	php = ''
 	ADD = (string) ->
@@ -52,9 +56,11 @@ exports.rewrite = (tree, context) ->
 					return element.value
 			when 'Bool'
 				if element.value
-					return 'true'
+					return 'TRUE'
 				else
-					return 'false'
+					return 'FALSE'
+			when 'Null'
+				return 'NULL'
 			when 'Array'
 				r = 'array('
 				for elem, i in element.elements
@@ -74,6 +80,16 @@ exports.rewrite = (tree, context) ->
 						r += ', '
 				r += ')'
 				return r;
+			when 'NewCall'
+				r = 'new ' + compile(element.variable)
+				if element.arguments isnt false
+					r += '('
+					for arg, i in element.arguments
+						r += compile arg
+						if i != element.arguments.length - 1
+							r += ', '
+					r += ')'
+				return r;
 			when 'Code'
 				if element.normal
 					r = 'function ' + element.name + '('
@@ -89,10 +105,22 @@ exports.rewrite = (tree, context) ->
 						r += compile parameter
 					if i != element.parameters.length - 1
 						r += ', '
-				r += ') {'
-				r += compile element.body
-				r += '}'
+				r += ')'
+				if element.body isnt false
+					r += ' {'
+					r += compile element.body
+					r += '}'
+				else
+					r += ';'
 				return r;
+			when 'Casting'
+				 return '(' + element.typec + ') ' + compile(element.variable)
+			when 'Exec'
+				return '`' + element.code + '`'
+			when 'HereDoc'
+				return '<<<EOT\n' + element.doc + '\nEOT'
+			when 'Clone'
+				return 'clone ' + compile(element.value)
 
 			# Operations
 			when 'Operation'
@@ -115,10 +143,21 @@ exports.rewrite = (tree, context) ->
 					context.Assign(element.left, element.right)
 				r = compile(element.left) + ' ' + element.operator + ' ' + compile(element.right)
 				return r
+			when 'GetKeyAssign'
+				r = ''
+				for key, i in element.keys
+					value = new nodes.Value(element.source.value)
+					value.add(new nodes.Access(new nodes.Literal('"' + key.name + '"'), '[]'))
+					if i isnt (element.keys.length - 1)
+						r += compile(new nodes.Expression(new nodes.Assign("=", key, value))) 
+						r += '\n'
+					else
+						r += compile(new nodes.Assign("=", key, value))
+				return r
 			when 'Constant'
 				cte = context.Add(element.left)
 				cte.type = 'cte'
-				return 'define("' + compile(element.left) + '", ' + compile(element.right) + ')'
+				return 'const ' + compile(element.left) + ' = ' + compile(element.right)
 			when 'Unary'
 				r = element.operator
 				r += compile element.expression
@@ -134,27 +173,83 @@ exports.rewrite = (tree, context) ->
 				r = '$Mammouth("in_array", ' + compile(element.left) + ', ' + compile(element.right) + ')'
 				return r
 
+			# Simple Statements
+			when 'Echo'
+				return 'echo ' + compile(element.value)
+			when 'Delete'
+				return 'unset(' + compile(element.value) + ')'
+			when 'Include'
+				if element.once
+					r = 'include_once '
+				else
+					r = 'include '
+				r += compile(element.path)
+				return r
+			when 'Require'
+				if element.once
+					r = 'require_once '
+				else
+					r = 'require '
+				r += compile(element.path)
+				return r
+			when 'Break'
+				r = 'break'
+				if element.arg isnt false
+					r += ' ' + compile(element.arg)
+				return r
+			when 'Continue'
+				r = 'continue'
+				if element.arg isnt false
+					r += ' ' + compile(element.arg)
+				return r
+			when 'Return'
+				return 'return ' + compile(element.value)
+			when 'Declare'
+				r = 'declare(' + compile(element.expression) + ')'
+				if element.script isnt false
+					r += ' {'
+					r += compile(element.script)
+					r += '}'
+				return r
+			when 'Goto'
+				return 'goto ' + element.section
+
 			# If
 			when 'If'
-				r = 'if(' + compile(element.condition) + ') {'
-				r += compile(element.body)
-				r += '}'
-				for elsei in element.Elses
-					if elsei.type is 'Else'
-						r += ' else {'
-						r += compile(elsei.body)
-						r += '}'
-					else if elsei.type is 'ElseIf'
-						r += ' elseif(' + compile(elsei.condition) + ') {'
-						r += compile(elsei.body)
-						r += '}'
-				return r
+				if element.as_expression
+					r = compile(element.condition) + ' ? ' + compile(element.body)
+					if element.Elses is false
+						r += ' : NULL'
+					else
+						r += ' : ' + compile(element.Elses)
+					return r
+				else
+					r = 'if(' + compile(element.condition) + ') {'
+					r += compile(element.body)
+					r += '}'
+					for elsei in element.Elses
+						if elsei.type is 'Else'
+							r += ' else {'
+							r += compile(elsei.body)
+							r += '}'
+						else if elsei.type is 'ElseIf'
+							r += ' elseif(' + compile(elsei.condition) + ') {'
+							r += compile(elsei.body)
+							r += '}'
+					return r
 
 			# While
 			when 'While'
 				r = 'while(' + compile(element.test) + ') {'
 				r += compile(element.body)
 				r += '}'
+				return r
+
+			# Do While
+			when 'DoWhile'
+				r = 'do {'
+				r += compile(element.body)
+				r += '} while (' + compile(element.test) + ');'
 				return r
 
 			# Try
@@ -186,6 +281,84 @@ exports.rewrite = (tree, context) ->
 					r += '\n'
 				r += '}'
 				return r
+
+			# For
+			when 'For'
+				if element.method is 'normal' and element.expressions.length > 1
+					r = 'for('
+					for expression, i in element.expressions
+						if expression.type is 'In'
+							expression.each = true
+						r += compile(expression)
+						if i isnt element.expressions.length
+							r += '; '
+					r += ') {'
+					r += compile(element.body)
+					r += '}'
+				else if element.method is 'normal' and element.expressions.length is 1 and element.expressions[0].type is 'In'
+					InElement = element.expressions[0]
+					r = 'for('
+					ID = IdCounter.get()
+					r += compile(ID) + ' = 0; '
+					r += compile(ID) + ' < count(' + compile(InElement.right) + '); '
+					r += compile(ID) + '++'
+					r += ') {'
+					element.body.nodes.unshift(new nodes.Expression(new nodes.Assign('=', InElement.left, new nodes.Value(InElement.right, [new nodes.Access(ID, '[]')]))))
+					r += compile(element.body)
+					r += '}'
+				else if element.method is 'foreach'
+					r = 'foreach('
+					r += compile(element.left)
+					r += ' as '
+					r += compile(element.right)
+					r += ') {'
+					r +=  compile(element.body)
+					r += '}'
+				return r
+
+			# Section
+			when 'Section'
+				return element.name + ':'
+
+			# Classe
+			when 'Class'
+				r = 'class ' + element.name
+				context.elements[element.name] = {
+					'type': 'class'
+				}
+				if element.abstract is true
+					r = 'abstract ' + r
+				if element.extendable isnt false
+					r += ' extends ' + element.extendable
+				if element.implement isnt false
+					r += ' implements ' + element.implement
+				r += ' {\n'
+				for line, i in element.body
+					lr = ''
+					if line.visibility isnt false
+						lr += line.visibility + ' '
+					if line.statically isnt false
+						lr += line.statically + ' '
+					lr += compile(line.element)
+					if line.finaly is true
+						lr = 'final ' + lr
+					if line.abstract is true
+						lr = 'abstract ' + lr
+					r += lr
+					if i isnt (element.body.length - 1)
+						r += '\n'
+				r += '\n}'
+				return r
+			# Namespace
+			when 'Namespace'
+				r = 'namespace ' + element.name
+				if element.body isnt false
+					r += ' {'
+					r += compile(element.body)
+					r += '}'
+				return r
+			when 'NamespaceRef'
+				return element.path
 
 	for doc in tree
 		switch doc.type

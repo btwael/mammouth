@@ -1,10 +1,11 @@
-Lexer = require("lex")
+Lexer = require "lex"
 
 col = 1
 row = 1
 
 IntoArray = false
 IntoMammouth = false
+IntoHereDoc = false
 
 Levels = [
 	{
@@ -16,6 +17,7 @@ Levels = [
 
 lastIsIdentifier = false
 ShouldCloseCall = false
+captureTypeCasting  =false
 tokenStack = []
 
 setToken = (token) ->
@@ -23,6 +25,10 @@ setToken = (token) ->
 		lastIsIdentifier = true
 	else
 		lastIsIdentifier = false
+		if token is '=>'
+			captureTypeCasting = true
+		else
+			captureTypeCasting = false
 	tokenStack.unshift(token)
 
 CloseIndents = (tokens) ->
@@ -55,9 +61,20 @@ RegularExpression =
 
 	# Value
 	IDENTIFIER: /(([$A-Za-z_\x7f-\uffff][$\w\x7f-\uffff]*)( [^\n\S]* : (?!:) )?)/
-	NUMBER: /(0b[01]+|0o[0-7]+|0x[\da-f]+|\d*\.?\d+(?:e[+-]?\d+)?)/
+	NUMBER: /(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)/
 	STRING: /('[^\\']*(?:\\[\s\S][^\\']*)*'|"[^\\"]*(?:\\[\s\S][^\\"]*)*")/
-	BOOL: /true|false/
+
+	# HEREDOC
+	HEREDOC: /// (
+		(
+			(
+				?!(
+					\`
+				)
+			)
+			(.|[\n\r\u2028\u2029]|[\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000])
+		)*
+	) ///
 
 	LineTerminator: /[\n\r\u2028\u2029]/
 	Zs: /[\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]/
@@ -69,6 +86,16 @@ lexer.addRule RegularExpression.PlainText, (lexeme) ->
 		@yytext = lexeme
 		setToken('PlainText')
 		return 'PlainText'
+	else
+		@reject = true
+
+# HEREDOC
+lexer.addRule RegularExpression.HEREDOC, (lexeme) ->
+	if IntoMammouth and IntoHereDoc
+		col += lexeme.length
+		@yytext = lexeme
+		setToken('HEREDOCTEXT')
+		return 'HEREDOCTEXT'
 	else
 		@reject = true
 
@@ -122,6 +149,25 @@ lexer.addRule RegularExpression.MammouthEnd, ->
 	return tokens
 
 # Symbols
+lexer.addRule /\`/, (lexeme) ->
+	col += lexeme.length
+	if IntoHereDoc
+		IntoHereDoc = false
+	else
+		IntoHereDoc = true
+	setToken('`')
+	return '`'
+
+lexer.addRule /\{/, (lexeme) ->
+	col += lexeme.length
+	setToken('{')
+	return '{'
+
+lexer.addRule /\}/, (lexeme) ->
+	col += lexeme.length
+	setToken('}')
+	return '}'
+
 lexer.addRule /\(/, (lexeme) ->
 	col += lexeme.length
 	if lastIsIdentifier
@@ -142,6 +188,11 @@ lexer.addRule /\)/, (lexeme) ->
 	else
 		setToken(')')
 		return ')'
+
+lexer.addRule /\;/, (lexeme) ->
+	col += lexeme.length
+	setToken(';')
+	return ';'
 
 lexer.addRule /\[/, (lexeme) ->
 	col += lexeme.length
@@ -177,6 +228,16 @@ lexer.addRule /->/, (lexeme) ->
 	col += lexeme.length
 	setToken('->')
 	return '->'
+
+lexer.addRule /\=>/, (lexeme) ->
+	col += lexeme.length
+	setToken('=>')
+	return '=>'
+
+lexer.addRule /\=\=>/, (lexeme) ->
+	col += lexeme.length
+	setToken('==>')
+	return '==>'
 
 lexer.addRule /:/, (lexeme) ->
 	col += lexeme.length
@@ -227,6 +288,11 @@ lexer.addRule /\//, (lexeme) ->
 	col += lexeme.length
 	setToken('/')
 	return '/'
+
+lexer.addRule /\\/, (lexeme) ->
+	col += lexeme.length
+	setToken('\\')
+	return '\\'
 
 lexer.addRule /%/, (lexeme) ->
 	col += lexeme.length
@@ -349,40 +415,96 @@ lexer.addRule /\=/, (lexeme) ->
 # Identifier and reserved words
 lexer.addRule RegularExpression.IDENTIFIER, (lexeme) ->
 	col += lexeme.length
+	if captureTypeCasting
+		@yytext = lexeme
+		setToken('cType')
+		return 'cType'
 	if lexeme in ['true', 'false']
 		@yytext = eval lexeme
 		setToken('BOOL')
 		return 'BOOL'
+	else if lexeme is 'break'
+		setToken('BREAK')
+		return 'BREAK' 
 	else if lexeme is 'and'
 		@yytext = lexeme
 		setToken('LOGIC')
 		return 'LOGIC'
+	else if lexeme is 'abstract'
+		setToken('ABSTRACT')
+		return 'ABSTRACT'
+	else if lexeme is 'as'
+		setToken('AS')
+		return 'AS'
 	else if lexeme is 'catch'
-		@yytext = lexeme
 		setToken('CATCH')
 		return 'CATCH'
 	else if lexeme is 'case'
 		setToken('CASE')
 		return 'CASE'
+	else if lexeme is 'class'
+		setToken('CLASS')
+		return 'CLASS'
+	else if lexeme is 'clone'
+		setToken('CLONE')
+		return 'CLONE'
+	else if lexeme is 'continue'
+		setToken('CONTINUE')
+		return 'CONTINUE'
 	else if lexeme is 'cte'
-		@yytext = lexeme
 		setToken('CTE')
 		return 'CTE'
+	else if lexeme is 'declare'
+		setToken('DECLARE')
+		return 'DECLARE'
+	else if lexeme is 'delete'
+		setToken('DELETE')
+		return 'DELETE'
+	else if lexeme is 'do'
+		setToken('DO')
+		return 'DO'
+	else if lexeme is 'each'
+		setToken('EACH')
+		return 'EACH'
+	else if lexeme is 'echo'
+		setToken('ECHO')
+		return 'ECHO'
 	else if lexeme is 'else'
-		@yytext = lexeme
 		setToken('ELSE')
 		return 'ELSE'
+	else if lexeme is 'exec'
+		setToken('EXEC')
+		return 'EXEC'
+	else if lexeme is 'extends'
+		setToken('EXTENDS')
+		return 'EXTENDS'
+	else if lexeme is 'final'
+		setToken('FINAL')
+		return 'FINAL'
 	else if lexeme is 'finally'
-		@yytext = lexeme
 		setToken('FINALLY')
 		return 'FINALLY'
+	else if lexeme is 'for'
+		setToken('FOR')
+		return 'FOR'
 	else if lexeme is 'func'
 		setToken('FUNC')
 		return 'FUNC'
+	else if lexeme is 'goto'
+		setToken('GOTO')
+		return 'GOTO'
 	else if lexeme is 'if'
-		@yytext = lexeme
 		setToken('IF')
 		return 'IF'
+	else if lexeme is 'implements'
+		setToken('IMPLEMENTS')
+		return 'IMPLEMENTS'
+	else if lexeme is 'include'
+		setToken('INCLUDE')
+		return 'INCLUDE'
+	else if lexeme is 'instanceof'
+		setToken('INSTANCEOF')
+		return 'INSTANCEOF'
 	else if lexeme is "is"
 		@yytext = "==="
 		setToken('COMPARE')
@@ -397,15 +519,47 @@ lexer.addRule RegularExpression.IDENTIFIER, (lexeme) ->
 	else if lexeme is 'not'
 		setToken('NOT')
 		return 'NOT'
+	else if lexeme is 'namespace'
+		setToken('NAMESPACE')
+		return 'NAMESPACE'
+	else if lexeme is 'new'
+		setToken('NEW')
+		return 'NEW'
+	else if lexeme is 'null'
+		setToken('NULL')
+		return 'NULL'
+	else if lexeme is 'once'
+		setToken('ONCE')
+		return 'ONCE'
 	else if lexeme is 'or'
 		@yytext = lexeme
 		setToken('LOGIC')
 		return 'LOGIC'
+	else if lexeme is 'public'
+		setToken('PUBLIC')
+		return 'PUBLIC'
+	else if lexeme is 'private'
+		setToken('PRIVATE')
+		return 'PRIVATE'
+	else if lexeme is 'protected'
+		setToken('PROTECTED')
+		return 'PROTECTED'
+	else if lexeme is 'static'
+		setToken('STATIC')
+		return 'STATIC'
+	else if lexeme is 'require'
+		setToken('REQUIRE')
+		return 'REQUIRE'
+	else if lexeme is 'return'
+		setToken('RETURN')
+		return 'RETURN'
 	else if lexeme is 'switch'
 		setToken('SWITCH')
 		return 'SWITCH'
+	else if lexeme is 'then'
+		setToken('THEN')
+		return 'THEN'
 	else if lexeme is 'try'
-		@yytext = lexeme
 		setToken('TRY')
 		return 'TRY'
 	else if lexeme is 'use'

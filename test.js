@@ -1,6 +1,5 @@
-v = "sdf{{\nfunc wael(use fgd)->\n sdfsd\nwael()}}"
+v = "sdf{{\nabstract class AbstractClass\n final protected func getValue(name)\nm = clone AbstractClass}}"
 mammouth = require('./lib/mammouth')
-//console.log(mammouth.parse(v)[1])
 console.log(mammouth.compile(v))
 /*lexer = require('./lib/lexer.js'),
 lexer.setInput(v)

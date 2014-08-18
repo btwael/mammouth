@@ -21,12 +21,12 @@ exports.Context = class Context
 			when 'Bool'
 				return 'Bool'
 			when 'Code'
-				return 'variable-function'
+				return 'variable'
 	Identify: (name) ->
 		if @elements[name] == undefined
 			return '$' + name
 		else
-			if @elements[name].type is 'function' or @elements[name].type is 'cte'
+			if @elements[name].type in ['function', 'cte', 'class']
 				return name
 			else
 				return '$' + name

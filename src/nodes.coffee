@@ -47,6 +47,10 @@ exports.Bool = class Bool
 	constructor: (@value) ->
 		@type = 'Bool'
 
+exports.Null = class
+	constructor: ->
+		@type = 'Null'
+
 exports.Array = class Array
 	constructor: (@elements = []) ->
 		@type = 'Array'
@@ -59,14 +63,43 @@ exports.Call = class Call
 	constructor: (@variable, @arguments = []) ->
 		@type = 'Call'
 
+exports.NewCall = class NewCall
+	constructor: (@variable, @arguments = false) ->
+		@type = 'NewCall'
+
 exports.Code = class Code
 	constructor: (@parameters, @body, @normal = false, @name = null) ->
 		@type = 'Code'
+
+exports.Casting = class Casting
+	constructor: (@variable, @typec) ->
+		@type = 'Casting'
+
+exports.Exec = class Exec
+	constructor: (code) ->
+		@type = 'Exec'
+		if code[0] is "'"
+			@code = code.replace(/\'/g, '')
+		else if code[0] is '"'
+			@code = code.replace(/\"/, '') 
+
+exports.HereDoc = class HereDoc
+	constructor: (@doc) ->
+		@type = 'HereDoc'
+
+exports.Clone = class Clone
+	constructor: (@value) ->
+		@type = 'Clone'
+
 
 # Operations
 exports.Assign = class Assign
 	constructor: (@operator, @left, @right) ->
 		@type = 'Assign'
+
+exports.GetKeyAssign = class GetKeyAssign
+	constructor: (@keys, @source) ->
+		@type = 'GetKeyAssign'
 
 exports.Constant = class Constant
 	constructor: (@left, @right) ->
@@ -92,11 +125,51 @@ exports.In = class In
 	constructor: (@left, @right) ->
 		@type = 'In'
 
+# Simple Statements
+exports.Echo = class Echo
+	constructor: (@value) ->
+		@type = 'Echo'
+
+exports.Delete = class Delete
+	constructor: (@value) ->
+		@type = 'Delete'
+
+exports.Include = class Include
+	constructor: (@path, @once) ->
+		@type = 'Include'
+
+exports.Require = class Require
+	constructor: (@path, @once) ->
+		@type = 'Require'
+
+exports.Break = class Break
+	constructor: (@arg = false) ->
+		@type = 'Break'
+
+exports.Continue = class Continue
+	constructor: (@arg = false) ->
+		@type = 'Continue'
+
+exports.Return = class Return
+	constructor: (@value) ->
+		@type = 'Return'
+
+exports.Declare = class Declare
+	constructor: (@expression, @script = false) ->
+		@type = 'Declare'
+
+exports.Goto = class Goto
+	constructor: (@section) ->
+		@type = 'Goto'
+
 # If
 exports.If = class If
-	constructor: (@condition, @body) ->
+	constructor: (@condition, @body, @as_expression = false) ->
 		@type = 'If'
-		@Elses = []
+		if not @as_expression
+			@Elses = []
+		else
+			@Elses = false
 
 	addElse: (element) ->
 		@Elses.push(element)
@@ -113,6 +186,11 @@ exports.Else = class Else
 exports.While = class While
 	constructor: (@test, @body) ->
 		@type = 'While'
+
+# Do While
+exports.DoWhile = class DoWhile
+	constructor: (@test, @body) ->
+		@type = 'DoWhile'
 
 # Try
 exports.Try = class Try
@@ -135,3 +213,41 @@ exports.When = class When
 exports.SwitchElse = class SwitchElse
 	constructor: (@body) ->
 		@type = 'SwitchElse'
+
+# For
+exports.For = class For
+	constructor: ->
+		@type = 'For'
+		if arguments[0] is 'normal'
+			@method = 'normal'
+			@expressions = arguments[1]
+			@body = arguments[2]
+		else if arguments[0] is 'foreach'
+			@method = 'foreach'
+			@left = arguments[1]
+			@right = arguments[2]
+			@body = arguments[3]
+
+# Section
+exports.Section = class Section
+	constructor: (@name) ->
+		@type = 'Section'
+
+# Classes
+exports.Class = class Class
+	constructor: (@name, @body, @extendable = false, @implement = false, @abstract = false) ->
+		@type = "Class"
+
+exports.ClassLine = class ClassLine
+	constructor: (@visibility, @statically, @element) ->
+		@type = 'ClassLine'
+		@abstract = false
+
+# Namespaces
+exports.Namespace = class Namespace
+	constructor: (@name, @body = false) ->
+		@type = 'Namespace'
+
+exports.NamespaceRef = class NamespaceRef
+	constructor: (@path) ->
+		@type = 'NamespaceRef'
