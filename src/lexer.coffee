@@ -204,6 +204,11 @@ lexer.addRule /\]/, (lexeme) ->
 	setToken(']')
 	return ']'
 
+lexer.addRule /@/, (lexeme) ->
+	col += lexeme.length
+	setToken('@')
+	return '@'
+
 lexer.addRule /,/, (lexeme) ->
 	col += lexeme.length
 	setToken(',')

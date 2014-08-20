@@ -1,4 +1,4 @@
-v = "sdf{{\nabstract class AbstractClass\n final protected func getValue(name)\nm = clone AbstractClass}}"
+v = "sdf{{\nabstract class AbstractClass\n final protected func getValue(name)->\n  @dfgdf\n  this.dfgd\nm = clone AbstractClass}}"
 mammouth = require('./lib/mammouth')
 console.log(mammouth.compile(v))
 /*lexer = require('./lib/lexer.js'),

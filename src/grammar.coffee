@@ -117,9 +117,9 @@ grammar =
 
 	SimpleAssignable: [
 		o 'Identifier', '$$ = new yy.Value($1)'
-		o 'USE IDENTIFIER', '$$ = new yy.Identifier(yytext, true, true)'
 		o '& IDENTIFIER', '$$ = new yy.Identifier(yytext, true, true)'
 		o 'Value Accessor', '$1.add($2); $$ = $1'
+		o '@ Identifier', 'th = new yy.Value(new yy.Identifier("this")); th.add(new yy.Access($2)); $$ = th'
 	]
 
 	Accessor: [
