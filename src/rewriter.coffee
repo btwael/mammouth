@@ -1,8 +1,8 @@
 nodes = require './nodes'
-{IdCounter} = require './helpers'
+helpers = require './helpers'
 
 exports.rewrite = (tree, context) ->
-	IdCounter = new IdCounter
+	IdCounter = new helpers.IdCounter
 	UseSuperMammouth = false
 	php = ''
 	ADD = (string) ->

@@ -1,14 +1,18 @@
 yy = require './nodes'
 parser = require('./parser').parser
-parser.lexer = require './lexer'
+lexer = require './lexer'
 rewriter = require './rewriter'
 {PreContext} = require './context'
+parser.lexer = lexer
 parser.yy = yy
-exports.VERSION = '1.0.0'
 
 module.exports =
+	VERSION: '2.0.0'
+
+	parser: parser
+
 	parse: (code) ->
-		return parser.parse code
+		return @parser.parse code
 
 	compile: (code, context) ->
 		tree = @parse code
