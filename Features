@@ -60,7 +60,7 @@
 	- [x] Scope Resolution Operator (::)
 	- [x] Static Keyword
 	- [x] Class Abstraction
-	- [ ] Object Interfaces
+	- [x] Object Interfaces
 	- [ ] Traits
 	- [ ] Object Iteration
 	- [x] Final Keyword

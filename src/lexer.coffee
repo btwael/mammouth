@@ -510,6 +510,9 @@ lexer.addRule RegularExpression.IDENTIFIER, (lexeme) ->
 	else if lexeme is 'instanceof'
 		setToken('INSTANCEOF')
 		return 'INSTANCEOF'
+	else if lexeme is 'interface'
+		setToken('INTERFACE')
+		return 'INTERFACE'
 	else if lexeme is "is"
 		@yytext = "==="
 		setToken('COMPARE')

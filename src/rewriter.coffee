@@ -349,6 +349,31 @@ exports.rewrite = (tree, context) ->
 						r += '\n'
 				r += '\n}'
 				return r
+
+			# Interface
+			when 'Interface'
+				r = 'interface ' + element.name
+				context.elements[element.name] = {
+					'type': 'interface'
+				}
+				if element.extendable isnt false
+					r += ' extends '
+					for ext, i in element.extendable
+						r += ext
+						if i isnt (element.extendable.length - 1)
+							r += ', '
+				r += ' {\n'
+				for line, i in element.body
+					lr = ''
+					if line.type is 'Code'
+						lr += 'public ' + compile(line)
+					else 
+						lr += compile(line)
+					r += lr
+					if i isnt (element.body.length - 1)
+						r += '\n'
+				r += '\n}'
+
 			# Namespace
 			when 'Namespace'
 				r = 'namespace ' + element.name

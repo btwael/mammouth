@@ -66,6 +66,7 @@ grammar =
 		o 'Declare'
 		o 'Section'
 		o 'Class'
+		o 'Interface'
 		o 'Namespace'
 	]
 
@@ -405,6 +406,28 @@ grammar =
 	Statically: [
 		o '', '$$ = false'
 		o 'STATIC', '$$ = "static"'
+	]
+
+	# Interface
+	Interface: [
+		o 'INTERFACE IDENTIFIER LineTerminator INDENT InterfaceBody OUTDENT', '$$ = new yy.Interface($2, $5)'
+		o 'INTERFACE IDENTIFIER EXTENDS ExtendedList LineTerminator INDENT InterfaceBody OUTDENT', '$$ = new yy.Interface($2, $7, $4)'
+	]
+
+	InterfaceBody: [
+		o 'InterfaceLine', '$$ = [$1]'
+		o 'InterfaceBody OptLineTerminator InterfaceLine', '$$ = $1.concat($3)'
+		o 'InterfaceBody LineTerminator'
+	]
+
+	InterfaceLine: [
+		o 'PUBLIC Function', 2
+		o 'Assign', '$$ = new yy.Expression($1)'
+	]
+
+	ExtendedList: [
+		o 'IDENTIFIER', '$$ = [$1]'
+		o 'ExtendedList , IDENTIFIER', '$$ = $1.concat($3)'
 	]
 
 	# Namespace

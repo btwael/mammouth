@@ -1,4 +1,4 @@
-v = "sdf{{\nabstract class AbstractClass\n final protected func getValue(name)->\n  @dfgdf\n  this.dfgd\nm = clone AbstractClass}}"
+v = "sdf{{\ninterface iTemplate extends wael, moha\n public func setVariable(name, var)\n cte wael = 12}}"
 mammouth = require('./lib/mammouth')
 console.log(mammouth.compile(v))
 /*lexer = require('./lib/lexer.js'),

@@ -233,7 +233,7 @@ exports.Section = class Section
 	constructor: (@name) ->
 		@type = 'Section'
 
-# Classes
+# Classe
 exports.Class = class Class
 	constructor: (@name, @body, @extendable = false, @implement = false, @abstract = false) ->
 		@type = "Class"
@@ -243,7 +243,12 @@ exports.ClassLine = class ClassLine
 		@type = 'ClassLine'
 		@abstract = false
 
-# Namespaces
+# Interface
+exports.Interface = class Interface
+	constructor: (@name, @body, @extendable = false) ->
+		@type = "Interface"
+
+# Namespace
 exports.Namespace = class Namespace
 	constructor: (@name, @body = false) ->
 		@type = 'Namespace'
