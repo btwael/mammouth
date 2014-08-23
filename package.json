@@ -6,12 +6,15 @@
 		"name": "Wael Amine Boutglay",
 		"email": "btwael@gmail.com"
 	},
+	"bin": "./bin/mammouth",
+	"main": "extras/mammouth.js",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/btwael/mammouth.git"
 	},
 	"dependencies": {
-		"lex": "latest"
+		"lex": "latest",
+		"commander": "latest"
 	},
 	"devDependencies": {
 		"jison": "latest",
