@@ -184,9 +184,9 @@ grammar =
 	# Function
 	Function: [
 		o 'FUNC IDENTIFIER', '$$ = new yy.Code([], false, true, $2)'
+		o 'FUNC IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2)'
 		o 'FUNC IDENTIFIER ( ParametersList )', '$$ = new yy.Code($4, false, true, $2)'
 		o 'FUNC IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2)'
-		o 'FUNC IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2)'
 	]
 
 	Code: [
@@ -387,7 +387,8 @@ grammar =
 	ClassLine: [
 		o 'Visibility Statically Identifier', '$$ = new yy.ClassLine($1, $2, $$ = new yy.Expression($3))'
 		o 'Visibility Statically Assign', '$$ = new yy.ClassLine($1, $2, $$ = new yy.Expression($3))'
-		o 'Finaly Visibility Statically Function', 'n = new yy.ClassLine($2, $3, $4); n.finaly = true; $$ = n'
+		o 'Visibility Statically Function', '$$ = new yy.ClassLine($1, $2, $3);'
+		o 'FINAL Visibility Statically Function', 'n = new yy.ClassLine($2, $3, $4); n.finaly = true; $$ = n'
 		o 'ABSTRACT ClassLine', '$2.abstract = true; $$ = $2'
 	]
 
