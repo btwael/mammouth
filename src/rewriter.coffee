@@ -93,9 +93,10 @@ exports.rewrite = (tree, context) ->
 			when 'Code'
 				if element.normal
 					r = 'function ' + element.name + '('
-					context.elements[element.name] = {
-						'type': 'function'
-					}
+					context.push({
+						name: element.name
+						type: 'function'
+					})
 				else
 					r = 'function('
 				for parameter, i in element.parameters
@@ -142,8 +143,6 @@ exports.rewrite = (tree, context) ->
 					r = compile(element.left) + ' ' + element.operator + ' ' + compile(element.right)
 				return r
 			when 'Assign'
-				if element.operator is '='
-					context.Assign(element.left, element.right)
 				r = compile(element.left) + ' ' + element.operator + ' ' + compile(element.right)
 				return r
 			when 'GetKeyAssign'
@@ -158,8 +157,10 @@ exports.rewrite = (tree, context) ->
 						r += compile(new nodes.Assign("=", key, value))
 				return r
 			when 'Constant'
-				cte = context.Add(element.left)
-				cte.type = 'cte'
+				context.push({
+					name: compile(element.left)
+					type: 'cte'
+				})
 				return 'const ' + compile(element.left) + ' = ' + compile(element.right)
 			when 'Unary'
 				r = element.operator
@@ -326,9 +327,10 @@ exports.rewrite = (tree, context) ->
 			# Classe
 			when 'Class'
 				r = 'class ' + element.name
-				context.elements[element.name] = {
-					'type': 'class'
-				}
+				context.push({
+					name: element.name
+					type: 'class'
+				})
 				if element.abstract is true
 					r = 'abstract ' + r
 				if element.extendable isnt false
@@ -356,9 +358,10 @@ exports.rewrite = (tree, context) ->
 			# Interface
 			when 'Interface'
 				r = 'interface ' + element.name
-				context.elements[element.name] = {
-					'type': 'interface'
-				}
+				context.push({
+					name: element.name
+					type: 'interface'
+				})
 				if element.extendable isnt false
 					r += ' extends '
 					for ext, i in element.extendable

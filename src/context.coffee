@@ -1,38 +1,29 @@
 exports.Context = class Context
-	constructor: (@elements = {}) ->
+	constructor: (element) ->
+		@scopes = []
+		@scopes.unshift(element)
 
-	Add: (element) ->
-		switch element.type
-			when 'Value'
-				if element.properties.length > 0
+	push: (iden) ->
+		@scopes[0][iden.name] = {}
+		@scopes[0][iden.name].name = iden.name
+		@scopes[0][iden.name].type = iden.type
 
-				else
-					return @Add element.value
-			when 'Identifier'
-				@elements[element.name] = {}
-				@elements[element.name].name = element.name
-				return @elements[element.name]
-	Assign: (right, left) ->
-		r = @Add right
-		r.type = @Typefy(left)
-		return 0
-	Typefy: (element) ->
-		switch element.type
-			when 'Bool'
-				return 'Bool'
-			when 'Code'
-				return 'variable'
+	scopein: () ->
+		@scopes.unshift({});
+
+	scopeout: () ->
+		@scopes.shift()
+
 	Identify: (name) ->
-		if @elements[name] == undefined
+		if @scopes[0][name] == undefined
 			return '$' + name
 		else
-			if @elements[name].type in ['function', 'cte', 'class']
+			if @scopes[0][name].type in ['function', 'cte', 'class', 'interface']
 				return name
 			else
 				return '$' + name
 
-PreContext = exports.PreContext = new Context()
-PreContext.elements =
+PreContext = exports.PreContext = new Context({
 	# Function handling Functions
 	'call_​user_​func_​array':
 		'type': 'function'
@@ -60,3 +51,4 @@ PreContext.elements =
 		'type': 'function'
 	'unregister_tick_function':
 		'type': 'function'
+})
