@@ -434,7 +434,7 @@ grammar =
 	# Namespace
 	Namespace: [
 		o 'NAMESPACE NamespaceName', '$$ = new yy.Expression(new yy.Namespace($2))'
-		o 'NAMESPACE NamespaceName Block', '$$ = new yy.Namespace($2, $3)'
+		o 'NAMESPACE NamespaceName -> Block', '$$ = new yy.Namespace($2, $4)'
 	]
 
 	NamespaceName: [

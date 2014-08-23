@@ -15,7 +15,7 @@ exports.Context = class Context
 		@scopes.shift()
 
 	Identify: (name) ->
-		for scope in @scope
+		for scope in @scopes
 			if scope[name] isnt undefined
 				if scope[name].type in ['function', 'cte', 'class', 'interface']
 					return name
