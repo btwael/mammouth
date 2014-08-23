@@ -1,3 +1,10 @@
+/**
+ * Mammouth Compiler v2.0.0
+ * http://mammouth.wamalaka.com
+ *
+ * Copyright 2014, Wael Amine Boutglay
+ * Released under the MIT License
+ */
 (function(root) {
 function require(path){ return require[path]; }
 require["lex"] = (function() {var exports = {}, module = {exports: exports};if (typeof module === "object" && typeof module.exports === "object") module.exports = Lexer;

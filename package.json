@@ -10,8 +10,11 @@
 		"type": "git",
 		"url": "git://github.com/btwael/mammouth.git"
 	},
+	"dependencies": {
+		"lex": "latest"
+	},
 	"devDependencies": {
-		"lex": "latest",
-		"jison": "latest"
+		"jison": "latest",
+		"node-minify": "latest"
 	}
 }
