@@ -1,4 +1,4 @@
-v = "sdf{{\ndelete wael}}"
+v = "sdf{{\ndelete variable # dsfsdfs\nsdfs}}"
 mammouth = require('./lib/mammouth')
 console.log(mammouth.compile(v))
 /*lexer = require('./lib/lexer.js'),

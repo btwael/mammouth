@@ -1,4 +1,6 @@
-- [ ] Comments
+- [/] Comments
+	- [x] SingleLine with #
+	- [ ] MultiLine
 - [x] Types
 	- [x] Boolean
 	- [x] Numbers
