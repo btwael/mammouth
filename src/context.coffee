@@ -15,13 +15,13 @@ exports.Context = class Context
 		@scopes.shift()
 
 	Identify: (name) ->
-		if @scopes[0][name] == undefined
-			return '$' + name
-		else
-			if @scopes[0][name].type in ['function', 'cte', 'class', 'interface']
-				return name
-			else
-				return '$' + name
+		for scope in @scope
+			if scope[name] isnt undefined
+				if scope[name].type in ['function', 'cte', 'class', 'interface']
+					return name
+				else
+					return '$' + name
+		return '$' + name
 
 PreContext = exports.PreContext = new Context({
 	# Function handling Functions
