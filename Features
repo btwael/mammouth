@@ -62,7 +62,7 @@
 	- [x] Class Abstraction
 	- [x] Object Interfaces
 	- [ ] Traits
-	- [ ] Object Iteration
+	- [x] Object Iteration
 	- [x] Final Keyword
 	- [x] Object Cloning
 - [x] Namespace

@@ -346,7 +346,7 @@ grammar =
 	# For
 	For: [
 		o 'FOR ForExpressions Block', '$$ = new yy.For("normal", $2, $3)'
-		o 'FOR EACH Expression AS Expression Block', '$$ = new yy.For("foreach", $3, $5, $6)'
+		o 'FOR EACH Expression AS Expression Block', '$5.foreach = true; $$ = new yy.For("foreach", $3, $5, $6)'
 	]
 
 	ForExpressions: [

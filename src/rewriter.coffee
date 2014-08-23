@@ -114,7 +114,10 @@ exports.rewrite = (tree, context) ->
 					r += ';'
 				return r;
 			when 'Casting'
-				 return '(' + element.typec + ') ' + compile(element.variable)
+				if element.foreach is true
+					return compile(new nodes.Identifier(element.typec)) + ' => ' + compile(element.variable)
+				else
+					return '(' + element.typec + ') ' + compile(element.variable)
 			when 'Exec'
 				return '`' + element.code + '`'
 			when 'HereDoc'
