@@ -50,7 +50,7 @@ RegularExpression =
 					|}}
 				)
 			)
-			.
+			([\n\r\u2028\u2029]|.)
 		)*
 	) ///
 	MammouthStart: /// {{ ///
@@ -155,6 +155,13 @@ lexer.addRule RegularExpression.MammouthEnd, ->
 	tokens = CloseIndents(['}}'])
 	for token in tokens
 		setToken(token)
+	Levels = [
+		{
+			IndentStack: []
+			CurrentIndent: -1
+			OpenedIndent: 0
+		}
+	]
 	return tokens
 
 # Symbols
