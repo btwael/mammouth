@@ -15,8 +15,9 @@ Levels = [
 	}
 ]
 
+OpenedParens = []
+
 lastIsIdentifier = false
-ShouldCloseCall = false
 captureTypeCasting  =false
 tokenStack = []
 
@@ -196,22 +197,19 @@ lexer.addRule /\(/, (lexeme) ->
 	col += lexeme.length
 	if lastIsIdentifier
 		lastIsIdentifier = false
-		ShouldCloseCall = true
+		OpenedParens.unshift 'CALL_END'
 		setToken('CALL_START')
 		return 'CALL_START'
 	else
+		OpenedParens.unshift ')'
 		setToken('(')
 		return '('
 
 lexer.addRule /\)/, (lexeme) ->
 	col += lexeme.length
-	if ShouldCloseCall
-		ShouldCloseCall = false
-		setToken('CALL_END')
-		return 'CALL_END'
-	else
-		setToken(')')
-		return ')'
+	tok = OpenedParens.shift()
+	setToken(tok)
+	return tok
 
 lexer.addRule /\;/, (lexeme) ->
 	col += lexeme.length
