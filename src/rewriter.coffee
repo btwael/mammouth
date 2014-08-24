@@ -158,7 +158,7 @@ exports.rewrite = (tree, context) ->
 				return r
 			when 'Constant'
 				context.push({
-					name: compile(element.left)
+					name: element.left.name
 					type: 'cte'
 				})
 				return 'const ' + compile(element.left) + ' = ' + compile(element.right)

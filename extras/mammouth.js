@@ -3198,7 +3198,7 @@ require["./rewriter"] = (function() {var exports = {}, module = {exports: export
           return r;
         case 'Constant':
           context.push({
-            name: compile(element.left),
+            name: element.left.name,
             type: 'cte'
           });
           return 'const ' + compile(element.left) + ' = ' + compile(element.right);

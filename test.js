@@ -4,9 +4,7 @@ function heredoc (f) {
 v = heredoc(function() {
 /*
 {{
-preg_replace_callback(func (match)->
-    return 'sdfsd'
-, 'hello-world')
+cte wamalaka =12
 }}
 */
 })
