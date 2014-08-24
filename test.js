@@ -3,27 +3,16 @@ function heredoc (f) {
 };
 v = heredoc(function() {
 /*
-{{
-namespace my\name
+<p>{{echo "wael"}}</p>
 
-class MyClass
- cte w = "wael"
-func myfunction ->
-  somevar
-cte MYCONST = 1
-MYCONST
-a = new MyClass
-c = new \my\name\MyClass
-$d = __NAMESPACE__ <-> '\MYCONST'
-}}
 */
 })
 mammouth = require('./lib/mammouth')
 console.log(mammouth.compile(v))
-lexer = require('./lib/lexer.js'),
+/*lexer = require('./lib/lexer.js'),
 lexer.setInput(v)
 m= 0
 while(m!=undefined) {
 	m=lexer.lex()
 	console.log(m)
-}
+}*/

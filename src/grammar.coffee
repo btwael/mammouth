@@ -34,6 +34,8 @@ grammar =
 	]
 
 	Block: [
+		o 'Expression', '$$ = new yy.Block([new yy.Expression($1)])'
+		o 'SimpleStatement', '$$ = new yy.Block([new yy.Expression($1)])'
 		o 'INDENT Lines OUTDENT', '$$ = new yy.Block($2)'
 		o 'LineTerminator INDENT Lines OUTDENT', '$$ = new yy.Block($3)'
 	]
