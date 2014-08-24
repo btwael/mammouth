@@ -322,4 +322,171 @@ PreContext = exports.PreContext = new Context({
 		'type': 'function'
 	'classkit_method_rename':
 		'type': 'function'
+
+
+	# Ctype
+	# Ctype functions
+	'ctype_alnum':
+		'type': 'function'
+	'ctype_alpha':
+		'type': 'function'
+	'ctype_cntrl':
+		'type': 'function'
+	'ctype_digit':
+		'type': 'function'
+	'ctype_graph':
+		'type': 'function'
+	'ctype_lower':
+		'type': 'function'
+	'ctype_print':
+		'type': 'function'
+	'ctype_punct':
+		'type': 'function'
+	'ctype_space':
+		'type': 'function'
+	'ctype_upper':
+		'type': 'function'
+	'ctype_xdigit':
+		'type': 'function'
+
+
+	# Data Filtering
+	# Data Filtering Constants	
+	'INPUT_POST':
+		'type': 'cte'
+	'INPUT_GET':
+		'type': 'cte'
+	'INPUT_COOKIE':
+		'type': 'cte'
+	'INPUT_ENV':
+		'type': 'cte'
+	'INPUT_SERVER':
+		'type': 'cte'
+	'INPUT_SESSION':
+		'type': 'cte'
+	'INPUT_REQUEST':
+		'type': 'cte'
+	'FILTER_FLAG_NONE':
+		'type': 'cte'
+	'FILTER_REQUIRE_SCALAR':
+		'type': 'cte'
+	'FILTER_REQUIRE_ARRAY':
+		'type': 'cte'
+	'FILTER_FORCE_ARRAY':
+		'type': 'cte'
+	'FILTER_NULL_ON_FAILURE':
+		'type': 'cte'
+	'FILTER_VALIDATE_INT':
+		'type': 'cte'
+	'FILTER_VALIDATE_BOOLEAN':
+		'type': 'cte'
+	'FILTER_VALIDATE_FLOAT':
+		'type': 'cte'
+	'FILTER_VALIDATE_REGEXP':
+		'type': 'cte'
+	'FILTER_VALIDATE_URL':
+		'type': 'cte'
+	'FILTER_VALIDATE_EMAIL':
+		'type': 'cte'
+	'FILTER_VALIDATE_IP':
+		'type': 'cte'
+	'FILTER_DEFAULT':
+		'type': 'cte'
+	'FILTER_UNSAFE_RAW':
+		'type': 'cte'
+	'FILTER_SANITIZE_STRING':
+		'type': 'cte'
+	'FILTER_SANITIZE_STRIPPED':
+		'type': 'cte'
+	'FILTER_SANITIZE_ENCODED':
+		'type': 'cte'
+	'FILTER_SANITIZE_SPECIAL_CHARS':
+		'type': 'cte'
+	'FILTER_SANITIZE_EMAIL':
+		'type': 'cte'
+	'FILTER_SANITIZE_URL':
+		'type': 'cte'
+	'FILTER_SANITIZE_NUMBER_INT':
+		'type': 'cte'
+	'FILTER_SANITIZE_NUMBER_FLOAT':
+		'type': 'cte'
+	'FILTER_SANITIZE_MAGIC_QUOTES':
+		'type': 'cte'
+	'FILTER_CALLBACK':
+		'type': 'cte'
+	'FILTER_FLAG_ALLOW_OCTAL':
+		'type': 'cte'
+	'FILTER_FLAG_ALLOW_HEX':
+		'type': 'cte'
+	'FILTER_FLAG_STRIP_LOW':
+		'type': 'cte'
+	'FILTER_FLAG_STRIP_HIGH':
+		'type': 'cte'
+	'FILTER_FLAG_ENCODE_LOW':
+		'type': 'cte'
+	'FILTER_FLAG_ENCODE_HIGH':
+		'type': 'cte'
+	'FILTER_FLAG_ENCODE_AMP':
+		'type': 'cte'
+	'FILTER_FLAG_NO_ENCODE_QUOTES':
+		'type': 'cte'
+	'FILTER_FLAG_EMPTY_STRING_NULL':
+		'type': 'cte'
+	'FILTER_FLAG_ALLOW_FRACTION':
+		'type': 'cte'
+	'FILTER_FLAG_ALLOW_THOUSAND':
+		'type': 'cte'
+	'FILTER_FLAG_ALLOW_SCIENTIFIC':
+		'type': 'cte'
+	'FILTER_FLAG_PATH_REQUIRED':
+		'type': 'cte'
+	'FILTER_FLAG_QUERY_REQUIRED':
+		'type': 'cte'
+	'FILTER_FLAG_IPV4':
+		'type': 'cte'
+	'FILTER_FLAG_IPV6':
+		'type': 'cte'
+	'FILTER_FLAG_NO_RES_RANGE':
+		'type': 'cte'
+	'FILTER_FLAG_NO_PRIV_RANGE':
+		'type': 'cte'
+	# Data filtering functions
+	'filter_has_var':
+		'type': 'function'
+	'filter_id':
+		'type': 'function'
+	'filter_input_array':
+		'type': 'function'
+	'filter_input':
+		'type': 'function'
+	'filter_list':
+		'type': 'function'
+	'filter_var_array':
+		'type': 'function'
+	'filter_var':
+		'type': 'function'
+
+
+	# Object Aggregation/Composition
+	# Object Aggregation functions
+	'aggregate_infoh':
+		'type': 'function'
+	'aggregate_methods_by_list':
+		'type': 'function'
+	'aggregate_methods_by_regexp':
+		'type': 'function'
+	'aggregate_methods':
+		'type': 'function'
+	'aggregate_properties_by_list':
+		'type': 'function'
+	'aggregate_properties_by_regexp':
+		'type': 'function'
+	'aggregate_properties':
+		'type': 'function'
+	'aggregate':
+		'type': 'function'
+	'aggregation_info':
+		'type': 'function'
+	'deaggregate':
+		'type': 'function'
 })
