@@ -147,6 +147,21 @@ lexer.addRule RegularExpression.MammouthStart, ->
 	col += 2
 	IntoMammouth = true
 	setToken('{{')
+	IntoArray = false
+	IntoHereDoc = false
+
+	Levels = [
+		{
+			IndentStack: []
+			CurrentIndent: -1
+			OpenedIndent: 0
+		}
+	]
+
+	lastIsIdentifier = false
+	ShouldCloseCall = false
+	captureTypeCasting  =false
+	tokenStack = []
 	return '{{'
 
 lexer.addRule RegularExpression.MammouthEnd, ->
@@ -155,13 +170,6 @@ lexer.addRule RegularExpression.MammouthEnd, ->
 	tokens = CloseIndents(['}}'])
 	for token in tokens
 		setToken(token)
-	Levels = [
-		{
-			IndentStack: []
-			CurrentIndent: -1
-			OpenedIndent: 0
-		}
-	]
 	return tokens
 
 # Symbols

@@ -97,7 +97,6 @@ exports.rewrite = (tree, context) ->
 						name: element.name
 						type: 'function'
 					})
-					context.scopein()
 				else
 					r = 'function('
 				for parameter, i in element.parameters
@@ -114,7 +113,6 @@ exports.rewrite = (tree, context) ->
 					r += '}'
 				else
 					r += ';'
-				context.scopeout()
 				return r;
 			when 'Casting'
 				if element.foreach is true
@@ -384,14 +382,11 @@ exports.rewrite = (tree, context) ->
 
 			# Namespace
 			when 'Namespace'
-				context.scopein()
 				r = 'namespace ' + element.name
-				context.scopein()
 				if element.body isnt false
 					r += ' {'
 					r += compile(element.body)
 					r += '}'
-				context.scopeout()
 				return r
 			when 'NamespaceRef'
 				return element.path

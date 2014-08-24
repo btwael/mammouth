@@ -1784,6 +1784,19 @@ require["./lexer"] = (function() {var exports = {}, module = {exports: exports};
     col += 2;
     IntoMammouth = true;
     setToken('{{');
+    IntoArray = false;
+    IntoHereDoc = false;
+    Levels = [
+      {
+        IndentStack: [],
+        CurrentIndent: -1,
+        OpenedIndent: 0
+      }
+    ];
+    lastIsIdentifier = false;
+    ShouldCloseCall = false;
+    captureTypeCasting = false;
+    tokenStack = [];
     return '{{';
   });
 
@@ -1796,13 +1809,6 @@ require["./lexer"] = (function() {var exports = {}, module = {exports: exports};
       token = tokens[_i];
       setToken(token);
     }
-    Levels = [
-      {
-        IndentStack: [],
-        CurrentIndent: -1,
-        OpenedIndent: 0
-      }
-    ];
     return tokens;
   });
 
@@ -3121,7 +3127,6 @@ require["./rewriter"] = (function() {var exports = {}, module = {exports: export
               name: element.name,
               type: 'function'
             });
-            context.scopein();
           } else {
             r = 'function(';
           }
@@ -3145,7 +3150,6 @@ require["./rewriter"] = (function() {var exports = {}, module = {exports: export
           } else {
             r += ';';
           }
-          context.scopeout();
           return r;
         case 'Casting':
           if (element.foreach === true) {
@@ -3442,15 +3446,12 @@ require["./rewriter"] = (function() {var exports = {}, module = {exports: export
           }
           return r += '\n}';
         case 'Namespace':
-          context.scopein();
           r = 'namespace ' + element.name;
-          context.scopein();
           if (element.body !== false) {
             r += ' {';
             r += compile(element.body);
             r += '}';
           }
-          context.scopeout();
           return r;
         case 'NamespaceRef':
           return element.path;
