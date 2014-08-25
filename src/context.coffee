@@ -24,7 +24,7 @@ exports.Context = class Context
 		return '$' + name
 
 ###
-	Precontext todo list:
+	Precontext Addition todo list:
 	[ ] Affecting PHP's Behaviour
 		[ ] APC
 		[ ] APD
@@ -83,9 +83,9 @@ exports.Context = class Context
 		[x] Direct IO
 		[x] Directories
 		[x] Fileinfo
-		[ ] Filesystem
-		[ ] Inotify
-		[ ] Mimetype
+		[x] Filesystem
+		[x] Inotify
+		[x] Mimetype
 		[ ] Proctitle
 		[ ] xattr
 		[ ] xdiff
@@ -992,5 +992,293 @@ PreContext = exports.PreContext = new Context({
 	'finfo_set_flags':
 		'type': 'function'
 	'mime_content_type':
+		'type': 'function'
+
+	# Filesystem
+	# Filesystem constants
+	'SEEK_SET':
+		'type': 'cte'
+	'SEEK_CUR':
+		'type': 'cte'
+	'SEEK_END':
+		'type': 'cte'
+	'LOCK_SH':
+		'type': 'cte'
+	'LOCK_EX':
+		'type': 'cte'
+	'LOCK_UN':
+		'type': 'cte'
+	'LOCK_NB':
+		'type': 'cte'
+	'GLOB_BRACE':
+		'type': 'cte'
+	'GLOB_ONLYDIR':
+		'type': 'cte'
+	'GLOB_MARK':
+		'type': 'cte'
+	'GLOB_NOSORT':
+		'type': 'cte'
+	'GLOB_NOCHECK':
+		'type': 'cte'
+	'GLOB_NOESCAPE':
+		'type': 'cte'
+	'GLOB_AVAILABLE_FLAGS':
+		'type': 'cte'
+	'PATHINFO_DIRNAME':
+		'type': 'cte'
+	'PATHINFO_BASENAME':
+		'type': 'cte'
+	'PATHINFO_EXTENSION':
+		'type': 'cte'
+	'PATHINFO_FILENAME':
+		'type': 'cte'
+	'FILE_USE_INCLUDE_PATH':
+		'type': 'cte'
+	'FILE_NO_DEFAULT_CONTEXT':
+		'type': 'cte'
+	'FILE_APPEND':
+		'type': 'cte'
+	'FILE_IGNORE_NEW_LINES':
+		'type': 'cte'
+	'FILE_SKIP_EMPTY_LINES':
+		'type': 'cte'
+	'FILE_BINARY':
+		'type': 'cte'
+	'FILE_TEXT':
+		'type': 'cte'
+	'INI_SCANNER_NORMAL':
+		'type': 'cte'
+	'INI_SCANNER_RAW':
+		'type': 'cte'
+	'FNM_NOESCAPE':
+		'type': 'cte'
+	'FNM_PATHNAME':
+		'type': 'cte'
+	'FNM_PERIOD':
+		'type': 'cte'
+	'FNM_CASEFOLD':
+		'type': 'cte'
+	# Filesystem functions
+	'basename':
+		'type': 'function'
+	'chgrp':
+		'type': 'function'
+	'chmod':
+		'type': 'function'
+	'chown':
+		'type': 'function'
+	'clearstatcache':
+		'type': 'function'
+	'copy':
+		'type': 'function'
+	'delete':
+		'type': 'function'
+	'dirname':
+		'type': 'function'
+	'disk_free_space':
+		'type': 'function'
+	'disk_total_space':
+		'type': 'function'
+	'diskfreespace':
+		'type': 'function'
+	'fclose':
+		'type': 'function'
+	'feof':
+		'type': 'function'
+	'fflush':
+		'type': 'function'
+	'fgetc':
+		'type': 'function'
+	'fgetcsv':
+		'type': 'function'
+	'fgets':
+		'type': 'function'
+	'fgetss':
+		'type': 'function'
+	'file_exists':
+		'type': 'function'
+	'file_get_contents':
+		'type': 'function'
+	'file_put_contents':
+		'type': 'function'
+	'file':
+		'type': 'function'
+	'fileatime':
+		'type': 'function'
+	'filectime':
+		'type': 'function'
+	'filegroup':
+		'type': 'function'
+	'fileinode':
+		'type': 'function'
+	'filemtime':
+		'type': 'function'
+	'fileowner':
+		'type': 'function'
+	'fileperms':
+		'type': 'function'
+	'filesize':
+		'type': 'function'
+	'filetype':
+		'type': 'function'
+	'flock':
+		'type': 'function'
+	'fnmatch':
+		'type': 'function'
+	'fopen':
+		'type': 'function'
+	'fpassthru':
+		'type': 'function'
+	'fputcsv':
+		'type': 'function'
+	'fputs':
+		'type': 'function'
+	'fread':
+		'type': 'function'
+	'fscanf':
+		'type': 'function'
+	'fseek':
+		'type': 'function'
+	'fstat':
+		'type': 'function'
+	'ftell':
+		'type': 'function'
+	'ftruncate':
+		'type': 'function'
+	'fwrite':
+		'type': 'function'
+	'glob':
+		'type': 'function'
+	'is_dir':
+		'type': 'function'
+	'is_executable':
+		'type': 'function'
+	'is_file':
+		'type': 'function'
+	'is_link':
+		'type': 'function'
+	'is_readable':
+		'type': 'function'
+	'is_uploaded_file':
+		'type': 'function'
+	'is_writable':
+		'type': 'function'
+	'is_writeable':
+		'type': 'function'
+	'lchgrp':
+		'type': 'function'
+	'lchown':
+		'type': 'function'
+	'link':
+		'type': 'function'
+	'linkinfo':
+		'type': 'function'
+	'lstat':
+		'type': 'function'
+	'mkdir':
+		'type': 'function'
+	'move_uploaded_file':
+		'type': 'function'
+	'parse_ini_file':
+		'type': 'function'
+	'parse_ini_string':
+		'type': 'function'
+	'pathinfo':
+		'type': 'function'
+	'pclose':
+		'type': 'function'
+	'popen':
+		'type': 'function'
+	'readfile':
+		'type': 'function'
+	'readlink':
+		'type': 'function'
+	'realpath_cache_get':
+		'type': 'function'
+	'realpath_cache_size':
+		'type': 'function'
+	'realpath':
+		'type': 'function'
+	'rename':
+		'type': 'function'
+	'rewind':
+		'type': 'function'
+	'rmdir':
+		'type': 'function'
+	'set_file_buffer':
+		'type': 'function'
+	'stat':
+		'type': 'function'
+	'symlink':
+		'type': 'function'
+	'tempnam':
+		'type': 'function'
+	'tmpfile':
+		'type': 'function'
+	'touch':
+		'type': 'function'
+	'umask':
+		'type': 'function'
+	'unlink':
+		'type': 'function'
+
+	# Inotify
+	# Inotify constants
+	'IN_ACCESS':
+		'type': 'cte'
+	'IN_MODIFY':
+		'type': 'cte'
+	'IN_ATTRIB':
+		'type': 'cte'
+	'IN_CLOSE_WRITE':
+		'type': 'cte'
+	'IN_CLOSE_NOWRITE':
+		'type': 'cte'
+	'IN_OPEN':
+		'type': 'cte'
+	'IN_MOVED_TO':
+		'type': 'cte'
+	'IN_MOVED_FROM':
+		'type': 'cte'
+	'IN_CREATE':
+		'type': 'cte'
+	'IN_DELETE':
+		'type': 'cte'
+	'IN_DELETE_SELF':
+		'type': 'cte'
+	'IN_MOVE_SELF':
+		'type': 'cte'
+	'IN_CLOSE':
+		'type': 'cte'
+	'IN_MOVE':
+		'type': 'cte'
+	'IN_ALL_EVENTS':
+		'type': 'cte'
+	'IN_UNMOUNT':
+		'type': 'cte'
+	'IN_Q_OVERFLOW':
+		'type': 'cte'
+	'IN_IGNORED':
+		'type': 'cte'
+	'IN_ISDIR':
+		'type': 'cte'
+	'IN_ONLYDIR':
+		'type': 'cte'
+	'IN_DONT_FOLLOW':
+		'type': 'cte'
+	'IN_MASK_ADD':
+		'type': 'cte'
+	'IN_ONESHOT':
+		'type': 'cte'
+	# Inotify functions
+	'inotify_add_watch':
+		'type': 'function'
+	'inotify_init':
+		'type': 'function'
+	'inotify_queue_len':
+		'type': 'function'
+	'inotify_read':
+		'type': 'function'
+	'inotify_rm_watch':
 		'type': 'function'
 })
