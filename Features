@@ -1,0 +1,73 @@
+- [x] Comments
+	- [x] SingleLine with #
+	- [x] MultiLine with ### text ###
+- [x] Types
+	- [x] Boolean
+	- [x] Numbers
+		- [x] decimal number
+		- [x] negative number
+		- [x] octal number
+		- [x] hexadecimal number
+		- [x] binary number
+	- [x] floating point numbers
+	- [x] Strings
+	- [x] Heredocs
+	- [x] Arrays
+	- [x] null
+	- [x] Type Juggling (Casting/Converting)
+- [x] Variables and Identifiers
+- [/] Better scoping and context
+- [x] Constants
+- [x] If as expression
+- [/] Operators
+	- [x] Arithmetic Operators
+	- [x] Assignment Operators
+	- [x] Bitwise Operators
+	- [x] Comparison Operators
+	- [ ] Error Control Operators
+	- [x] Execution Operators
+	- [x] Incrementing/Decrementing Operators
+	- [x] Logical Operators
+	- [x] String Operators
+	- [x] Type Operators
+- [x] Structures
+	- [x] if
+	- [x] else
+	- [x] else if
+	- [x] while
+	- [x] do-while
+	- [x] for
+	- [x] foreach
+	- [x] break
+	- [x] continue
+	- [x] switch
+	- [x] declare
+	- [x] return
+	- [x] require
+	- [x] include
+	- [x] require_once
+	- [x] include_once
+	- [x] goto
+	- [x] echo
+- [/] Classes and Objects
+	- [x] new
+	- [x] this (and @)
+	- [x] The Basics
+	- [x] Properties
+	- [x] Class Constants
+	- [x] implements in Autoloading Classes
+	- [x] Constructors and Destructors
+	- [x] Visibility
+	- [x] Object Inheritance
+	- [x] Scope Resolution Operator (::)
+	- [x] Static Keyword
+	- [x] Class Abstraction
+	- [x] Object Interfaces
+	- [ ] Traits
+	- [x] Object Iteration
+	- [x] Final Keyword
+	- [x] Object Cloning
+- [x] Namespace
+	- [x] Defining
+	- [x] Defining with a block
+	- [x] reference to namespace

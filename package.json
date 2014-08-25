@@ -1,19 +1,23 @@
 {
 	"name": "mammouth",
-	"version": "0.2.3",
+	"version": "2.0.0",
 	"description": "Unfancy PHP",
 	"author": {
 		"name": "Wael Amine Boutglay",
 		"email": "btwael@gmail.com"
 	},
 	"bin": "./bin/mammouth",
-	"main": "extras/mammouth-nodejs.js",
+	"main": "extras/mammouth.js",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/btwael/mammouth.git"
 	},
 	"dependencies": {
-		"commander": "latest",
-		"pegjs": "0.7.0"
+		"lex": "latest",
+		"commander": "latest"
+	},
+	"devDependencies": {
+		"jison": "latest",
+		"node-minify": "latest"
 	}
 }

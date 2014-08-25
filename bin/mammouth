@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 var program = require('commander'),
 	fs = require('fs'),
-	mammouth = require('../extras/mammouth-nodejs.js'),
+	mammouth = require('../lib/mammouth.js'),
 	patch = require('path');
 program
-	.version('0.2.3')
-	.usage('[options] <file ...>')
-	.option('-c, --compile', '')
-	.option('-o, --output [DIR]', 'Write out all compiled PHP files into the specified directory. Use in conjunction with --compile', './');
+		.version(mammouth.VERSION)
+		.usage('[options] <file ...>')
+		.option('-c, --compile', '')
+		.option('-o, --output [DIR]', 'Write out all compiled PHP files into the specified directory. Use in conjunction with --compile', './');
 program.parse(process.argv);
-///////////////////////////////////////
-var copyFileSync = function(srcFile, destFile) {
+// functions
+function copyFileSync(srcFile, destFile) {
 	var BUF_LENGTH, buff, bytesRead, fdr, fdw, pos;
 	BUF_LENGTH = 64 * 1024;
 	buff = new Buffer(BUF_LENGTH);
@@ -25,8 +25,8 @@ var copyFileSync = function(srcFile, destFile) {
 	}
 	fs.closeSync(fdr);
 	return fs.closeSync(fdw);
-};
-var sharpr = function(path) {
+}
+function sharpr(path) {
 	var arr = path.split("\\");
 	pathr = "";
 	for (var i = 0; i < arr.length; i++) {
@@ -37,8 +37,7 @@ var sharpr = function(path) {
 		}
 	};
 	return pathr;
-};
-
+}
 function bld(path, to) {
 	var stats = fs.lstatSync(path);
 	if(stats.isFile()){
@@ -49,8 +48,7 @@ function bld(path, to) {
 			fs.readFile(path, 'utf8', function (err, data) {
 				try {
 					r = mammouth.compile(data);
-					fs.writeFile(to + '/' + arr[arr.length-1].split(".")[0] + '.php', r, function () {
-					});
+					fs.writeFile(to + '/' + arr[arr.length-1].split(".")[0] + '.php', r, function () {});
 				} catch(err) {
 					console.log(err);
 				}
@@ -82,9 +80,8 @@ function buildFolder(path, output) {
 	for (var i = 0; i < ctn.length; i++) {
 		bld(path + "/" + ctn[i], output);
 	}
-};
-
-/////////////////////////////////
+}
+// program
 if (program.compile) {
 	for (var i = 0; i < program.args.length; i++) {
 		path = sharpr(program.args[i]);

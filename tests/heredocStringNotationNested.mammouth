@@ -1,8 +1,0 @@
-{{
-  class SomeClass ->
-    __construct ->
-      echo `
-        pass
-      ` # TODO: indents are forbidden on heredoc close
-  new SomeClass()
-}}
