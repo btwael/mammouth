@@ -276,6 +276,7 @@ exports.rewrite = (tree, context) ->
 				for Scase in element.cases
 					if Scase.type is 'When'
 						r += 'case ' + compile(Scase.condition) + ': {'
+						Scase.body.nodes.push(new nodes.Expression(new nodes.Break))
 						r += compile(Scase.body)
 						r += '}'
 					else if Scase.type is 'SwitchElse'
