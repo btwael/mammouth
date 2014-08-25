@@ -81,8 +81,8 @@ exports.Context = class Context
 		[ ] HRTime
 	[/] File System Related Extensions
 		[x] Direct IO
-		[ ] Directories
-		[ ] Fileinfo
+		[x] Directories
+		[x] Fileinfo
 		[ ] Filesystem
 		[ ] Inotify
 		[ ] Mimetype
@@ -923,5 +923,74 @@ PreContext = exports.PreContext = new Context({
 	'dio_truncate':
 		'type': 'function'
 	'dio_write':
+		'type': 'function'
+
+	# Directories 
+	# Directories constants
+	'DIRECTORY_SEPARATOR':
+		'type': 'cte'
+	'PATH_SEPARATOR':
+		'type': 'cte'
+	'SCANDIR_SORT_ASCENDING':
+		'type': 'cte'
+	'SCANDIR_SORT_DESCENDING':
+		'type': 'cte'
+	'SCANDIR_SORT_NONE':
+		'type': 'cte'
+	# Directories classes
+	"Directory":
+		"type": "class"
+	# Directories functions
+	'chdir':
+		'type': 'function'
+	'chroot':
+		'type': 'function'
+	'closedir':
+		'type': 'function'
+	'dir':
+		'type': 'function'
+	'getcwd':
+		'type': 'function'
+	'opendir':
+		'type': 'function'
+	'readdir':
+		'type': 'function'
+	'rewinddir':
+		'type': 'function'
+	'scandir':
+		'type': 'function'
+
+	# File Information
+	# File Information constants
+	'FILEINFO_NONE':
+		'type': 'cte'
+	'FILEINFO_SYMLINK':
+		'type': 'cte'
+	'FILEINFO_MIME_TYPE':
+		'type': 'cte'
+	'FILEINFO_MIME_ENCODING':
+		'type': 'cte'
+	'FILEINFO_MIME':
+		'type': 'cte'
+	'FILEINFO_COMPRESS':
+		'type': 'cte'
+	'FILEINFO_DEVICES':
+		'type': 'cte'
+	'FILEINFO_CONTINUE':
+		'type': 'cte'
+	'FILEINFO_PRESERVE_ATIME':
+		'type': 'cte'
+	'FILEINFO_RAW':
+		'type': 'cte'
+	# File Information functions
+	'finfo_close':
+		'type': 'function'
+	'finfo_file':
+		'type': 'function'
+	'finfo_open':
+		'type': 'function'
+	'finfo_set_flags':
+		'type': 'function'
+	'mime_content_type':
 		'type': 'function'
 })
