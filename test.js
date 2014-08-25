@@ -4,7 +4,7 @@ function heredoc (f) {
 v = heredoc(function() {
 /*
 {{
-cte wamalaka =12
+exec 'wadzedf'
 }}
 */
 })

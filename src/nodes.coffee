@@ -81,7 +81,7 @@ exports.Exec = class Exec
 		if code[0] is "'"
 			@code = code.replace(/\'/g, '')
 		else if code[0] is '"'
-			@code = code.replace(/\"/, '') 
+			@code = code.replace(/\"/g, '') 
 
 exports.HereDoc = class HereDoc
 	constructor: (@doc) ->
