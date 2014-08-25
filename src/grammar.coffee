@@ -332,7 +332,7 @@ grammar =
 
 	Whens: [
 		o 'When', '$$ = [$1]'
-		o 'Whens OptLineTerminator When', '$$ = $1.concat($2)'
+		o 'Whens OptLineTerminator When', '$$ = $1.concat($3)'
 		o 'Whens LineTerminator'
 	]
 
@@ -359,7 +359,7 @@ grammar =
 	# Declare
 	Declare: [
 		o 'DECLARE SimpleArg', '$$ = new yy.Expression(new yy.Declare($2))'
-		o 'DECLARE SimpleArg Block', '$$ = new yy.Declare($2, $3)'
+		o 'DECLARE SimpleArg -> Block', '$$ = new yy.Declare($2, $4)'
 	]
 
 	# Section
