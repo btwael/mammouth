@@ -4,15 +4,12 @@ function heredoc (f) {
 v = heredoc(function() {
 /*
 {{
-switch day
- when "Mon"
-  go(work)
- when "Tue"
-  go(relax)
- when "Thu"
-  go(iceFishing)
- else
-  walloooo()
+`sdfsdfsdfdsfsdsdfssdfssf
+dsfsdfs
+dd
+
+
+fsdfsdfsd`
 }}
 */
 })
