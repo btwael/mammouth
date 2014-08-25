@@ -186,7 +186,7 @@ lexer.addRule RegularExpression.MammouthStart, ->
 
 	lastIsIdentifier = false
 	ShouldCloseCall = false
-	captureTypeCasting  =false
+	captureTypeCasting  = false
 	tokenStack = []
 	return '{{'
 

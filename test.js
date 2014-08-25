@@ -4,12 +4,7 @@ function heredoc (f) {
 v = heredoc(function() {
 /*
 {{
-`sdfsdfsdfdsfsdsdfssdfssf
-dsfsdfs
-dd
-
-
-fsdfsdfsd`
+'123'+123
 }}
 */
 })

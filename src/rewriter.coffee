@@ -1,9 +1,12 @@
 nodes = require './nodes'
 helpers = require './helpers'
 
+SuperMammouth = "\nfunction mammouth($func, $arg1, $arg2){if ( $func == '+' ){if((is_string($arg1) && is_numeric($arg2))||(is_string($arg2) && is_numeric($arg1))) {return $arg1.$arg2;} else {return $arg1+$arg2;}}}\n"
+
 exports.rewrite = (tree, context) ->
 	IdCounter = new helpers.IdCounter
 	UseSuperMammouth = false
+	AddSuperMammouth = false
 	php = ''
 	ADD = (string) ->
 		php += string
@@ -138,7 +141,7 @@ exports.rewrite = (tree, context) ->
 					r = compile(element.left) + '.' + compile(element.right)
 				else if element.operator is '+'
 					UseSuperMammouth = true
-					r = '$Mammouth("+", ' + compile(element.left) + ', ' + compile(element.right) + ')'
+					r = 'mammouth("+", ' + compile(element.left) + ', ' + compile(element.right) + ')'
 				else
 					r = compile(element.left) + ' ' + element.operator + ' ' + compile(element.right)
 				return r
@@ -174,7 +177,7 @@ exports.rewrite = (tree, context) ->
 				r = 'isset(' + compile(element.expression) + ')'
 				return r
 			when 'In'
-				r = '$Mammouth("in_array", ' + compile(element.left) + ', ' + compile(element.right) + ')'
+				r = 'mammouth("in_array", ' + compile(element.left) + ', ' + compile(element.right) + ')'
 				return r
 
 			# Simple Statements
@@ -395,5 +398,11 @@ exports.rewrite = (tree, context) ->
 	for doc in tree
 		switch doc.type
 			when 'PlainBlock' then ADD doc.toPHP()
-			when 'MammouthBlock' then ADD '<?php' + compile(doc.body) + '?>'
+			when 'MammouthBlock'
+				code = compile(doc.body)
+				if UseSuperMammouth and not AddSuperMammouth
+					code = SuperMammouth + code
+					AddSuperMammouth = true
+					UseSuperMammouth = false
+				ADD '<?php' + code + '?>'
 	return php
