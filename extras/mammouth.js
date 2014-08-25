@@ -830,7 +830,236 @@ require["./context"] = (function() {var exports = {}, module = {exports: exports
 
   })();
 
+
+  /*
+  	Precontext todo list:
+  	[ ] Affecting PHP's Behaviour
+  		[ ] APC
+  		[ ] APD
+  		[ ] bcompiler
+  		[ ] BLENC
+  		[ ] Error Handling
+  		[ ] htscanner
+  		[ ] inclued
+  		[ ] Memtrack
+  		[ ] OPcache
+  		[ ] Output Control
+  		[ ] PHP Options/Info
+  		[ ] runkit
+  		[ ] scream
+  		[ ] uopz
+  		[ ] Weakref
+  		[ ] WinCache
+  		[ ] Xhprof
+  	[ ] Audio Formats Manipulation
+  		[ ] ID3
+  		[ ] KTaglib
+  		[ ] oggvorbis
+  		[ ] OpenAL
+  	[ ] Authentication Services
+  		[ ] KADM5
+  		[ ] Radius
+  	[ ] Command Line Specific Extensions
+  		[ ] Ncurses
+  		[ ] Newt
+  		[ ] Readline
+  	[ ] Compression and Archive Extensions
+  		[ ] Bzip2
+  		[ ] LZF
+  		[ ] Phar
+  		[ ] Rar
+  		[ ] Zip
+  		[ ] Zlib
+  	[ ] Credit Card Processing
+  		[ ] MCVE
+  		[ ] SPPLUS
+  	[ ] Cryptography Extensions
+  		[ ] Crack
+  		[ ] Hash
+  		[ ] Mcrypt
+  		[ ] Mhash
+  		[ ] OpenSSL
+  		[ ] Password Hashing
+  	[ ] Database Extensions
+  		[ ] Abstraction Layers
+  		[ ] Vendor Specific Database Extensions
+  	[ ] Date and Time Related Extensions
+  		[ ] Calendar
+  		[ ] Date/Time
+  		[ ] HRTime
+  	[/] File System Related Extensions
+  		[x] Direct IO
+  		[ ] Directories
+  		[ ] Fileinfo
+  		[ ] Filesystem
+  		[ ] Inotify
+  		[ ] Mimetype
+  		[ ] Proctitle
+  		[ ] xattr
+  		[ ] xdiff
+  	[ ] Human Language and Character Encoding Support
+  		[ ] Enchant
+  		[ ] FriBiDi
+  		[ ] Gender
+  		[ ] Gettext
+  		[ ] iconv
+  		[ ] intl
+  		[ ] Multibyte String
+  		[ ] Pspell
+  		[ ] Recode
+  	[ ] Image Processing and Generation
+  		[ ] Cairo
+  		[ ] Exif
+  		[ ] GD
+  		[ ] Gmagick
+  		[ ] ImageMagick
+  	[ ] Mail Related Extensions
+  		[ ] Cyrus
+  		[ ] IMAP
+  		[ ] Mail
+  		[ ] Mailparse
+  		[ ] vpopmail
+  	[ ] Mathematical Extensions
+  		[ ] BC Math
+  		[ ] GMP
+  		[ ] Lapack
+  		[ ] Math
+  		[ ] Statistics
+  		[ ] Trader
+  	[ ] Non-Text MIME Output
+  		[ ] FDF
+  		[ ] GnuPG
+  		[ ] haru
+  		[ ] Ming
+  		[ ] PDF
+  		[ ] PS
+  		[ ] RPM Reader
+  		[ ] SWF
+  	[ ] Process Control Extensions
+  		[ ] Eio
+  		[ ] Ev
+  		[ ] Expect
+  		[ ] Libevent
+  		[ ] PCNTL
+  		[ ] POSIX
+  		[ ] Program execution
+  		[ ] pthreads
+  		[ ] Semaphore
+  		[ ] Shared Memory
+  		[ ] Sync
+  	[ ] Other Basic Extensions
+  		[ ] GeoIP
+  		[ ] FANN
+  		[ ] JSON
+  		[ ] Judy
+  		[ ] Lua
+  		[ ] Misc.
+  		[ ] Parsekit
+  		[ ] SPL
+  		[ ] SPL Types
+  		[ ] Streams
+  		[ ] Tidy
+  		[ ] Tokenizer
+  		[ ] URLs
+  		[ ] V8js
+  		[ ] Yaml
+  		[ ] Yaf
+  		[ ] Taint
+  	[ ] Other Services
+  		[ ] chdb
+  		[ ] cURL
+  		[ ] Event
+  		[ ] FAM
+  		[ ] FTP
+  		[ ] Gearman
+  		[ ] Gopher
+  		[ ] Gupnp
+  		[ ] HTTP
+  		[ ] Hyperwave
+  		[ ] Hyperwave API
+  		[ ] Java
+  		[ ] LDAP
+  		[ ] Lotus Notes
+  		[ ] Memcache
+  		[ ] Memcached
+  		[ ] mqseries
+  		[ ] Network
+  		[ ] RRD
+  		[ ] SAM
+  		[ ] SNMP
+  		[ ] Sockets
+  		[ ] SSH2
+  		[ ] Stomp
+  		[ ] SVM
+  		[ ] SVN
+  		[ ] TCP
+  		[ ] Varnish
+  		[ ] YAZ
+  		[ ] YP/NIS
+  		[ ] 0MQ messaging
+  	[ ] Search Engine Extensions
+  		[ ] mnoGoSearch
+  		[ ] Solr
+  		[ ] Sphinx
+  		[ ] Swish
+  	[ ] Server Specific Extensions
+  		[ ] Apache
+  		[ ] FastCGI Process Manager
+  		[ ] IIS
+  		[ ] NSAPI
+  	[ ] Session Extensions
+  		[ ] Msession
+  		[ ] Sessions
+  		[ ] Session PgSQL
+  	[ ] Text Processing
+  		[ ] BBCode
+  		[ ] PCRE
+  		[ ] POSIX Regex
+  		[ ] ssdeep
+  		[ ] Strings
+  	[x] Variable and Type Related Extensions
+  		[x] Arrays
+  		[x] Classes/Objects
+  		[x] Classkit
+  		[x] Ctype
+  		[x] Filter
+  		[x] Function Handling
+  		[x] Object Aggregation
+  		[x] Quickhash
+  		[x] Reflection
+  		[x] Variable handling
+  	[ ] Web Services
+  		[ ] OAuth
+  		[ ] SCA
+  		[ ] SOAP
+  		[ ] Yar
+  		[ ] XML-RPC
+  	[ ] Windows Only Extensions
+  		[ ] .NET
+  		[ ] COM
+  		[ ] W32api
+  		[ ] win32ps
+  		[ ] win32service
+  	[ ] XML Manipulation
+  		[ ] DOM
+  		[ ] libxml
+  		[ ] qtdom
+  		[ ] SDO
+  		[ ] SDO-DAS-Relational
+  		[ ] SDO DAS XML
+  		[ ] SimpleXML
+  		[ ] WDDX
+  		[ ] XMLDiff
+  		[ ] XML Parser
+  		[ ] XMLReader
+  		[ ] XMLWriter
+  		[ ] XSL
+  		[ ] XSLT (PHP 4)
+   */
+
   PreContext = exports.PreContext = new Context({
+
+    /* Variable and Type Related Extensions */
     'call_​user_​func_​array': {
       'type': 'function'
     },
@@ -1633,6 +1862,143 @@ require["./context"] = (function() {var exports = {}, module = {exports: exports
       'type': 'function'
     },
     'var_export': {
+      'type': 'function'
+    },
+
+    /* File System Related Extensions */
+    'F_DUPFD': {
+      'type': 'cte'
+    },
+    'F_GETFD': {
+      'type': 'cte'
+    },
+    'F_GETFL': {
+      'type': 'cte'
+    },
+    'F_GETLK': {
+      'type': 'cte'
+    },
+    'F_GETOWN': {
+      'type': 'cte'
+    },
+    'F_RDLCK': {
+      'type': 'cte'
+    },
+    'F_SETFL': {
+      'type': 'cte'
+    },
+    'F_SETLK': {
+      'type': 'cte'
+    },
+    'F_SETLKW': {
+      'type': 'cte'
+    },
+    'F_SETOWN': {
+      'type': 'cte'
+    },
+    'F_UNLCK': {
+      'type': 'cte'
+    },
+    'F_WRLCK': {
+      'type': 'cte'
+    },
+    'O_APPEND': {
+      'type': 'cte'
+    },
+    'O_ASYNC': {
+      'type': 'cte'
+    },
+    'O_CREAT': {
+      'type': 'cte'
+    },
+    'O_EXCL': {
+      'type': 'cte'
+    },
+    'O_NDELAY': {
+      'type': 'cte'
+    },
+    'O_NOCTTY': {
+      'type': 'cte'
+    },
+    'O_NONBLOCK': {
+      'type': 'cte'
+    },
+    'O_RDONLY': {
+      'type': 'cte'
+    },
+    'O_RDWR': {
+      'type': 'cte'
+    },
+    'O_SYNC': {
+      'type': 'cte'
+    },
+    'O_TRUNC': {
+      'type': 'cte'
+    },
+    'O_WRONLY': {
+      'type': 'cte'
+    },
+    'S_IRGRP': {
+      'type': 'cte'
+    },
+    'S_IROTH': {
+      'type': 'cte'
+    },
+    'S_IRUSR': {
+      'type': 'cte'
+    },
+    'S_IRWXG': {
+      'type': 'cte'
+    },
+    'S_IRWXO': {
+      'type': 'cte'
+    },
+    'S_IRWXU': {
+      'type': 'cte'
+    },
+    'S_IWGRP': {
+      'type': 'cte'
+    },
+    'S_IWOTH': {
+      'type': 'cte'
+    },
+    'S_IWUSR': {
+      'type': 'cte'
+    },
+    'S_IXGRP': {
+      'type': 'cte'
+    },
+    'S_IXOTH': {
+      'type': 'cte'
+    },
+    'S_IXUSR': {
+      'type': 'cte'
+    },
+    'dio_close': {
+      'type': 'function'
+    },
+    'dio_fcntl': {
+      'type': 'function'
+    },
+    'dio_open': {
+      'type': 'function'
+    },
+    'dio_read': {
+      'type': 'function'
+    },
+    'dio_seek': {
+      'type': 'function'
+    },
+    'dio_stat': {
+      'type': 'function'
+    },
+    'dio_tcsetattr': {
+      'type': 'function'
+    },
+    'dio_truncate': {
+      'type': 'function'
+    },
+    'dio_write': {
       'type': 'function'
     }
   });
@@ -2518,7 +2884,7 @@ require["./nodes"] = (function() {var exports = {}, module = {exports: exports};
       if (code[0] === "'") {
         this.code = code.replace(/\'/g, '');
       } else if (code[0] === '"') {
-        this.code = code.replace(/\"/, '');
+        this.code = code.replace(/\"/g, '');
       }
     }
 
