@@ -4,7 +4,8 @@ function heredoc (f) {
 v = heredoc(function() {
 /*
 {{
-'123'+123
+if 'wael' in ['wael', 'moha']
+ echo 'exist'
 }}
 */
 })

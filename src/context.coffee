@@ -65,10 +65,10 @@ exports.Context = class Context
 	[ ] Credit Card Processing
 		[ ] MCVE
 		[ ] SPPLUS
-	[ ] Cryptography Extensions
-		[ ] Crack
-		[ ] Hash
-		[ ] Mcrypt
+	[/] Cryptography Extensions
+		[x] Crack
+		[x] Hash
+		[x] Mcrypt
 		[ ] Mhash
 		[ ] OpenSSL
 		[ ] Password Hashing
@@ -1353,5 +1353,149 @@ PreContext = exports.PreContext = new Context({
 	'xdiff_string_patch':
 		'type': 'function'
 	'xdiff_string_rabdiff':
+		'type': 'function'
+
+
+	### Cryptography Extensions ###
+
+	# Crack
+	# Crack functions
+	'crack_check':
+		'type': 'function'
+	'crack_closedict':
+		'type': 'function'
+	'crack_getlastmessage':
+		'type': 'function'
+	'crack_opendict':
+		'type': 'function'
+
+	# Hash
+	# Hash constants
+	'HASH_HMAC':
+		'type': 'cte'
+	# Hash functions
+	'hash_algos':
+		'type': 'function'
+	'hash_copy':
+		'type': 'function'
+	'hash_file':
+		'type': 'function'
+	'hash_final':
+		'type': 'function'
+	'hash_hmac_file':
+		'type': 'function'
+	'hash_hmac':
+		'type': 'function'
+	'hash_init':
+		'type': 'function'
+	'hash_pbkdf2':
+		'type': 'function'
+	'hash_update_file':
+		'type': 'function'
+	'hash_update_stream':
+		'type': 'function'
+	'hash_update':
+		'type': 'function'
+	'hash':
+		'type': 'function'
+
+	# Mcrypt
+	# Mcrypt constants
+	'MCRYPT_MODE_ECB':
+		'type': 'cte'
+	'MCRYPT_MODE_CBC':
+		'type': 'cte'
+	'MCRYPT_MODE_CFB':
+		'type': 'cte'
+	'MCRYPT_MODE_OFB':
+		'type': 'cte'
+	'MCRYPT_MODE_NOFB':
+		'type': 'cte'
+	'MCRYPT_MODE_STREAM':
+		'type': 'cte'
+	'MCRYPT_ENCRYPT':
+		'type': 'cte'
+	'MCRYPT_DECRYPT':
+		'type': 'cte'
+	'MCRYPT_DEV_RANDOM':
+		'type': 'cte'
+	'MCRYPT_DEV_URANDOM':
+		'type': 'cte'
+	'MCRYPT_RAND':
+		'type': 'cte' 
+	# Mcrypt functions
+	'mcrypt_cbc':
+		'type': 'function'
+	'mcrypt_cfb':
+		'type': 'function'
+	'mcrypt_create_iv':
+		'type': 'function'
+	'mcrypt_decrypt':
+		'type': 'function'
+	'mcrypt_ecb':
+		'type': 'function'
+	'mcrypt_enc_get_algorithms_name':
+		'type': 'function'
+	'mcrypt_enc_get_block_size':
+		'type': 'function'
+	'mcrypt_enc_get_iv_size':
+		'type': 'function'
+	'mcrypt_enc_get_key_size':
+		'type': 'function'
+	'mcrypt_enc_get_modes_name':
+		'type': 'function'
+	'mcrypt_enc_get_supported_key_sizes':
+		'type': 'function'
+	'mcrypt_enc_is_block_algorithm_mode':
+		'type': 'function'
+	'mcrypt_enc_is_block_algorithm':
+		'type': 'function'
+	'mcrypt_enc_is_block_mode':
+		'type': 'function'
+	'mcrypt_enc_self_test':
+		'type': 'function'
+	'mcrypt_encrypt':
+		'type': 'function'
+	'mcrypt_generic_deinit':
+		'type': 'function'
+	'mcrypt_generic_end':
+		'type': 'function'
+	'mcrypt_generic_init':
+		'type': 'function'
+	'mcrypt_generic':
+		'type': 'function'
+	'mcrypt_get_block_size':
+		'type': 'function'
+	'mcrypt_get_cipher_name':
+		'type': 'function'
+	'mcrypt_get_iv_size':
+		'type': 'function'
+	'mcrypt_get_key_size':
+		'type': 'function'
+	'mcrypt_list_algorithms':
+		'type': 'function'
+	'mcrypt_list_modes':
+		'type': 'function'
+	'mcrypt_module_close':
+		'type': 'function'
+	'mcrypt_module_get_algo_block_size':
+		'type': 'function'
+	'mcrypt_module_get_algo_key_size':
+		'type': 'function'
+	'mcrypt_module_get_supported_key_sizes':
+		'type': 'function'
+	'mcrypt_module_is_block_algorithm_mode':
+		'type': 'function'
+	'mcrypt_module_is_block_algorithm':
+		'type': 'function'
+	'mcrypt_module_is_block_mode':
+		'type': 'function'
+	'mcrypt_module_open':
+		'type': 'function'
+	'mcrypt_module_self_test':
+		'type': 'function'
+	'mcrypt_ofb':
+		'type': 'function'
+	'mdecrypt_generic':
 		'type': 'function'
 })
