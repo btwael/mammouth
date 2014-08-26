@@ -177,7 +177,7 @@ exports.rewrite = (tree, context) ->
 				r = 'isset(' + compile(element.expression) + ')'
 				return r
 			when 'In'
-				r = 'mammouth("in_array", ' + compile(element.left) + ', ' + compile(element.right) + ')'
+				r = 'in_array(' + compile(element.left) + ', ' + compile(element.right) + ')'
 				return r
 
 			# Simple Statements

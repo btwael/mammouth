@@ -4202,7 +4202,7 @@ require["./rewriter"] = (function() {var exports = {}, module = {exports: export
           r = 'isset(' + compile(element.expression) + ')';
           return r;
         case 'In':
-          r = 'mammouth("in_array", ' + compile(element.left) + ', ' + compile(element.right) + ')';
+          r = 'in_array(' + compile(element.left) + ', ' + compile(element.right) + ')';
           return r;
         case 'Echo':
           return 'echo ' + compile(element.value);
