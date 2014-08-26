@@ -79,16 +79,16 @@ exports.Context = class Context
 		[ ] Calendar
 		[ ] Date/Time
 		[ ] HRTime
-	[/] File System Related Extensions
+	[x] File System Related Extensions
 		[x] Direct IO
 		[x] Directories
 		[x] Fileinfo
 		[x] Filesystem
 		[x] Inotify
 		[x] Mimetype
-		[ ] Proctitle
-		[ ] xattr
-		[ ] xdiff
+		[x] Proctitle
+		[x] xattr
+		[x] xdiff
 	[ ] Human Language and Character Encoding Support
 		[ ] Enchant
 		[ ] FriBiDi
@@ -1280,5 +1280,78 @@ PreContext = exports.PreContext = new Context({
 	'inotify_read':
 		'type': 'function'
 	'inotify_rm_watch':
+		'type': 'function'
+
+	# Proctitle
+	# Proctitle functions
+	'setproctitle':
+		'type': 'function'
+	'setthreadtitle':
+		'type': 'function'
+
+	# xattr
+	# xattr constants
+	'XATTR_ROOT':
+		'type': 'cte'
+	'XATTR_DONTFOLLOW':
+		'type': 'cte'
+	'XATTR_CREATE':
+		'type': 'cte'
+	'XATTR_REPLACE':
+		'type': 'cte'
+	# xattr functions
+	'xattr_get':
+		'type': 'function'
+	'xattr_list':
+		'type': 'function'
+	'xattr_remove':
+		'type': 'function'
+	'xattr_set':
+		'type': 'function'
+	'xattr_supported':
+		'type': 'function'
+
+	# xdiff
+	# xdiff constants
+	'XDIFF_PATCH_NORMAL':
+		'type': 'cte'
+	'XDIFF_PATCH_REVERSE':
+		'type': 'cte'
+	# xdiff functions
+	'xdiff_file_bdiff_size':
+		'type': 'function'
+	'xdiff_file_bdiff':
+		'type': 'function'
+	'xdiff_file_bpatch':
+		'type': 'function'
+	'xdiff_file_diff_binary':
+		'type': 'function'
+	'xdiff_file_diff':
+		'type': 'function'
+	'xdiff_file_merge3':
+		'type': 'function'
+	'xdiff_file_patch_binary':
+		'type': 'function'
+	'xdiff_file_patch':
+		'type': 'function'
+	'xdiff_file_rabdiff':
+		'type': 'function'
+	'xdiff_string_bdiff_size':
+		'type': 'function'
+	'xdiff_string_bdiff':
+		'type': 'function'
+	'xdiff_string_bpatch':
+		'type': 'function'
+	'xdiff_string_diff_binary':
+		'type': 'function'
+	'xdiff_string_diff':
+		'type': 'function'
+	'xdiff_string_merge3':
+		'type': 'function'
+	'xdiff_string_patch_binary':
+		'type': 'function'
+	'xdiff_string_patch':
+		'type': 'function'
+	'xdiff_string_rabdiff':
 		'type': 'function'
 })
