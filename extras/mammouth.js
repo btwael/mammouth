@@ -870,13 +870,13 @@ require["./context"] = (function() {var exports = {}, module = {exports: exports
   	[ ] Credit Card Processing
   		[ ] MCVE
   		[ ] SPPLUS
-  	[/] Cryptography Extensions
+  	[x] Cryptography Extensions
   		[x] Crack
   		[x] Hash
   		[x] Mcrypt
-  		[ ] Mhash
-  		[ ] OpenSSL
-  		[ ] Password Hashing
+  		[x] Mhash
+  		[x] OpenSSL
+  		[x] Password Hashing
   	[ ] Database Extensions
   		[ ] Abstraction Layers
   		[ ] Vendor Specific Database Extensions
@@ -2796,6 +2796,417 @@ require["./context"] = (function() {var exports = {}, module = {exports: exports
       'type': 'function'
     },
     'mdecrypt_generic': {
+      'type': 'function'
+    },
+    'MHASH_ADLER32': {
+      'type': 'cte'
+    },
+    'MHASH_CRC32': {
+      'type': 'cte'
+    },
+    'MHASH_CRC32B': {
+      'type': 'cte'
+    },
+    'MHASH_GOST': {
+      'type': 'cte'
+    },
+    'MHASH_HAVAL128': {
+      'type': 'cte'
+    },
+    'MHASH_HAVAL160': {
+      'type': 'cte'
+    },
+    'MHASH_HAVAL192': {
+      'type': 'cte'
+    },
+    'MHASH_HAVAL224': {
+      'type': 'cte'
+    },
+    'MHASH_HAVAL256': {
+      'type': 'cte'
+    },
+    'MHASH_MD2': {
+      'type': 'cte'
+    },
+    'MHASH_MD4': {
+      'type': 'cte'
+    },
+    'MHASH_MD5': {
+      'type': 'cte'
+    },
+    'MHASH_RIPEMD128': {
+      'type': 'cte'
+    },
+    'MHASH_RIPEMD256': {
+      'type': 'cte'
+    },
+    'MHASH_RIPEMD320': {
+      'type': 'cte'
+    },
+    'MHASH_SHA1': {
+      'type': 'cte'
+    },
+    'MHASH_SHA192': {
+      'type': 'cte'
+    },
+    'MHASH_SHA224': {
+      'type': 'cte'
+    },
+    'MHASH_SHA256': {
+      'type': 'cte'
+    },
+    'MHASH_SHA384': {
+      'type': 'cte'
+    },
+    'MHASH_SHA512': {
+      'type': 'cte'
+    },
+    'MHASH_SNEFRU128': {
+      'type': 'cte'
+    },
+    'MHASH_SNEFRU256': {
+      'type': 'cte'
+    },
+    'MHASH_TIGER': {
+      'type': 'cte'
+    },
+    'MHASH_TIGER128': {
+      'type': 'cte'
+    },
+    'MHASH_TIGER160': {
+      'type': 'cte'
+    },
+    'MHASH_WHIRLPOOL ': {
+      'type': 'cte'
+    },
+    'mhash_count': {
+      'type': 'function'
+    },
+    'mhash_get_block_size': {
+      'type': 'function'
+    },
+    'mhash_get_hash_name': {
+      'type': 'function'
+    },
+    'mhash_keygen_s2k': {
+      'type': 'function'
+    },
+    'mhash': {
+      'type': 'function'
+    },
+    'X509_PURPOSE_SSL_CLIENT': {
+      'type': 'cte'
+    },
+    'X509_PURPOSE_SSL_SERVER': {
+      'type': 'cte'
+    },
+    'X509_PURPOSE_NS_SSL_SERVER': {
+      'type': 'cte'
+    },
+    'X509_PURPOSE_SMIME_SIGN': {
+      'type': 'cte'
+    },
+    'X509_PURPOSE_SMIME_ENCRYPT': {
+      'type': 'cte'
+    },
+    'X509_PURPOSE_CRL_SIGN': {
+      'type': 'cte'
+    },
+    'X509_PURPOSE_ANY': {
+      'type': 'cte'
+    },
+    'OPENSSL_PKCS1_PADDING': {
+      'type': 'cte'
+    },
+    'OPENSSL_SSLV23_PADDING': {
+      'type': 'cte'
+    },
+    'OPENSSL_NO_PADDING': {
+      'type': 'cte'
+    },
+    'OPENSSL_PKCS1_OAEP_PADDING': {
+      'type': 'cte'
+    },
+    'OPENSSL_KEYTYPE_RSA': {
+      'type': 'cte'
+    },
+    'OPENSSL_KEYTYPE_DSA': {
+      'type': 'cte'
+    },
+    'OPENSSL_KEYTYPE_DH': {
+      'type': 'cte'
+    },
+    'OPENSSL_KEYTYPE_EC': {
+      'type': 'cte'
+    },
+    'OPENSSL_KEYTYPE_EC': {
+      'type': 'cte'
+    },
+    'PKCS7_TEXT': {
+      'type': 'cte'
+    },
+    'PKCS7_BINARY': {
+      'type': 'cte'
+    },
+    'PKCS7_NOINTERN': {
+      'type': 'cte'
+    },
+    'PKCS7_NOVERIFY': {
+      'type': 'cte'
+    },
+    'PKCS7_NOCHAIN': {
+      'type': 'cte'
+    },
+    'PKCS7_NOCERTS': {
+      'type': 'cte'
+    },
+    'PKCS7_NOATTR': {
+      'type': 'cte'
+    },
+    'PKCS7_DETACHED': {
+      'type': 'cte'
+    },
+    'PKCS7_NOSIGS': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_DSS1': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_SHA1': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_SHA224': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_SHA256': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_SHA384': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_SHA512': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_RMD160': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_MD5': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_MD4': {
+      'type': 'cte'
+    },
+    'OPENSSL_ALGO_MD2': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_RC2_40': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_RC2_128': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_RC2_64': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_DES': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_3DES': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_AES_128_CBC': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_AES_192_CBC': {
+      'type': 'cte'
+    },
+    'OPENSSL_CIPHER_AES_256_CBC': {
+      'type': 'cte'
+    },
+    'OPENSSL_VERSION_TEXT': {
+      'type': 'cte'
+    },
+    'OPENSSL_VERSION_NUMBER': {
+      'type': 'cte'
+    },
+    'OPENSSL_TLSEXT_SERVER_NAME': {
+      'type': 'cte'
+    },
+    'openssl_cipher_iv_length': {
+      'type': 'function'
+    },
+    'openssl_csr_export_to_file': {
+      'type': 'function'
+    },
+    'openssl_csr_export': {
+      'type': 'function'
+    },
+    'openssl_csr_get_public_key': {
+      'type': 'function'
+    },
+    'openssl_csr_get_subject': {
+      'type': 'function'
+    },
+    'openssl_csr_new': {
+      'type': 'function'
+    },
+    'openssl_csr_sign': {
+      'type': 'function'
+    },
+    'openssl_decrypt': {
+      'type': 'function'
+    },
+    'openssl_dh_compute_key': {
+      'type': 'function'
+    },
+    'openssl_digest': {
+      'type': 'function'
+    },
+    'openssl_encrypt': {
+      'type': 'function'
+    },
+    'openssl_error_string': {
+      'type': 'function'
+    },
+    'openssl_free_key': {
+      'type': 'function'
+    },
+    'openssl_get_cipher_methods': {
+      'type': 'function'
+    },
+    'openssl_get_md_methods': {
+      'type': 'function'
+    },
+    'openssl_get_privatekey': {
+      'type': 'function'
+    },
+    'openssl_get_publickey': {
+      'type': 'function'
+    },
+    'openssl_open': {
+      'type': 'function'
+    },
+    'openssl_pbkdf2': {
+      'type': 'function'
+    },
+    'openssl_pkcs12_export_to_file': {
+      'type': 'function'
+    },
+    'openssl_pkcs12_export': {
+      'type': 'function'
+    },
+    'openssl_pkcs12_read': {
+      'type': 'function'
+    },
+    'openssl_pkcs7_decrypt': {
+      'type': 'function'
+    },
+    'openssl_pkcs7_encrypt': {
+      'type': 'function'
+    },
+    'openssl_pkcs7_sign': {
+      'type': 'function'
+    },
+    'openssl_pkcs7_verify': {
+      'type': 'function'
+    },
+    'openssl_pkey_export_to_file': {
+      'type': 'function'
+    },
+    'openssl_pkey_export': {
+      'type': 'function'
+    },
+    'openssl_pkey_free': {
+      'type': 'function'
+    },
+    'openssl_pkey_get_details': {
+      'type': 'function'
+    },
+    'openssl_pkey_get_private': {
+      'type': 'function'
+    },
+    'openssl_pkey_get_public': {
+      'type': 'function'
+    },
+    'openssl_pkey_new': {
+      'type': 'function'
+    },
+    'openssl_private_decrypt': {
+      'type': 'function'
+    },
+    'openssl_private_encrypt': {
+      'type': 'function'
+    },
+    'openssl_public_decrypt': {
+      'type': 'function'
+    },
+    'openssl_public_encrypt': {
+      'type': 'function'
+    },
+    'openssl_random_pseudo_bytes': {
+      'type': 'function'
+    },
+    'openssl_seal': {
+      'type': 'function'
+    },
+    'openssl_sign': {
+      'type': 'function'
+    },
+    'openssl_spki_export_challenge': {
+      'type': 'function'
+    },
+    'openssl_spki_export': {
+      'type': 'function'
+    },
+    'openssl_spki_new': {
+      'type': 'function'
+    },
+    'openssl_spki_verify': {
+      'type': 'function'
+    },
+    'openssl_verify': {
+      'type': 'function'
+    },
+    'openssl_x509_check_private_key': {
+      'type': 'function'
+    },
+    'openssl_x509_checkpurpose': {
+      'type': 'function'
+    },
+    'openssl_x509_export_to_file': {
+      'type': 'function'
+    },
+    'openssl_x509_export': {
+      'type': 'function'
+    },
+    'openssl_x509_fingerprint': {
+      'type': 'function'
+    },
+    'openssl_x509_free': {
+      'type': 'function'
+    },
+    'openssl_x509_parse': {
+      'type': 'function'
+    },
+    'openssl_x509_read': {
+      'type': 'function'
+    },
+    'PASSWORD_BCRYPT': {
+      'type': 'cte'
+    },
+    'PASSWORD_DEFAULT': {
+      'type': 'cte'
+    },
+    'password_get_info': {
+      'type': 'function'
+    },
+    'password_hash': {
+      'type': 'function'
+    },
+    'password_needs_rehash': {
+      'type': 'function'
+    },
+    'password_verify': {
       'type': 'function'
     }
   });
