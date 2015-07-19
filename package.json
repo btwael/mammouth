@@ -1,0 +1,16 @@
+{
+    "name": "mammouth",
+    "version": "3.0.0",
+    "description": "Unfancy PHP",
+    "author": {
+        "name": "Wael Amine Boutglay",
+        "email": "btwael@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/btwael/mammouth.git"
+    },
+    "devDependencies": {
+        "jison": "latest"
+    }
+}
