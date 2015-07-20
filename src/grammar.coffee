@@ -35,8 +35,13 @@ grammar =
 
 	# The script grammar description is here
 	Block: [ # a block is a list of instructions with the some indent level
-        
+        o 'INDENT Instructions OUTDENT', 2
 	]
+
+    Instructions: [
+        o 'Instruction', '$$ = [$1];'
+        o 'Instructions MINDENT Instruction', '$$ = $1.concat($3);'
+    ]
 
 operators = []
 
