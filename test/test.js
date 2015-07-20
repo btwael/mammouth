@@ -1,4 +1,16 @@
-var code = 'sdfsd{{\n\n   \n  \n  \n       \n}}sdfdfs';
+function heredoc (f) {
+    return f.toString().match(/\/\*\s*([\s\S]*?)\s*\*\//m)[1];
+};
+
+var code = heredoc(function() {
+/*
+{{ds
+     dfsdf
+       dfsdf
+         fgd
+}}
+*/
+});
 
 // The lexer
 var lexed = [],
@@ -9,3 +21,7 @@ while(m != undefined) {
     m = lexer.lex();
 }
 console.log(lexer.tokens);
+
+// The parser
+mammouth = require('../lib/mammouth');
+//console.log(mammouth.parse(code))

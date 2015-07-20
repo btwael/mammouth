@@ -86,13 +86,24 @@ lexer.addRule REGEX.startTag, (lexeme) ->
 lexer.addRule REGEX.endTag, (lexeme) ->
     posAdvance lexeme, @
     Track.into.mammouth = off
-    return addToken '}}'
+    tokens = ['}}']
+    # Some indent can still unclosed, so we should close them
+    while Track.indent.openedIndent > 0
+        tokens.unshift 'OUTDENT'
+        Track.indent.openedIndent--
+    console.log(tokens)
+    return addToken tokens
+
+# Skip empty lines
+lexer.addRule REGEX.EMPTYLINE, (lexeme) ->
+    posAdvance lexeme, @
 
 # Indent are used to determine block start and end instead of { & } in php
 lexer.addRule REGEX.INDENT, (lexeme) ->
     posAdvance lexeme, @
     # For reasons, we don't support TAB as indent, so we treat as 4 spaces
-    indentLength = lexeme.split(REGEX.LINETERMINATOR)[1].replace(/\t/g,'    ').length
+    multiIndent = lexeme.split REGEX.LINETERMINATOR
+    indentLength = multiIndent[multiIndent.length - 1].replace(/\t/g,'    ').length
     if indentLength > Track.indent.currentIndent
         # if indent lenght is superior than current indent, thhen it's a new block
         Track.indent.currentIndent = indentLength
@@ -130,10 +141,16 @@ lexer.addRule REGEX.INDENT, (lexeme) ->
                 }
         return addToken tokens, undefined, prop
 
+# Detect identifier
+lexer.addRule REGEX.IDENTIFIER, (lexeme) ->
+    posAdvance lexeme, @
+    return addToken 'IDENTIFIER', lexeme
+
 # Line terminator
 lexer.addRule REGEX.LINETERMINATOR, (lexeme) ->
     posAdvance lexeme, @
-    return addToken 'LINETERMINATOR'
+    if @look() in ['INDENT', 'MINDENT', 'OUTDENT']
+        return addToken 'LINETERMINATOR'
 
 # End of string
 lexer.addRule /$/, (lexeme) ->
