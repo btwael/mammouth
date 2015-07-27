@@ -1,5 +1,6 @@
 REGEX =
     IDENTIFIER: /((^[$A-Za-z_\x7f-\uffff][$\w\x7f-\uffff]*)( [^\n\S]* : (?!:) )?)/
+    INDENT: /(^[ \t]*)/
     LINETERMINATOR: /[\n\r\u2028]/
 
 class Lexer
@@ -17,16 +18,15 @@ class Lexer
                 row: 1
             into:
                 mammouth: off
+            indent:
+                indentStack: []
+                currentIndent: -1
+                openedIndent: 0
 
     setInput: (code) ->
         @initialize()
         @input = code
         @inputLength = code.length
-
-    addToken: (token) ->
-        @Tokens.push token
-        console.log token, @pos, @inputLength - 1
-        return token
 
     posAdvance: (string) ->
         lines = string.split REGEX.LINETERMINATOR
@@ -36,6 +36,18 @@ class Lexer
             else
                 @Track.position.row++
                 @Track.position.col = string.length
+
+    addToken: (token) ->
+        if token instanceof Array
+            for tok in token
+                @Tokens.push tok
+            return token
+        else
+            @Tokens.push token
+            return token
+
+    lastToken: () ->
+        @Tokens[@Tokens.length - 1].type
 
     nextToken: () ->
         return undefined if @pos is @inputLength
@@ -47,6 +59,10 @@ class Lexer
             return @readTokenStartTag()
         if @isEndTag @pos
             return @readTokenEndTag()
+        # Indent
+        if @lastToken() is 'LINETERMINAROR' and @isIndent(@pos)
+            @Tokens.pop()
+            return @readIndent()
         if @isIdentifier @pos
             return @readTokenIdentifier()
         return @getTokenFromCode @input.charCodeAt @pos
@@ -78,8 +94,16 @@ class Lexer
     readTokenEndTag: () ->
         @Track.position.col += 2
         @pos += 2
+        tokens = [{
+            type: '}}'
+        }]
         @Track.into.mammouth = off
-        return @addToken {type: '}}'}
+        while @Track.indent.openedIndent
+            tokens.unshift {
+                type: 'OUTDENT'
+            }
+            @Track.indent.openedIndent--
+        return @addToken tokens
 
     readLineTerminator: () ->
         @pos++
@@ -97,6 +121,44 @@ class Lexer
             value: value
         }
 
+    readIndent: () ->
+        indent = @input.slice(@pos).match(REGEX.INDENT)[0]
+        @pos += indent.length
+        @Track.position.col += indent.length
+        if indent.length > @Track.indent.currentIndent
+            @Track.indent.currentIndent = indent.length
+            @Track.indent.openedIndent++
+            @Track.indent.indentStack.push indent.length
+            return @addToken {
+                type: 'INDENT'
+                length: indent.length
+            }
+        else if indent.length is @Track.indent.currentIndent
+            return @addToken {
+                type: 'MINDENT'
+            }
+        else
+            tokens = []
+            # reversed @Track.indent.indentStack
+            reversed = []
+            for i in @Track.indent.indentStack
+                reversed.unshift i
+
+            for indentLevel in reversed
+                if indent.length is indentLevel
+                    @Track.indent.currentIndent = indent.length
+                    tokens.push {
+                        type: 'MINDENT'
+                    }
+                else if indent.length < indentLevel
+                    @Track.indent.currentIndent = @Track.indent.indentStack.pop()
+                    @Track.indent.openedIndent--
+                    tokens.push {
+                        type: 'OUTDENT'
+                    }
+
+            return @addToken tokens
+
     # checking
     isStartTag: (pos) -> # 123 is '{'
         if @pos + 1 > @inputLength - 1
@@ -111,12 +173,14 @@ class Lexer
     isIdentifier: (pos) ->
         return @input.slice(pos).match(REGEX.IDENTIFIER) isnt null
 
+    isIndent: (pos) ->
+        return @input.slice(pos).match(REGEX.INDENT) isnt null
+
 
 lexer = new Lexer
-lexer.setInput('sdfsdfsdf{{fs\ndf}}sdfsd')
+lexer.setInput('sdfsdfsdf{{\nv1\n v2\n v2\n   v3\n   v3\n  v2}}sdfsd')
 Tokens = []
 m = 0;
 while m isnt undefined
     m = lexer.nextToken();
-    Tokens.push m
-console.log(Tokens)
+console.log(lexer.Tokens)
