@@ -1,158 +1,113 @@
-Lexer = require './util/lex'
-{REGEX} = require './constants'
+REGEX =
+    IDENTIFIER: /((^[$A-Za-z_\x7f-\uffff][$\w\x7f-\uffff]*)( [^\n\S]* : (?!:) )?)/
+    LINETERMINATOR: /[\n\r\u2028]/
 
-# We should track some informations while lexing like positions & indents...
-Track = {}
+class Lexer
+    constructor: () ->
+        @initialize()
 
-# So we should have an initialize function for Track called for each file lexing
-initializeTrack = ->
-    return {
-        # Positions
-        row: 1
-        col: 1
-        into:
-            mammouth: off # to check if we're in a code block or not
-        # Tokens list
-        tokens: []
-        # Indent level
-        indent:
-            currentIndent: -1
-            openedIndent: 0
-            indentStack: []
-    }
+    initialize: () ->
+        @input = ''
+        @inputLength = 0
+        @Tokens = [] 
+        @pos = 0
+        @Track =
+            position:
+                col: 1
+                row: 1
+            into:
+                mammouth: off
 
-# We also need to track previous tokens
-addToken = (tok, value = undefined, prop = {}) ->
-    if tok instanceof Array
-        # A rule in our lexer can return many tokens
-        for el, i in tok
-            token =
-                type: el
-            token['value'] = value[i] if value && value[i]
-            if prop && prop[i]
-                for key, val of prop[i]
-                    token[key] = val 
-            Track.tokens.push token
-        return tok
-    else
-        token =
-            type: tok
-        token['value'] = value if value
-        for key, val of prop
-            token[key] = val
-        Track.tokens.push token
-        return tok
+    setInput: (code) ->
+        @initialize()
+        @input = code
+        @inputLength = code.length
 
-# and a helper function to increase lexing positon
-posAdvance = (string, yy) ->
-    yy.yylloc = {
-        first_line: Track.row,
-        first_column: Track.col,
-    }
-    lines = string.split REGEX.LINETERMINATOR
-    for line, i in lines
-        if i is 0
-            Track.col += string.length
-        else
-            Track.row++
-            Track.col = string.length
-    yy.yylloc.last_line = Track.row
-    yy.yylloc.last_column = Track.col
+    addToken: (token) ->
+        @Tokens.push token
+        return token
 
-# Initialising...
-Track = initializeTrack()
+    posAdvance: (string) ->
+        lines = string.split REGEX.LINETERMINATOR
+        for line, i in lines
+            if i is 0
+                @Track.position.col += string.length
+            else
+                @Track.position.row++
+                @Track.position.col = string.length
 
-# Create a new lexer instance
-lexer = module.exports = new Lexer (char) ->
-    throw new Error 'Unexpected character at row ' + Track.row + ', col ' + Track.col + ': ' + char
+    nextToken: () ->
+        # Everything out of '{{ }}' is a RAW text (html/xml...)
+        if not @Track.into.mammouth
+            return @addToken @readRAW()
+        # now let's lex what's into '{{ }}'
+        if @isStartTag @pos
+            @Track.position.col += 2
+            @pos += 2
+            return @addToken {type: '{{'}
+        if @isEndTag @pos
+            @Track.position.col += 2
+            @pos += 2
+            return @addToken {type: '}}'}
+        if @isIdentifier @pos
+            return @addToken @readTokenIdentifier()
+        return @addToken @getTokenFromCode @input.charCodeAt @pos
 
-# Mammouth files are very similiar to PHP files, each file can contain what I
-# call RAW text (html/xml...) and code block, in mammouth between `{{` & `}}`.
-# So if we're not into a code block everything is a RAW
-lexer.addRule REGEX.RAWTEXT, (lexeme) ->
-    if not Track.into.mammouth
-        posAdvance lexeme, @
-        @yytext = lexeme
-        return addToken 'RAWTEXT', lexeme
-    else
-        @reject = true
+    # reading
+    getTokenFromCode: (code) ->
+        switch code
+            when 10, 13, 8232 # 10 is "\n", 13 is "\r", 8232 is "\u2028"
+                return @readLineTerminator()
 
-# The rest of lexng rules are only executed if we're into code block.
-lexer.addRule REGEX.startTag, (lexeme) ->
-    posAdvance lexeme, @
-    Track.into.mammouth = on
-    return addToken '{{'
-
-lexer.addRule REGEX.endTag, (lexeme) ->
-    posAdvance lexeme, @
-    Track.into.mammouth = off
-    tokens = ['}}']
-    # Some indent can still unclosed, so we should close them
-    while Track.indent.openedIndent > 0
-        tokens.unshift 'OUTDENT'
-        Track.indent.openedIndent--
-    console.log(tokens)
-    return addToken tokens
-
-# Skip empty lines
-lexer.addRule REGEX.EMPTYLINE, (lexeme) ->
-    posAdvance lexeme, @
-
-# Indent are used to determine block start and end instead of { & } in php
-lexer.addRule REGEX.INDENT, (lexeme) ->
-    posAdvance lexeme, @
-    # For reasons, we don't support TAB as indent, so we treat as 4 spaces
-    multiIndent = lexeme.split REGEX.LINETERMINATOR
-    indentLength = multiIndent[multiIndent.length - 1].replace(/\t/g,'    ').length
-    if indentLength > Track.indent.currentIndent
-        # if indent lenght is superior than current indent, thhen it's a new block
-        Track.indent.currentIndent = indentLength
-        Track.indent.openedIndent++
-        Track.indent.indentStack.push indentLength
-        return addToken 'INDENT', undefined, {
-            length: indentLength
+    readRAW: () ->
+        startPos = @pos
+        while @pos < @inputLength and not @isStartTag @pos
+            @pos++
+        if @isStartTag @pos
+            @Track.into.mammouth = on
+        value = @input.slice startPos, @pos
+        @posAdvance value
+        return {
+            type: 'RAW'
+            value: value
         }
-    else if indentLength is Track.indent.currentIndent
-        # This is optional just to decrease parser errors.
-        return addToken 'MINDENT'
-    else
-        tokens = []
-        prop = []
-        # reverse indent stack to reversedStack
-        reversedStack = []
-        for i in Track.indent.indentStack
-            reversedStack.unshift i
 
-        for indentLevel in reversedStack
-            if indentLength is indentLevel
-                Track.indent.currentIndent = indentLevel
-            else if indentLength < indentLevel
-                Track.indent.currentIndent = Track.indent.indentStack.pop()
-                tokens.push 'OUTDENT'
-                prop.push undefined
-                Track.indent.openedIndent--
-            else if indentLength > indentLevel
-                Track.indent.currentIndent = indentLength
-                Track.indent.openedIndent++
-                Track.indent.indentStack.push indentLength
-                tokens.push 'INDENT'
-                prop.push {
-                    length: indentLength
-                }
-        return addToken tokens, undefined, prop
+    readLineTerminator: () ->
+        @pos++
+        @Track.position.row++
+        return {
+            type: 'LINETERMINAROR'
+        }
 
-# Detect identifier
-lexer.addRule REGEX.IDENTIFIER, (lexeme) ->
-    posAdvance lexeme, @
-    return addToken 'IDENTIFIER', lexeme
+    readTokenIdentifier: () ->
+        value = @input.slice(@pos).match(REGEX.IDENTIFIER)[0]
+        @pos += value.length
+        @Track.position.col += value.length
+        return {
+            type: 'IDENTIFIER'
+            value: value
+        }
 
-# Line terminator
-lexer.addRule REGEX.LINETERMINATOR, (lexeme) ->
-    posAdvance lexeme, @
-    if @look() in ['INDENT', 'MINDENT', 'OUTDENT']
-        return addToken 'LINETERMINATOR'
+    # checking
+    isStartTag: (pos) -> # 123 is '{'
+        if @pos + 1 > @inputLength - 1
+            return false
+        return @input.charCodeAt(pos) is 123 and @input.charCodeAt(@pos + 1) is 123
 
-# End of string
-lexer.addRule /$/, (lexeme) ->
-    @tokens = Track.tokens
-    @reject = true
+    isEndTag: (pos) -> # 125 is '}'
+        if @pos + 1 > @inputLength - 1
+            return false
+        return @input.charCodeAt(pos) is 125 and @input.charCodeAt(@pos + 1) is 125
+
+    isIdentifier: (pos) ->
+        return @input.slice(pos).match(REGEX.IDENTIFIER) isnt null
+
+
+lexer = new Lexer
+lexer.setInput('sdfsdfsdf{{fsdf}}')
+Tokens = []
+m = 0;
+while m isnt undefined
+    m = lexer.nextToken();
+    Tokens.push m
+console.log(Tokens)
