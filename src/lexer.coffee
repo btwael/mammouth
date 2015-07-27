@@ -25,6 +25,7 @@ class Lexer
 
     addToken: (token) ->
         @Tokens.push token
+        console.log token, @pos, @inputLength - 1
         return token
 
     posAdvance: (string) ->
@@ -37,21 +38,18 @@ class Lexer
                 @Track.position.col = string.length
 
     nextToken: () ->
+        return undefined if @pos is @inputLength
         # Everything out of '{{ }}' is a RAW text (html/xml...)
         if not @Track.into.mammouth
-            return @addToken @readRAW()
+            return @readRAW()
         # now let's lex what's into '{{ }}'
         if @isStartTag @pos
-            @Track.position.col += 2
-            @pos += 2
-            return @addToken {type: '{{'}
+            return @readTokenStartTag()
         if @isEndTag @pos
-            @Track.position.col += 2
-            @pos += 2
-            return @addToken {type: '}}'}
+            return @readTokenEndTag()
         if @isIdentifier @pos
-            return @addToken @readTokenIdentifier()
-        return @addToken @getTokenFromCode @input.charCodeAt @pos
+            return @readTokenIdentifier()
+        return @getTokenFromCode @input.charCodeAt @pos
 
     # reading
     getTokenFromCode: (code) ->
@@ -67,15 +65,26 @@ class Lexer
             @Track.into.mammouth = on
         value = @input.slice startPos, @pos
         @posAdvance value
-        return {
+        return @addToken {
             type: 'RAW'
             value: value
         }
 
+    readTokenStartTag: () ->
+        @Track.position.col += 2
+        @pos += 2
+        return @addToken {type: '{{'}
+
+    readTokenEndTag: () ->
+        @Track.position.col += 2
+        @pos += 2
+        @Track.into.mammouth = off
+        return @addToken {type: '}}'}
+
     readLineTerminator: () ->
         @pos++
         @Track.position.row++
-        return {
+        return @addToken {
             type: 'LINETERMINAROR'
         }
 
@@ -83,7 +92,7 @@ class Lexer
         value = @input.slice(@pos).match(REGEX.IDENTIFIER)[0]
         @pos += value.length
         @Track.position.col += value.length
-        return {
+        return @addToken {
             type: 'IDENTIFIER'
             value: value
         }
@@ -104,7 +113,7 @@ class Lexer
 
 
 lexer = new Lexer
-lexer.setInput('sdfsdfsdf{{fsdf}}')
+lexer.setInput('sdfsdfsdf{{fs\ndf}}sdfsd')
 Tokens = []
 m = 0;
 while m isnt undefined
