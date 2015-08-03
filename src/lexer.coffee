@@ -8,7 +8,7 @@ REGEX =
 
 KEYWORDS =
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
-    RESERVED: ['clone', 'const', 'cte', 'func', 'null']
+    RESERVED: ['clone', 'const', 'cte', 'func', 'in', 'instanceof', 'new', 'not', 'null']
 
 class Lexer
     constructor: () ->
@@ -27,6 +27,7 @@ class Lexer
                 row: 1
             into:
                 mammouth: off
+                call: off
             indent:
                 indentStack: []
                 currentIndent: -1
@@ -55,6 +56,8 @@ class Lexer
                 if token.type is 'MINDENT'
                     if @Tokens[i + 1] and @Tokens[i - 1]
                         if @Tokens[i + 1].type is ']' and @Tokens[i - 1].type is 'OUTDENT'
+                            @Tokens.splice i, 1
+                        if @Tokens[i + 1].type is 'CALL_END' and @Tokens[i - 1].type is 'OUTDENT'
                             @Tokens.splice i, 1
         @_Tokens = @Tokens
         @lexed = on
@@ -120,20 +123,124 @@ class Lexer
             when 32, 160, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288
                 @colAdvance()
                 @nextToken()
-            when 40
+            when 33 # 33 is '!'
                 @colAdvance()
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'COMPARE'
+                        value: '!='
+                    }
+                return @addToken {
+                    type: 'NOT'
+                }
+            when 37 # 37 is '%'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '%='
+                    }
+                return @addToken {
+                    type: '%'
+                }
+            when 38 # 38 is '&'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '&='
+                    }
+                if @input.charCodeAt(@pos) is 38
+                    @colAdvance()
+                    return @addToken {
+                        type: 'LOGIC'
+                        value: '&&'
+                    }
+                return @addToken {
+                    type: 'LOGIC'
+                    value: '&'
+                }
+            when 40 # 40 is '('
+                @colAdvance()
+                if @lastToken() is 'IDENTIFIER'
+                    @Track.into.call = on
+                    return @addToken {
+                        type: 'CALL_START'
+                    }
                 return @addToken {
                     type: '('
                 }
-            when 41
+            when 41 # 41 is ')'
                 @colAdvance()
+                if @Track.into.call is on
+                    @Track.into.call = off
+                    return @addToken {
+                        type: 'CALL_END'
+                    }
                 return @addToken {
                     type: ')'
+                }
+            when 42 # 43 is '*'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 42
+                    @colAdvance()
+                    return @addToken {
+                        type: '**'
+                    }
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '*='
+                    }
+                return @addToken {
+                    type: '*'
+                }
+            when 43 # 43 is '+'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 43
+                    @colAdvance()
+                    return @addToken {
+                        type: '++'
+                    }
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '+='
+                    }
+                return @addToken {
+                    type: '+'
                 }
             when 44 # 44 is ','
                 @colAdvance()
                 return @addToken {
                     type: ','
+                }
+            when 45 # 45 is '-'
+                @colAdvance()
+                switch @input.charCodeAt(@pos)
+                    when 45
+                        @colAdvance()
+                        return @addToken {
+                            type: '--'
+                        }
+                    when 61
+                        @colAdvance()
+                        return @addToken {
+                            type: 'ASSIGN'
+                            value: '-='
+                        }
+                    when 62
+                        @colAdvance()
+                        return @addToken {
+                            type: '->'
+                        }
+                return @addToken {
+                    type: '-'
                 }
             when 46 # 46 is '.'
                 @colAdvance()
@@ -145,6 +252,17 @@ class Lexer
                 return @addToken {
                     type: '.'
                 }
+            when 47 # 47 is '/'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '/='
+                    }
+                return @addToken {
+                    type: '/'
+                }
             when 58 # 58 is ':'
                 @colAdvance()
                 if @input.charCodeAt(@pos) is 58
@@ -155,6 +273,36 @@ class Lexer
                 return @addToken {
                     type: ':'
                 }
+            when 60 # 60 is '<'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 60
+                    @colAdvance()
+                    if @input.charCodeAt(@pos) is 61
+                        @colAdvance()
+                        return @addToken {
+                            type: 'ASSIGN'
+                            value: '<<='
+                        }
+                    return @addToken {
+                        type: 'BITWISE'
+                        value: '<<'
+                    }
+                if @input.charCodeAt(@pos) is 45 and @input.charCodeAt(@pos + 1) is 62
+                    # looking for '<->' 
+                    @colAdvance(2)
+                    return @addToken {
+                        type: 'CONCAT'
+                    }
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'COMPARE'
+                        value: '<='
+                    }
+                return @addToken {
+                    type: 'COMPARE'
+                    value: '<'
+                }
             when 61 # 61 is '='
                 @colAdvance()
                 if @input.charCodeAt(@pos) is 62
@@ -162,8 +310,44 @@ class Lexer
                     return @addToken {
                         type: '=>'
                     }
+                if @input.charCodeAt(@pos) is 61 and @input.charCodeAt(@pos + 1) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'COMPARE'
+                        value: '==='
+                    }
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'COMPARE'
+                        value: '=='
+                    }
                 return @addToken {
                     type: '='
+                }
+            when 62 # 62 is '>'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 62
+                    @colAdvance()
+                    if @input.charCodeAt(@pos) is 61
+                        @colAdvance()
+                        return @addToken {
+                            type: 'ASSIGN'
+                            value: '>>='
+                        }
+                    return @addToken {
+                        type: 'BITWISE'
+                        value: '>>'
+                    }
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'COMPARE'
+                        value: '>='
+                    }
+                return @addToken {
+                    type: 'COMPARE'
+                    value: '>'
                 }
             when 64 # 61 is '@'
                 @colAdvance()
@@ -181,6 +365,63 @@ class Lexer
                 @Track.into.array = off
                 return @addToken {
                     type: ']'
+                }
+            when 94 # 94 is '^'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '^='
+                    }
+                return @addToken {
+                    type: 'BITWISE'
+                    value: '^'
+                }
+            when 96 # 96 is '`'
+                @colAdvance()
+                return @addToken {
+                    type: '`'
+                }
+            when 124 # 124 is '|'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 124
+                    @colAdvance()
+                    return @addToken {
+                        type: 'BITWISE'
+                        value: '||'
+                    }
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '|='
+                    }
+                return @addToken {
+                    type: 'BITWISE'
+                    value: '|'
+                }
+            when 126 # 126 is '~'
+                @colAdvance()
+                if @input.charCodeAt(@pos) is 126
+                    @colAdvance()
+                    if @input.charCodeAt(@pos) is 61
+                        @colAdvance()
+                        return @addToken {
+                            type: 'ASSIGN'
+                            value: '.='
+                        }
+                    return @addToken {
+                        type: 'CONCAT'
+                    }
+                if @input.charCodeAt(@pos) is 61
+                    @colAdvance()
+                    return @addToken {
+                        type: 'ASSIGN'
+                        value: '.='
+                    }
+                return @addToken {
+                    type: 'CONCAT'
                 }
 
     readTokenRAW: () ->
@@ -239,6 +480,21 @@ class Lexer
             return  @addToken {
                 type: 'BOOL'
                 value: value
+            }
+        if value in ['and', 'or', 'xor']
+            return  @addToken {
+                type: 'LOGIC'
+                value: if value is 'and' then '&&' else if value is 'or' then '||' else value
+            }
+        if value is 'is'
+            return  @addToken {
+                type: 'COMPARE'
+                value: "==="
+            }
+        if value is 'isnt'
+            return  @addToken {
+                type: 'COMPARE'
+                value: '!='
             }
         # it can be a casting type
         if @lastToken() is '=>' and value in KEYWORDS.CASTTYPE

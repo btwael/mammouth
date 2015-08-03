@@ -7,10 +7,7 @@ code = heredoc(function() {
 /*
 sdfsdf
 {{
-[
- clone obj
- df:123
-]
+ dssd^=dfsdf
 }}
 */
 })

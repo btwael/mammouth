@@ -70,3 +70,43 @@ class exports.Clone
     constructor: (expression) ->
         @type = 'Clone'
         @expression = expression
+
+class exports.Call
+    constructor: (callee, args = []) ->
+        @type = 'Call'
+        @callee = callee
+        @arguments = args
+
+class exports.NewExpression
+    constructor: (callee, args = []) ->
+        @type = 'NewExpression'
+        @callee = callee
+        @arguments = args
+
+# Operations
+class exports.Assign
+    constructor: (operator, left, right) ->
+        @type = 'Assign'
+        @operator = operator
+        @left = left
+        @right = right
+
+class exports.Unary
+    constructor: (operator, expression) ->
+        @type = 'Unary'
+        @operator = operator
+        @expression = expression
+
+class exports.Update
+    constructor: (operator, expression, prefix = true) ->
+        @type = 'Update'
+        @operator = operator
+        @expression = expression
+        @prefix = prefix
+
+class exports.Operation
+    constructor: (operator, left, right) ->
+        @type = 'Operation'
+        @operator = operator
+        @left = left
+        @right = right

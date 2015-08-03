@@ -45,8 +45,10 @@ grammar =
 
     Expression: [
         o 'Value'
+        o 'Invocation'
+        # o 'Code'
+        o 'Operation'
         o 'Casting'
-        # Execution
         o 'Clone'
     ]
 
@@ -55,18 +57,11 @@ grammar =
         o 'Assignable'
         o 'Literal', '$$ = new yy.Value($1);'
         o 'Parenthetical', '$$ = new yy.Value($1);'
+        # o 'Existence'
     ]
 
     Parenthetical: [
         o '( Expression )', '$$ = new yy.Parens($2);'
-    ]
-
-    Casting: [
-        o 'Value => CASTTYPE','$$ = new yy.typeCasting($1, $3);'
-    ]
-
-    Clone: [
-        o 'CLONE Value', '$$ = new yy.Clone($2);'
     ]
 
     Assignable: [
@@ -128,11 +123,66 @@ grammar =
         o ','
     ]
 
+    Casting: [
+        o 'Value => CASTTYPE','$$ = new yy.typeCasting($1, $3);'
+    ]
+
+    Clone: [
+        o 'CLONE Value', '$$ = new yy.Clone($2);'
+    ]
+
+    # Invocation
+    Invocation: [
+        o 'Value Arguments', '$$ = new yy.Call($1, $2);'
+        o 'NEW Value', '$$ = new yy.NewExpression($2);'
+        o 'NEW Value Arguments', '$$ = new yy.NewExpression($2, $3);'
+    ]
+
+    Arguments: [
+        o 'CALL_START CALL_END', '$$ = [];'
+        o 'CALL_START ArgList OptComma CALL_END', 2
+    ]
+
+    # Operation
+    Operation: [
+        o '-- Expression', '$$ = new yy.Update("--", $2);'
+        o '++ Expression', '$$ = new yy.Update("++", $2);'
+        o 'SimpleAssignable --', '$$ = new yy.Update("--", $1, false);'
+        o 'SimpleAssignable ++', '$$ = new yy.Update("++", $1, false);'
+        o 'NOT Expression', '$$ = new yy.Unary("!", $2);'
+        o '- Expression', '$$ = new yy.Unary("-", $2);'
+        o '+ Expression', '$$ = new yy.Unary("+", $2);'
+        o 'Expression + Expression', '$$ = new yy.Operation("+", $1, $3);'
+        o 'Expression CONCAT Expression', '$$ = new yy.Operation("~", $1, $3);'
+        o 'Expression - Expression', '$$ = new yy.Operation("-", $1, $3);'
+        o 'Expression * Expression', '$$ = new yy.Operation("*", $1, $3);'
+        o 'Expression ** Expression', '$$ = new yy.Operation("**", $1, $3);'
+        o 'Expression / Expression', '$$ = new yy.Operation("/", $1, $3);'
+        o 'Expression % Expression', '$$ = new yy.Operation("%", $1, $3);'
+        o 'Expression BITWISE Expression', '$$ = new yy.Operation($2, $1, $3);'
+        o 'Expression LOGIC Expression', '$$ = new yy.Operation($2, $1, $3);'
+        o 'Expression COMPARE Expression', '$$ = new yy.Operation($2, $1, $3);'
+        o 'SimpleAssignable ASSIGN Expression', '$$ = new yy.Assign($2, $1, $3);'
+        o 'Expression INSTANCEOF Expression', '$$ = new yy.Operation("instanceof", $1, $3);'
+        o 'Expression IN Expression', '$$ = new yy.Operation("in", $1, $3);'
+    ]
+
+
 operators = [
     ['left', '.', '..', '::']
+    ['nonassoc', '++', '--']
+    ['left', 'CALL_START', 'CALL_END']
+    ['right', 'NOT']
+    ['left', '*', '**', '/', '%']
+    ['left', '+', '-', 'CONCAT']
+    ['left', 'BITWISE']
+    ['left', 'INSTANCEOF', 'IN']
+    ['left', 'COMPARE']
+    ['left', 'LOGIC']
     ['left', '=>']
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
-    ['right', 'CLONE']
+    ['right', '=', ':', 'ASSIGN']
+    ['nonassoc', 'CLONE']
 ]
 
 {Parser} = require 'jison'
