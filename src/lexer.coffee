@@ -7,6 +7,7 @@ REGEX =
     STRING: /^('[^\\']*(?:\\[\s\S][^\\']*)*'|"[^\\"]*(?:\\[\s\S][^\\"]*)*")/
 
 KEYWORDS =
+    CALLABLE: ['IDENTIFIER', ')', ']', '?', '@']
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     RESERVED: ['clone', 'const', 'cte', 'func', 'in', 'instanceof', 'new', 'not', 'null']
 
@@ -160,12 +161,11 @@ class Lexer
                         value: '&&'
                     }
                 return @addToken {
-                    type: 'LOGIC'
-                    value: '&'
+                    type: '&'
                 }
             when 40 # 40 is '('
                 @colAdvance()
-                if @lastToken() is 'IDENTIFIER'
+                if @lastToken() in KEYWORDS.CALLABLE
                     @Track.into.call = on
                     return @addToken {
                         type: 'CALL_START'
@@ -349,6 +349,11 @@ class Lexer
                     type: 'COMPARE'
                     value: '>'
                 }
+            when 63 # 63 is '?'
+                @colAdvance()
+                return @addToken {
+                    type: '?'
+                }
             when 64 # 61 is '@'
                 @colAdvance()
                 return @addToken {
@@ -447,11 +452,13 @@ class Lexer
             type: '}}'
         }]
         @Track.into.mammouth = off
+        reversed = @reversedIndentStack()
         while @Track.indent.openedIndent
             if @lastToken() is 'LINETERMINAROR'
                 @Tokens.pop()
             tokens.unshift {
                 type: 'OUTDENT'
+                length: reversed[@Track.indent.openedIndent - 1]
             }
             @Track.indent.openedIndent--
         if @lastToken() is 'LINETERMINAROR'
@@ -526,25 +533,26 @@ class Lexer
         else if indent.length is @Track.indent.currentIndent
             return @addToken {
                 type: 'MINDENT'
+                length: indent.length
             }
         else
             tokens = []
             # reversed @Track.indent.indentStack
-            reversed = []
-            for i in @Track.indent.indentStack
-                reversed.unshift i
+            reversed = @reversedIndentStack()
 
             for indentLevel in reversed
                 if indent.length is indentLevel
                     @Track.indent.currentIndent = indent.length
                     tokens.push {
                         type: 'MINDENT'
+                        length: indent.length
                     }
                 else if indent.length < indentLevel
                     @Track.indent.currentIndent = @Track.indent.indentStack.pop()
                     @Track.indent.openedIndent--
                     tokens.push {
                         type: 'OUTDENT'
+                        value: indentLevel
                     }
 
             return @addToken tokens
@@ -591,5 +599,12 @@ class Lexer
 
     isString: (pos) ->
         return @input.slice(pos).match(REGEX.STRING) isnt null
+
+    # helpers
+    reversedIndentStack: () ->
+        reversed = []
+        for i in @Track.indent.indentStack
+            reversed.unshift i
+        return reversed
 
 module.exports = new Lexer

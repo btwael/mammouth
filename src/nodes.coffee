@@ -83,6 +83,11 @@ class exports.NewExpression
         @callee = callee
         @arguments = args
 
+class exports.Existence
+    constructor: (value) ->
+        @type = 'Existence'
+        @value = value
+
 # Operations
 class exports.Assign
     constructor: (operator, left, right) ->
@@ -110,3 +115,19 @@ class exports.Operation
         @operator = operator
         @left = left
         @right = right
+
+class exports.Code
+    constructor: (parameters, body, normal = false, name = null) ->
+        @type = 'Code'
+        @parameters = parameters
+        @body = body
+        @normal = normal
+        @name = name
+
+class exports.Param
+    constructor: (name, passing = false, hasDefault = false, def = null) ->
+        @type = 'Param'
+        @name = name
+        @passing = passing
+        @hasDefault = hasDefault
+        @default = def

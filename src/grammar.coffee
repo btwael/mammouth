@@ -31,6 +31,7 @@ grammar =
     ]
 
     Block: [
+        o 'INDENT OUTDENT', '$$ = new yy.Block([]);'
         o 'INDENT Instructions OUTDENT', '$$ = new yy.Block($2);'
     ]
 
@@ -46,8 +47,9 @@ grammar =
     Expression: [
         o 'Value'
         o 'Invocation'
-        # o 'Code'
+        o 'Code'
         o 'Operation'
+        o 'Assign'
         o 'Casting'
         o 'Clone'
     ]
@@ -57,11 +59,15 @@ grammar =
         o 'Assignable'
         o 'Literal', '$$ = new yy.Value($1);'
         o 'Parenthetical', '$$ = new yy.Value($1);'
-        # o 'Existence'
+        o 'Existence', '$$ = new yy.Value($1);'
     ]
 
     Parenthetical: [
         o '( Expression )', '$$ = new yy.Parens($2);'
+    ]
+
+    Existence: [
+        o 'Value ?', '$$ = new yy.Existence($1);'
     ]
 
     Assignable: [
@@ -123,6 +129,11 @@ grammar =
         o ','
     ]
 
+    Assign: [
+        o 'Assignable = Expression', '$$ = new yy.Assign("=", $1, $3);'
+        o 'Assignable = INDENT Expression OUTDENT', '$$ = new yy.Assign("=", $1, $4);'
+    ]
+
     Casting: [
         o 'Value => CASTTYPE','$$ = new yy.typeCasting($1, $3);'
     ]
@@ -143,6 +154,33 @@ grammar =
         o 'CALL_START ArgList OptComma CALL_END', 2
     ]
 
+    # Functions
+    Code: [
+        o 'FUNC ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($3, $6);'
+        o 'FUNC FuncGlyph Block', '$$ = new yy.Code([], $3);'
+    ]
+
+    FuncGlyph: [
+        o '->', false
+    ]
+
+    ParametersList: [
+        o '', '$$ = [];'
+        o 'Param', '$$ = [$1];'
+        o 'ParametersList , Param', '$$ = $1.concat($3);'
+    ]
+
+    Param: [
+        o 'ParamVar'
+        o 'USE ParamVar', '$2.passing = true; $$ = $2;'
+        o 'ParamVar = Expression', '$1.hasDefault = true; $1.default = $3; $$ = $1;'
+    ]
+
+    ParamVar: [
+        o '& IDENTIFIER', '$$ = new yy.Param(yytext, true);'
+        o 'IDENTIFIER', '$$ = new yy.Param(yytext);'
+    ]
+
     # Operation
     Operation: [
         o '-- Expression', '$$ = new yy.Update("--", $2);'
@@ -160,6 +198,7 @@ grammar =
         o 'Expression / Expression', '$$ = new yy.Operation("/", $1, $3);'
         o 'Expression % Expression', '$$ = new yy.Operation("%", $1, $3);'
         o 'Expression BITWISE Expression', '$$ = new yy.Operation($2, $1, $3);'
+        o 'Expression & Expression', '$$ = new yy.Operation("&", $1, $3);'
         o 'Expression LOGIC Expression', '$$ = new yy.Operation($2, $1, $3);'
         o 'Expression COMPARE Expression', '$$ = new yy.Operation($2, $1, $3);'
         o 'SimpleAssignable ASSIGN Expression', '$$ = new yy.Assign($2, $1, $3);'
@@ -178,7 +217,7 @@ operators = [
     ['left', 'BITWISE']
     ['left', 'INSTANCEOF', 'IN']
     ['left', 'COMPARE']
-    ['left', 'LOGIC']
+    ['left', 'LOGIC'; '&']
     ['left', '=>']
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
     ['right', '=', ':', 'ASSIGN']
