@@ -115,6 +115,7 @@ grammar =
         o 'Arg', '$$ = [$1];'
         o 'ArgList , Arg', '$$ = $1.concat($3);'
         o 'ArgList OptComma MINDENT Arg', '$$ = $1.concat($4);'
+        o 'INDENT OUTDENT', '$$ = [];'
         o 'INDENT ArgList OptComma OUTDENT', 2
         o 'ArgList OptComma INDENT ArgList OptComma OUTDENT', '$$ = $1.concat($4);'
     ]

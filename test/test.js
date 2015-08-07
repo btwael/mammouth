@@ -5,20 +5,16 @@ function heredoc (f) {
 };
 code = heredoc(function() {
 /*
-sdfsdf
-{{
- qsdqsd
-   dedsdf
-     sdfd
-   fdsdfsdf
-   dfsdf
+wael
+boutglay{{
+    wazl~"xfdsf"
 }}
 */
 })
 
-//console.log(mammouth.parse(code).sections[1].body.body[0])
+console.log(mammouth.parse(code).sections[1].body.body)
 
 var lexer = require('../lib/lexer');
 lexer.setInput(code);
 
-console.log(lexer.tokenize())
+//console.log(lexer.tokenize())
