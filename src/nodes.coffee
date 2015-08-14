@@ -117,11 +117,11 @@ class exports.Operation
         @right = right
 
 class exports.Code
-    constructor: (parameters, body, normal = false, name = null) ->
+    constructor: (parameters, body, asStatement = false, name = null) ->
         @type = 'Code'
         @parameters = parameters
         @body = body
-        @normal = normal
+        @asStatement = asStatement
         @name = name
 
 class exports.Param
@@ -131,3 +131,25 @@ class exports.Param
         @passing = passing
         @hasDefault = hasDefault
         @default = def
+
+# If
+class exports.If
+    constructor: (condition, body) ->
+        @type = 'If'
+        @condition = condition
+        @body = body
+        @elses = []
+
+    addElse: (element) ->
+        @elses.push(element)
+
+class exports.ElseIf
+    constructor: (condition, body) ->
+        @type = 'ElseIf'
+        @condition = condition
+        @body = body
+
+class exports.Else
+    constructor: (body) ->
+        @type = 'Else'
+        @body = body

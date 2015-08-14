@@ -42,6 +42,16 @@ grammar =
 
     Instruction: [
         o 'Expression'
+        o 'BigStatement'
+    ]
+
+    BigStatement: [
+        #o 'Statement'
+        o 'Function'
+    ]
+
+    Statement: [
+
     ]
 
     Expression: [
@@ -52,6 +62,7 @@ grammar =
         o 'Assign'
         o 'Casting'
         o 'Clone'
+        o 'If'
     ]
 
     # A world of values
@@ -156,6 +167,13 @@ grammar =
     ]
 
     # Functions
+    Function: [
+        o 'FUNC IDENTIFIER', '$$ = new yy.Code([], false, true, $2);'
+        o 'FUNC IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2);'
+        o 'FUNC IDENTIFIER ( ParametersList )', '$$ = new yy.Code($4, false, true, $2);'
+        o 'FUNC IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2);'
+    ]
+
     Code: [
         o 'FUNC ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($3, $6);'
         o 'FUNC FuncGlyph Block', '$$ = new yy.Code([], $3);'
@@ -180,6 +198,19 @@ grammar =
     ParamVar: [
         o '& IDENTIFIER', '$$ = new yy.Param(yytext, true);'
         o 'IDENTIFIER', '$$ = new yy.Param(yytext);'
+    ]
+
+    # If
+    If: [
+        o 'IfBlock'
+        o 'IfBlock ELSE Block', '$1.addElse(new yy.Else($3)); $$ = $1'
+        o 'Statement POST_IF Expression', '$$ = new yy.If($3, new yy.Block([$1]))'
+        o 'Expression POST_IF Expression', '$$ = new yy.If($3, new yy.Block([$1]))'
+    ]
+
+    IfBlock: [
+        o 'IF Expression Block', '$$ = new yy.If($2, $3)'
+        o 'IfBlock ELSE IF Expression Block', '$1.addElse(new yy.ElseIf($4, $5)); $$ = $1'
     ]
 
     # Operation
@@ -222,7 +253,9 @@ operators = [
     ['left', '=>']
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
     ['right', '=', ':', 'ASSIGN']
-    ['nonassoc', 'CLONE']
+    ['right', 'CLONE']
+    ['right', 'IF', 'ELSE']
+    ['left', 'POST_IF']
 ]
 
 {Parser} = require 'jison'

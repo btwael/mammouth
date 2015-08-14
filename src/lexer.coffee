@@ -2,11 +2,6 @@ class Lexer
     setInput: (input) ->
         # Initialing the lexer
         @yytext = '' # value passed to parser (eg. identifier name)
-        @yyloc = # tracking location data passed to parser
-            first_column: 0,
-            first_line: 1,
-            last_line: 1,
-            last_column: 0
 
         @Track = # important tracking data for lexer
             position:
@@ -14,8 +9,7 @@ class Lexer
                 col: 0
             into:
                 array: off
-                call: off # when it's on, it means that between '(' & ')' of an invocation
-                track: on # when it's off/false, it means that lexer will stay in her position 
+                call: off # when it's on, it means that between '(' & ')' of an invocation 
                 mammouth: off # when it's on/true, it means that lexer is into code block, between '{{' & '}}'
             indent: [ # We can have many ident stacks,
                       # cause by example between '(' & ')', indent leveling can be independent of global one
@@ -48,72 +42,46 @@ class Lexer
             @Tokens.push tokens
         return tokens
 
-    setStartPos: () ->
-        @yylloc =
-            first_line: @Track.position.row
-            first_column: @Track.position.col
-
-    setEndPos: () ->
-        @yylloc.last_line = @Track.position.row
-        @yylloc.last_column = @Track.position.col
-
     posAdvance: (string, incPos = on) -> # increase position by given string
         @pos += string.length if incPos
-        if @Track.into.track
-            @setStartPos()
-            lines = string.split REGEX.LINETERMINATOR
-            for line, i in lines
-                if i is 0
-                    @Track.position.col += string.length
-                else
-                    @Track.position.row++
-                    @Track.position.col = line.length
-            @setEndPos()
+        lines = string.split REGEX.LINETERMINATOR
+        for line, i in lines
+            if i is 0
+                @Track.position.col += string.length
+            else
+                @Track.position.row++
+                @Track.position.col = line.length
 
     colAdvance: (num = 1) -> # increase position by number of column
         @pos += num
-        if @Track.into.track
-            @setStartPos()
-            @Track.position.col += num
-            @setEndPos()
+        @Track.position.col += num
 
     rowAdvance: (num = 1) -> # increase position by number of column
         @pos += num
-        if @Track.into.track
-            @setStartPos()
-            @Track.position.row += num
-            @Track.position.col = 0
-            @setEndPos()
-
-    lookMode: () ->
-        if @Track.into.track
-            @Track.into.track = off
-            @Track.lookTrack = @Track
-            @Track.lookPos = @pos
-            @Track.lookyytext = @yytext
-            @Track.lookTokens = @Tokens
-            return on
-        else
-            @Track.into.track = on
-            @pos = @Track.lookPos
-            @yytext = @Track.lookyytext
-            @Tokens = @Track.lookTokens
-            @Track = @Track.lookTrack
-            return off
+        @Track.position.row += num
+        @Track.position.col = 0
 
     getPos: () ->
         JSON.parse JSON.stringify @Track.position
 
-    last: () -> # get the previous token
-        if @Tokens[@Tokens.length - 1]
-            return @Tokens[@Tokens.length - 1]
+    last: (num = 1) -> # get the previous token
+        if @Tokens[@Tokens.length - num]
+            return @Tokens[@Tokens.length - num]
         return undefined
 
-    next: () -> # get the supposed next token
-        @lookMode()
-        tok = @nextToken()
-        @lookMode()
-        return tok
+    next: (num = 1) -> # get the supposed next token
+        lexer = new Lexer
+        lexer.yyloc = @yyloc
+        lexer.Track = JSON.parse JSON.stringify @Track
+        lexer.Tokens = JSON.parse JSON.stringify @Tokens
+        lexer.pos = @pos
+        lexer.input = @input
+        lexer.inputLength = @inputLength
+        lexer.name = 2
+        while num > 0
+            lexer.nextToken()
+            num--
+        return lexer.Tokens[lexer.Tokens.length - 1]
 
     charCode: (pos = @pos) ->
         return @input.charCodeAt pos
@@ -125,6 +93,11 @@ class Lexer
         token = @Tokens.shift()
         if token
             @yytext = if token.value then token.value else ''
+            @yylloc =
+                first_column: token.loc.start.col
+                first_line: token.loc.start.row
+                last_line: token.loc.end.row
+                last_column: token.loc.end.col
             return token.type
 
     tokenize: () -> # get list of all tokens
@@ -215,7 +188,9 @@ class Lexer
         if indent.length > @Track.indent[0].currentIndent
             @Track.indent[0].currentIndent = indent.length
             @Track.indent[0].openedIndent++
-            @Track.indent[0].indentStack.push indent.length
+            @Track.indent[0].indentStack.push {
+                length: indent.length
+            }
             return @addToken collect {
                 type: 'INDENT'
                 length: indent.length
@@ -231,18 +206,18 @@ class Lexer
             reversed = @reversedIndentStack()
 
             for indentLevel in reversed
-                if indent.length is indentLevel
+                if indent.length is indentLevel.length
                     @Track.indent[0].currentIndent = indent.length
                     tokens.push collect {
                         type: 'MINDENT'
                         length: indent.length
                     }, token
-                else if indent.length < indentLevel
-                    @Track.indent[0].currentIndent = @Track.indent[0].indentStack.pop()
+                else if indent.length < indentLevel.length
+                    @Track.indent[0].currentIndent = @Track.indent[0].indentStack.pop().length
                     @Track.indent[0].openedIndent--
                     tokens.push collect {
                         type: 'OUTDENT'
-                        value: indentLevel
+                        value: indentLevel.length
                     }, token
 
             return @addToken tokens
@@ -280,9 +255,28 @@ class Lexer
 
         # check for other reserved words
         if value in KEYWORDS.RESERVED
+            if (value is 'if') and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ','])
+                value = 'POST_IF'
+            if value is 'then'
+                length = @Track.indent[0].currentIndent + 1
+                @Track.indent[0].currentIndent = length
+                @Track.indent[0].openedIndent++
+                @Track.indent[0].indentStack.push {
+                    length: length
+                    sensible: on
+                }
+                return @addToken collect {
+                        type: 'INDENT'
+                        length: length
+                    }, token
+            if value is 'else'
+                res = @closeSensibleIndent(0, token)
+                if res[0] is on
+                    return @addToken res[1].concat collect {
+                        type: value.toUpperCase()
+                    }, token
             return @addToken collect {
                 type: value.toUpperCase()
-                value: value
             }, token
 
         # other php reserved words can't be identifiers
@@ -384,7 +378,7 @@ class Lexer
                 @colAdvance()
                 token.loc.end = @getPos()
                 @addIndentLevel()
-                if @last().type in KEYWORDS.CALLABLE
+                if @last().type in KEYWORDS.CALLABLE and @last(2).type isnt 'FUNC'
                     @Track.into.call = on
                     return @addToken collect {
                         type: 'CALL_START'
@@ -487,9 +481,34 @@ class Lexer
                     when 62 # 61 is '>'
                         @colAdvance()
                         token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '->'
-                        }, token
+                        tokens = [
+                            collect {
+                                type: '->'
+                            }, token
+                        ]
+                        next = @next(2).type
+                        if next isnt 'INDENT'
+                            if next in ['MINDENT', 'OUTDENT', 'LINETERMINATOR']
+                                tokens.push collect {
+                                    type: 'INDENT'
+                                    length: @Track.indent[0].currentIndent + 1
+                                }, token
+                                tokens.push collect {
+                                    type: 'OUTDENT'
+                                    length: @Track.indent[0].currentIndent + 1
+                                }, token
+                            else
+                                length = @Track.indent[0].currentIndent + 1
+                                @Track.indent[0].currentIndent = length
+                                @Track.indent[0].openedIndent++
+                                @Track.indent[0].indentStack.push {
+                                    length: length
+                                }
+                                tokens.push collect {
+                                    type: 'INDENT'
+                                    length: length
+                                }, token
+                        return @addToken tokens
                     else
                         token.loc.end = @getPos()
                         return @addToken collect {
@@ -780,7 +799,11 @@ class Lexer
 
     # Rewriting
     rewrite: () ->  
-
+        for token, i in @Tokens
+            if token
+                if token.type is 'MINDENT' and @Tokens[i + 1] and @Tokens[i + 1].type is 'ELSE'
+                    @Tokens.splice i, 1
+        
     # helpers
     newToken: () ->
         return {
@@ -811,12 +834,25 @@ class Lexer
                 @Tokens.pop()
             tokens.unshift collect {
                 type: 'OUTDENT'
-                length: reversed[@Track.indent[0].openedIndent - 1]
+                length: reversed[@Track.indent[0].openedIndent - 1].length
             }, posTok
             @Track.indent[0].openedIndent--
         if @last().type is 'LINETERMINATOR'
             @Tokens.pop()
         return tokens
+
+    closeSensibleIndent: (level = 0, posTok = 0) ->
+        res = [off]
+        if @Track.indent[level].indentStack[@Track.indent[level].indentStack.length - 1] and @Track.indent[level].indentStack[@Track.indent[level].indentStack.length - 1].sensible is on
+            (res[0] = on) and (res.push [])
+            length = @Track.indent[0].indentStack.pop().length - 1
+            @Track.indent[0].currentIndent = length
+            @Track.indent[0].openedIndent--
+            res[1].push collect {
+                type: 'OUTDENT'
+                length: length
+            }, posTok
+        return res
 
 
 collect = -> # {n:1} + {l:2} = {n:1, l:2}
@@ -840,7 +876,7 @@ KEYWORDS =
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
     LOGIC: ['and', 'or', 'xor']
-    RESERVED: ['clone', 'const', 'cte', 'func', 'in', 'instanceof', 'new', 'not', 'null']
+    RESERVED: ['clone', 'const', 'cte', 'else', 'func', 'if', 'in', 'instanceof', 'new', 'not', 'null', 'then', 'use']
     PHPRESERVED: [
         'abstract', 'and', 'array', 'as'
         'break'
