@@ -63,6 +63,7 @@ grammar =
         o 'Casting'
         o 'Clone'
         o 'If'
+        o 'While'
     ]
 
     # A world of values
@@ -203,14 +204,34 @@ grammar =
     # If
     If: [
         o 'IfBlock'
-        o 'IfBlock ELSE Block', '$1.addElse(new yy.Else($3)); $$ = $1'
-        o 'Statement POST_IF Expression', '$$ = new yy.If($3, new yy.Block([$1]))'
-        o 'Expression POST_IF Expression', '$$ = new yy.If($3, new yy.Block([$1]))'
+        o 'IfBlock ELSE Block', '$$ = $1.addElse(new yy.Else($3));'
+        o 'Statement POST_IF Expression', '$$ = new yy.If($3, new yy.Block([$1]), $2)'
+        o 'Expression POST_IF Expression', '$$ = new yy.If($3, new yy.Block([$1]), $2)'
     ]
 
     IfBlock: [
-        o 'IF Expression Block', '$$ = new yy.If($2, $3)'
-        o 'IfBlock ELSE IF Expression Block', '$1.addElse(new yy.ElseIf($4, $5)); $$ = $1'
+        o 'IF Expression Block', '$$ = new yy.If($2, $3, $1)'
+        o 'IfBlock ELSE IF Expression Block', '$$ = $1.addElse(new yy.ElseIf($4, $5));'
+    ]
+
+    # While
+    While: [
+        o 'WhileSource Block', '$$ = $1.addBody($2);'
+        o 'Statement WhileSource', '$$ = $2.addBody(new yy.Block([$1]));'
+        o 'Expression WhileSource', '$$ = $2.addBody(new yy.Block([$1]));'
+        o 'Loop'
+    ]
+
+    WhileSource: [
+        o 'WHILE Expression', '$$ = new yy.While($2, false);'
+        o 'WHILE Expression WHEN Expression', '$$ = new yy.While($2, false, $4);'
+        o 'UNTIL Expression', '$$ = new yy.While($2, true);'
+        o 'UNTIL Expression WHEN Expression', '$$ = new yy.While($2, true, $4);'
+    ]
+
+    Loop: [
+        o 'LOOP Block'
+        o 'LOOP Expression'
     ]
 
     # Operation
@@ -254,7 +275,8 @@ operators = [
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
     ['right', '=', ':', 'ASSIGN']
     ['right', 'CLONE']
-    ['right', 'IF', 'ELSE']
+    ['right', 'WHEN']
+    ['right', 'IF', 'ELSE', 'WHILE', 'UNTIL', 'LOOP']
     ['left', 'POST_IF']
 ]
 

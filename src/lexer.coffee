@@ -255,8 +255,16 @@ class Lexer
 
         # check for other reserved words
         if value in KEYWORDS.RESERVED
-            if (value is 'if') and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ','])
-                value = 'POST_IF'
+            if (value in ['if', 'unless']) and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ','])
+                return @addToken collect {
+                    type: 'POST_IF'
+                    value: if value is 'if' then off else on
+                }, token
+            if value in ['if', 'unless']
+                return @addToken collect {
+                    type: 'IF'
+                    value: if value is 'if' then off else on
+                }, token
             if value is 'then'
                 length = @Track.indent[0].currentIndent + 1
                 @Track.indent[0].currentIndent = length
@@ -876,7 +884,7 @@ KEYWORDS =
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
     LOGIC: ['and', 'or', 'xor']
-    RESERVED: ['clone', 'const', 'cte', 'else', 'func', 'if', 'in', 'instanceof', 'new', 'not', 'null', 'then', 'use']
+    RESERVED: ['clone', 'const', 'cte', 'else', 'func', 'if', 'in', 'instanceof', 'loop', 'new', 'not', 'null', 'then', 'unless', 'until', 'use', 'when', 'while']
     PHPRESERVED: [
         'abstract', 'and', 'array', 'as'
         'break'

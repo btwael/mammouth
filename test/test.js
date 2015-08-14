@@ -7,12 +7,12 @@ code = heredoc(function() {
 /*
 wael
 boutglay{{
-    console.log(wael) if maeo
+    wael until true when false
 }}
 */
 })
 
-console.log(mammouth.parse(code).sections[1].body.body[0])
+console.log(mammouth.parse(code).sections[1].body.body[0].test)
 
 var lexer = require('../lib/lexer');
 lexer.setInput(code);
