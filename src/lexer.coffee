@@ -276,7 +276,7 @@ class Lexer
                 return @addToken collect {
                         type: 'INDENT'
                         length: length
-                    }, token
+                }, token
             if value is 'else'
                 res = @closeSensibleIndent(0, token)
                 if res[0] is on
@@ -809,7 +809,7 @@ class Lexer
     rewrite: () ->  
         for token, i in @Tokens
             if token
-                if token.type is 'MINDENT' and @Tokens[i + 1] and @Tokens[i + 1].type is 'ELSE'
+                if token.type is 'MINDENT' and @Tokens[i + 1] and @Tokens[i + 1].type in ['CATCH', 'ELSE', 'FINALLY']
                     @Tokens.splice i, 1
         
     # helpers
@@ -879,12 +879,12 @@ REGEX = # some useful regular expression
     STRING: /^('[^\\']*(?:\\[\s\S][^\\']*)*'|"[^\\"]*(?:\\[\s\S][^\\"]*)*")/
 
 KEYWORDS =
-    CALLABLE: ['IDENTIFIER', ')', ']', '?', '@']
+    CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@']
     BOOL: ['TRUE', 'FALSE']
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
     LOGIC: ['and', 'or', 'xor']
-    RESERVED: ['clone', 'const', 'cte', 'else', 'func', 'if', 'in', 'instanceof', 'loop', 'new', 'not', 'null', 'then', 'unless', 'until', 'use', 'when', 'while']
+    RESERVED: ['catch', 'clone', 'const', 'cte', 'else', 'finally', 'func', 'if', 'in', 'instanceof', 'loop', 'new', 'not', 'null', 'then', 'try', 'unless', 'until', 'use', 'when', 'while']
     PHPRESERVED: [
         'abstract', 'and', 'array', 'as'
         'break'

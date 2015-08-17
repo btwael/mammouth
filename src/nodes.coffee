@@ -162,8 +162,19 @@ While = class exports.While
         @test = if invert then new Unary("!", test) else test
         @guard = guard
         @body = block
+        if block isnt null
+            delete @guard
 
     addBody: (block) ->
         @body = if @guard isnt null then new Block([new If(@guard, block.body)]) else block
         delete @guard
         return @
+
+# Try
+Try = class exports.Try
+    constructor: (TryBody, CatchBody = new Block, CatchIdentifier = false, FinallyBody = false) ->
+        @type = 'Try'
+        @TryBody = TryBody
+        @CatchBody = CatchBody
+        @CatchIdentifier = CatchIdentifier
+        @FinallyBody = FinallyBody

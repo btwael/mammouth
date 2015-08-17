@@ -64,6 +64,8 @@ grammar =
         o 'Clone'
         o 'If'
         o 'While'
+        # dowhile
+        o 'Try'
     ]
 
     # A world of values
@@ -72,6 +74,7 @@ grammar =
         o 'Literal', '$$ = new yy.Value($1);'
         o 'Parenthetical', '$$ = new yy.Value($1);'
         o 'Existence', '$$ = new yy.Value($1);'
+        # heredoc
     ]
 
     Parenthetical: [
@@ -230,8 +233,21 @@ grammar =
     ]
 
     Loop: [
-        o 'LOOP Block'
-        o 'LOOP Expression'
+        o 'LOOP Block', '$$ = new yy.While(new yy.Value(new yy.Literal("true")), false, null, $2);'
+        o 'LOOP Expression', '$$ = new yy.While(new yy.Value(new yy.Literal("true")), false, null, new yy.Block([$2]));'
+    ]
+
+    # Try
+    Try: [
+        o 'TRY Block', '$$ = new yy.Try($2);'
+        o 'TRY Block Catch', '$$ = new yy.Try($2, $3[0], $3[1]);'
+        o 'TRY Block FINALLY Block', '$$ = new yy.Try($2, new yy.Block, false, $4);'
+        o 'TRY Block Catch FINALLY Block', '$$ = new yy.Try($2, $3[0], $3[1], $5);'
+    ]
+
+    Catch: [
+        o 'CATCH Identifier Block', '$$ = [$3, $2]'
+        o 'CATCH Block', '$$ = [$2, false]'
     ]
 
     # Operation
