@@ -1,31 +1,17 @@
 class Lexer
     setInput: (input) ->
-        # Initialing the lexer
         @yytext = '' # value passed to parser (eg. identifier name)
 
-        @Track = # important tracking data for lexer
-            position:
-                row: 1
-                col: 0
+        @track =
+            position: new Position
             into:
-                array: off
-                call: off # when it's on, it means that between '(' & ')' of an invocation 
                 mammouth: off # when it's on/true, it means that lexer is into code block, between '{{' & '}}'
-            indent: [ # We can have many ident stacks,
-                      # cause by example between '(' & ')', indent leveling can be independent of global one
-                {
-                    indentStack: [] # The stack of all current indentation lengths
-                    currentIndent: -1 # current indent length
-                    openedIndent: 0 # number of opend indent
-                }
-            ]
+            opened: []
 
-        @Tokens = [] # Stream of parsed tokens
+        @tokens = [] # stream of tokens
 
-        @pos = 0 # position of lexer
-        @input = input = input.replace(/\r\n/g, '\n')
-        @inputLength = input.length
-        @lexed = off
+        @pos = 0 # lexer position
+        @input = input.replace(/\r\n/g, '\n')
 
     # Other lexer methods can be categorized to
         # Tracking: helpful functions to simplify error detection and position tracking
@@ -37,82 +23,91 @@ class Lexer
     addToken: (tokens) -> # add tokens to the tokens stream list
         if tokens instanceof Array
             for token in tokens
-                @Tokens.push token
+                @tokens.push token
         else
-            @Tokens.push tokens
+            @tokens.push tokens
         return tokens
+
+    addIndentLevel: () ->
+        @track.opened.unshift {
+            type: 'IndentLevel'
+            indentStack: [] # The stack of all current indentation lengths
+            currentIndent: -1 # current indent length
+            openedIndent: 0 # number of opened indent
+        }
+    
+    getPos: () -> @track.position.clone()
 
     posAdvance: (string, incPos = on) -> # increase position by given string
         @pos += string.length if incPos
         lines = string.split REGEX.LINETERMINATOR
         for line, i in lines
             if i is 0
-                @Track.position.col += string.length
+                @track.position.col += string.length
             else
-                @Track.position.row++
-                @Track.position.col = line.length
+                @track.position.row++
+                @track.position.col = line.length
 
     colAdvance: (num = 1) -> # increase position by number of column
         @pos += num
-        @Track.position.col += num
+        @track.position.col += num
 
     rowAdvance: (num = 1) -> # increase position by number of column
         @pos += num
-        @Track.position.row += num
-        @Track.position.col = 0
-
-    getPos: () ->
-        JSON.parse JSON.stringify @Track.position
+        @track.position.row += num
+        @track.position.col = 0
 
     last: (num = 1) -> # get the previous token
-        if @Tokens[@Tokens.length - num]
-            return @Tokens[@Tokens.length - num]
+        if @tokens[@tokens.length - num]
+            return @tokens[@tokens.length - num]
         return undefined
 
     next: (num = 1) -> # get the supposed next token
         lexer = new Lexer
-        lexer.yyloc = @yyloc
-        lexer.Track = JSON.parse JSON.stringify @Track
-        lexer.Tokens = JSON.parse JSON.stringify @Tokens
+        lexer.track = JSON.parse JSON.stringify @track
+        lexer.track.position = @track.position.clone()
+        lexer.tokens = JSON.parse JSON.stringify @tokens
         lexer.pos = @pos
         lexer.input = @input
-        lexer.inputLength = @inputLength
-        lexer.name = 2
         while num > 0
             lexer.nextToken()
             num--
-        return lexer.Tokens[lexer.Tokens.length - 1]
+        return lexer.tokens[lexer.tokens.length - 1]
 
-    charCode: (pos = @pos) ->
-        return @input.charCodeAt pos
+    charCode: (pos = @pos) -> @input.charCodeAt pos
+
+    currentIndentTracker: ->
+        for ele in @track.opened
+            if ele.type is 'IndentLevel'
+                return ele
 
     # Tokenizing
-    lex: () ->
+    lex: ->
         if not @lexed
             @tokenize()
-        token = @Tokens.shift()
+        token = @tokens.shift()
         if token
             @yytext = if token.value then token.value else ''
             @yylloc =
-                first_column: token.loc.start.col
-                first_line: token.loc.start.row
-                last_line: token.loc.end.row
-                last_column: token.loc.end.col
+                first_column: token.location.start.col
+                first_line: token.location.start.row
+                last_line: token.location.end.row
+                last_column: token.location.end.col
             return token.type
 
-    tokenize: () -> # get list of all tokens
+    tokenize: -> # get list of all tokens
         m = 0;
         while m isnt undefined
             m = @nextToken();
         @rewrite()
         @lexed = on
-        return @Tokens
+        return @tokens
 
-    nextToken: () ->
-        return undefined if @pos is @inputLength
+    nextToken: ->
+        return undefined if @pos is @input.length
 
         # Everything out of '{{ }}' is a RAW text (html/xml...)
-        if not @Track.into.mammouth
+        if not @track.into.mammouth
             return @readTokenRAW()
 
         # now let's lex what's into '{{ }}'
@@ -127,7 +122,7 @@ class Lexer
 
         # Indent
         if @last().type is 'LINETERMINATOR' and @isIndent()
-            @Tokens.pop()
+            @tokens.pop()
             return @readIndent()
 
         # check for identifier
@@ -140,735 +135,490 @@ class Lexer
         
         # check for string
         if @isString()
-            return @readTokenString() 
+            return @readTokenString()
 
         return @getTokenFromCode @charCode()
 
-    readTokenRAW: () ->
-        token = @newToken()
+    readTokenRAW: ->
+        token = (new Token 'RAW').setStart @getPos()
         startPos = @pos
-        while @pos < @inputLength and not @isStartTag()
+        while @pos < @input.length and not @isStartTag()
             @pos++
         if @isStartTag()
-            @Track.into.mammouth = on
+            @track.into.mammouth = on
         value = @input.slice startPos, @pos
         @posAdvance value, off
-        token.loc.end = @getPos()
-        return @addToken collect {
-            type: 'RAW'
-            value: value
-        }, token
+        return @addToken token.set('value', value).setEnd(@getPos())
 
-    readTokenStartTag: () ->
-        token = @newToken()
+    readTokenStartTag: ->
+        token = (new Token '{{').setStart @getPos()
         @colAdvance(2)
-        token.loc.end = @getPos()
-        return @addToken collect {
+        @track.opened.unshift {
             type: '{{'
-        }, token
+            closableBy: '}}'
+        }
+        @addIndentLevel()
+        return @addToken token.setEnd @getPos()
 
-    readTokenEndTag: () ->
-        token = @newToken()
+    readTokenEndTag: ->
+        token = (new Token '}}').setStart @getPos()
         @colAdvance(2)
-        token.loc.end = @getPos()
-        tokens = [
-            collect {
-                type: '}}'
-            }, token
-        ]
-        tokens = @closeIndent(0, token).concat tokens
-        @Track.into.mammouth = off
+        token.setEnd @getPos()
+        @track.into.mammouth = off
+        tokens = @closeIndent(@currentIndentTracker(), token.location)
+        @closeIndentLevel()
+        if @track.opened[0].type is '{{'
+            @track.opened.shift()
+            tokens = tokens.concat token
         return @addToken tokens
 
     readIndent: () ->
-        token = @newToken()
+        token = (new Token).setStart @getPos()
         indent = @input.slice(@pos).match(REGEX.INDENT)[0]
         @colAdvance indent.length
-        token.loc.end = @getPos()
-        if indent.length > @Track.indent[0].currentIndent
-            @Track.indent[0].currentIndent = indent.length
-            @Track.indent[0].openedIndent++
-            @Track.indent[0].indentStack.push {
+        token.setEnd @getPos()
+        indentTracker = @currentIndentTracker()
+        if indent.length > indentTracker.currentIndent
+            indentTracker.currentIndent = indent.length
+            indentTracker.openedIndent++
+            indentTracker.indentStack.push {
                 length: indent.length
             }
-            return @addToken collect {
-                type: 'INDENT'
-                length: indent.length
-            }, token
-        else if indent.length is @Track.indent[0].currentIndent
-            return @addToken collect {
-                type: 'MINDENT'
-                length: indent.length
-            }, token
+            return @addToken token.set('type', 'INDENT').set('length', indent.length)
+        else if indent.length is indentTracker.currentIndent
+            return @addToken token.set('type', 'MINDENT').set('length', indent.length)
         else
             tokens = []
-            # reversed @Track.indent.indentStack
-            reversed = @reversedIndentStack()
+            # reversed @track.indent.indentStack
+            reversed = @reversedIndentStack(indentTracker)
 
             for indentLevel in reversed
                 if indent.length is indentLevel.length
-                    @Track.indent[0].currentIndent = indent.length
-                    tokens.push collect {
-                        type: 'MINDENT'
+                    indentTracker.currentIndent = indent.length
+                    tokens.push new Token 'MINDENT', token.location, {
                         length: indent.length
-                    }, token
+                    }
                 else if indent.length < indentLevel.length
-                    @Track.indent[0].currentIndent = @Track.indent[0].indentStack.pop().length
-                    @Track.indent[0].openedIndent--
-                    tokens.push collect {
-                        type: 'OUTDENT'
-                        value: indentLevel.length
-                    }, token
+                    indentTracker.currentIndent = indentTracker.indentStack.pop().length
+                    indentTracker.openedIndent--
+                    tokens.push new Token 'OUTDENT', token.location, {
+                        length: indentLevel.length
+                    }
 
             return @addToken tokens
 
-    readTokenIdentifier: () ->
-        token = @newToken()
+    readTokenIdentifier: ->
+        token = (new Token).setStart @getPos()
         value = @input.slice(@pos).match(REGEX.IDENTIFIER)[0]
         @colAdvance value.length
-        token.loc.end = @getPos()
+        token.setEnd @getPos()
+
         # check for boolean
         if value.toUpperCase() in KEYWORDS.BOOL
-            return @addToken collect {
-                type: 'BOOL'
-                value: value
-            }, token
+            return @addToken token.set('type', 'BOOL').set('value', value)
 
         # check for operator
         if value in KEYWORDS.LOGIC
-            return @addToken collect {
-                type: 'LOGIC'
-                value: if value is 'and' then '&&' else if value is 'or' then '||' else value
-            }, token
+            return @addToken token.set('type', 'LOGIC')
+                                  .set('value', if value is 'and' then '&&' else if value is 'or' then '||' else value)
         if value in KEYWORDS.COMPARE
-            return @addToken collect {
-                type: 'COMPARE'
-                value: if value is 'is' then '===' else if value is 'isnt' then '!=' else value
-            }, token
+            return @addToken token.set('type', 'COMPARE')
+                                  .set('value', if value is 'is' then '===' else if value is 'isnt' then '!=' else value)
 
-        # check for casting type
         if @last().type is '=>' and value in KEYWORDS.CASTTYPE
-            return @addToken collect {
-                type: 'CASTTYPE'
-                value: value
-            }, token
+            return @addToken token.set('type', 'CASTTYPE').set('value', value)
 
-        # check for other reserved words
         if value in KEYWORDS.RESERVED
             if (value in ['if', 'unless']) and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ','])
-                return @addToken collect {
-                    type: 'POST_IF'
-                    value: if value is 'if' then off else on
-                }, token
+                return @addToken token.set('type', 'POST_IF')
+                                      .set('value', if value is 'if' then off else on)
             if value in ['if', 'unless']
-                return @addToken collect {
-                    type: 'IF'
-                    value: if value is 'if' then off else on
-                }, token
+                return @addToken token.set('type', 'IF')
+                                      .set('value', if value is 'if' then off else on)
             if value is 'then'
-                length = @Track.indent[0].currentIndent + 1
-                @Track.indent[0].currentIndent = length
-                @Track.indent[0].openedIndent++
-                @Track.indent[0].indentStack.push {
+                indentTracker = @currentIndentTracker()
+                length = indentTracker.currentIndent + 1
+                indentTracker.currentIndent = length
+                indentTracker.openedIndent++
+                indentTracker.indentStack.push {
                     length: length
                     sensible: on
                 }
-                return @addToken collect {
-                        type: 'INDENT'
-                        length: length
-                }, token
+                return @addToken token.set('type', 'INDENT').set('length', length)
             if value is 'else'
-                res = @closeSensibleIndent(0, token)
-                if res[0] is on
-                    return @addToken res[1].concat collect {
-                        type: value.toUpperCase()
-                    }, token
-            return @addToken collect {
-                type: value.toUpperCase()
-            }, token
+                res = @closeSensibleIndent(@currentIndentTracker(), token.location)
+                return @addToken res.concat(token.set('type', 'ELSE')).concat @lookLinearBlock(token.location)
+
+            if value is 'try'
+                return @addToken [].concat(token.set('type', 'TRY')).concat @lookLinearBlock(token.location)
+
+            if value is 'catch'
+                res = @closeSensibleIndent(@currentIndentTracker(), token.location)
+                return @addToken res.concat(token.set('type', 'CATCH'))
+
+            if value is 'finally'
+                res = @closeSensibleIndent(@currentIndentTracker(), token.location)
+                return @addToken res.concat(token.set('type', 'FINALLY')).concat @lookLinearBlock(token.location)
+
+            return @addToken token.set('type', value.toUpperCase())
 
         # other php reserved words can't be identifiers
         if value in KEYWORDS.PHPRESERVED
             # throw error
-            return @addToken collect {
-                type: 'UNEXPECTED'
-                value: value
-            }, token
+            return @addToken token.set('type', 'UNEXPECTED').set('value', value)
 
-        # if it's not a reserved word then it's an identifier
-        return @addToken collect {
-            type: 'IDENTIFIER'
-            value: value
-        }, token
+        # then it's an identifier
+        return @addToken token.set('type', 'IDENTIFIER').set('value', value)
 
     readTokenNumber: () ->
-        token = @newToken()
+        token = (new Token 'NUMBER').setStart @getPos()
         value = @input.slice(@pos).match(REGEX.NUMBER)[0]
         @colAdvance value.length
-        token.loc.end = @getPos()
-        return @addToken collect {
-            type: 'NUMBER'
-            value: value
-        }, token
+        return @addToken token.set('value', value).setEnd @getPos()
 
     readTokenString: () ->
-        token = @newToken()
+        token = (new Token 'STRING').setStart @getPos()
         value = @input.slice(@pos).match(REGEX.STRING)[0]
         @posAdvance value
-        token.loc.end = @getPos()
-        return @addToken collect {
-            type: 'STRING'
-            value: value
-        }, token
+        return @addToken token.set('value', value).setEnd @getPos()
 
     getTokenFromCode: (code) ->
-        token = @newToken()
+        token = (new Token).setStart @getPos()
+        @colAdvance()
         switch code
             when 10, 13, 8232 # 10 is "\n", 13 is "\r", 8232 is "\u2028"
+                @colAdvance(-1)
                 return @readLineTerminator()
             # Skip whitespaces
             when 32, 160, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202, 8239, 8287, 12288
-                @colAdvance()
                 return @nextToken()
             when 33 # 33 is '!'
-                @colAdvance()
                 # look for '!='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'COMPARE'
-                        value: '!='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: 'NOT'
-                }, token
+                    return @addToken token.set('type', 'COMPARE').set('value', '!=').setEnd @getPos()
+                return @addToken token.set('type', 'NOT').setEnd @getPos()
             when 37 # 37 is '%'
-                @colAdvance()
                 # look for '%='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'ASSIGN'
-                        value: '%='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: '%'
-                }, token
+                    return @addToken token.set('type', 'ASSIGN').set('value', '%=').setEnd @getPos()
+                return @addToken token.set('type', '%').setEnd @getPos()
             when 38 # 38 is '&'
-                @colAdvance()
-                switch @charCode()
-                    # look for '&='
-                    when 61 # 61 is '='
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'ASSIGN'
-                            value: '&='
-                        }, token
-                    # look for '&&'
-                    when 38 # 38 is '&'
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'LOGIC'
-                            value: '&&'
-                        }, token
-                    else
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '&'
-                        }, token
+                # look for '&='
+                if @charCode() is 61 # 61 is '='
+                    @colAdvance()
+                    return @addToken token.set('type', 'ASSIGN').set('value', '&=').setEnd @getPos()
+                # look for '&&'
+                if @charCode() is 38 # 38 is '&'
+                    @colAdvance()
+                    return @addToken token.set('type', 'LOGIC').set('value', '&&').setEnd @getPos()
+                return @addToken token.set('type', '%').setEnd @getPos()
             when 40 # 40 is '('
-                @colAdvance()
-                token.loc.end = @getPos()
-                @addIndentLevel()
                 if @last().type in KEYWORDS.CALLABLE and @last(2).type isnt 'FUNC'
-                    @Track.into.call = on
-                    return @addToken collect {
+                    @track.opened.unshift {
                         type: 'CALL_START'
-                    }, token
-                return @addToken collect {
+                        closableBy: 'CALL_END'
+                    }
+                    @addIndentLevel()
+                    return @addToken token.set('type', 'CALL_START').setEnd @getPos()
+                @track.opened.unshift {
                     type: '('
-                }, token
+                    closableBy: ')'
+                }
+                @addIndentLevel()
+                return @addToken token.set('type', '(').setEnd @getPos()
             when 41 # 41 is ')'
-                @colAdvance()
-                token.loc.end = @getPos()
-                if @Track.into.call is on
-                    @Track.into.call = off
-                    tokens = [
-                        collect {
-                            type: 'CALL_END'
-                        }, token
-                    ]
-                    tokens = @closeIndent(0, token).concat tokens
-                    @closeIndentLevel()
-                    return @addToken tokens
-                tokens = [
-                    collect {
-                        type: ')'
-                    }, token
-                ]
-                tokens = @closeIndent(0, token).concat tokens
+                tokens = @closeIndent(@currentIndentTracker(), token.location)
                 @closeIndentLevel()
+                switch @track.opened[0].type
+                    when 'CALL_START'
+                        tokens = tokens.concat token.set('type', 'CALL_END').setEnd @getPos()
+                        @track.opened.shift()
+                    when '('
+                        tokens = tokens.concat token.set('type', ')').setEnd @getPos()
+                        @track.opened.shift()
                 return @addToken tokens
             when 42 # 43 is '*'
-                @colAdvance()
-                switch @charCode()
-                    # look for '**'
-                    when 42 # 42 is '*'
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '**'
-                        }, token
-                    # look for '*='
-                    when 61 # 61 is '='
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'ASSIGN'
-                            value: '*='
-                        }, token
-                    else
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '*'
-                        }, token
+                # look for '**'
+                if @charCode() is 42 # 42 is '*'
+                    @colAdvance()
+                    return @addToken token.set('type', '**').setEnd @getPos()
+                # look for '*='
+                if @charCode() is 61 # 61 is '='
+                    @colAdvance()
+                    return @addToken token.set('type', 'ASSIGN').set('value', '*=').setEnd @getPos()
+                return @addToken token.set('type', '*').setEnd @getPos()
             when 43 # 43 is '+'
-                @colAdvance()
-                switch @charCode()
-                    # look for '++'
-                    when 43 # 43 is '+
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '++'
-                        }, token
-                    # look for '*+='
-                    when 61 # 61 is '=
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'ASSIGN'
-                            value: '+='
-                        }, token
-                    else
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '+'
-                        }, token
+                # look for '++'
+                if @charCode() is 43 # 43 is '+
+                    @colAdvance()
+                    return @addToken token.set('type', '++').setEnd @getPos()
+                # look for '+='
+                if @charCode() is 61 # 61 is '=
+                    @colAdvance()
+                    return @addToken token.set('type', 'ASSIGN').set('value', '+=').setEnd @getPos()
+                return @addToken token.set('type', '+').setEnd @getPos()
             when 44 # 44 is ','
-                @colAdvance()
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: ','
-                }, token
+                return @addToken token.set('type', ',').setEnd @getPos()
             when 45 # 45 is '-'
-                @colAdvance()
-                switch @charCode()
-                    # look for '--'
-                    when 45 # 45 is '-'
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '--'
-                        }, token
-                    # look for '-='
-                    when 61 # 61 is '='
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'ASSIGN'
-                            value: '-='
-                        }, token
-                    # look for '->'
-                    when 62 # 61 is '>'
-                        @colAdvance()
-                        token.loc.end = @getPos()
-                        tokens = [
-                            collect {
-                                type: '->'
-                            }, token
-                        ]
-                        next = @next(2).type
-                        if next isnt 'INDENT'
-                            if next in ['MINDENT', 'OUTDENT', 'LINETERMINATOR']
-                                tokens.push collect {
-                                    type: 'INDENT'
-                                    length: @Track.indent[0].currentIndent + 1
-                                }, token
-                                tokens.push collect {
-                                    type: 'OUTDENT'
-                                    length: @Track.indent[0].currentIndent + 1
-                                }, token
-                            else
-                                length = @Track.indent[0].currentIndent + 1
-                                @Track.indent[0].currentIndent = length
-                                @Track.indent[0].openedIndent++
-                                @Track.indent[0].indentStack.push {
-                                    length: length
-                                }
-                                tokens.push collect {
-                                    type: 'INDENT'
-                                    length: length
-                                }, token
-                        return @addToken tokens
-                    else
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: '-'
-                        }, token
+                # look for '--'
+                if @charCode() is 45 # 45 is '-'
+                    @colAdvance()
+                    return @addToken token.set('type', '--').setEnd @getPos()
+                # look for '-='
+                if @charCode() is 61 # 61 is '='
+                    @colAdvance()
+                    return @addToken token.set('type', 'ASSIGN').set('value', '-=').setEnd @getPos()
+                # look for '->'
+                if @charCode() is 62 # 61 is '>'
+                    @colAdvance()
+                    tokens = [
+                        token.set('type', '->').setEnd @getPos()
+                    ].concat @lookLinearBlock(token.location)
+
+                    return @addToken tokens
+                return @addToken token.set('type', '-').setEnd @getPos()
             when 46 # 46 is '.'
-                @colAdvance()
                 # look for '..'
                 if @charCode() is 46 # 46 is '.'
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: '..'
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: '.'
-                }, token
+                    return @addToken token.set('type', '..').setEnd @getPos()
+                return @addToken token.set('type', '.').setEnd @getPos()
             when 47 # 47 is '/'
-                @colAdvance()
                 # look for '/='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'ASSIGN'
-                        value: '/='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: '/'
-                }, token
+                    return @addToken token.set('type', 'ASSIGN').set('value', '/=').setEnd @getPos()
+                return @addToken token.set('type', '/').setEnd @getPos()
             when 58 # 58 is ':'
-                @colAdvance()
                 # look for '::'
                 if @charCode() is 58 # 58 is ':'
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: '::'
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: ':'
-                }, token
+                    return @addToken token.set('type', '::').setEnd @getPos()
+                return @addToken token.set('type', ':').setEnd @getPos()
             when 60 # 60 is '<'
-                @colAdvance()
                 if @charCode() is 60 # 60 is '<'
                     @colAdvance()
                     # look for '<<='
                     if @charCode() is 61 # 61 is '='
                         @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'ASSIGN'
-                            value: '<<='
-                        }, token
+                        return @addToken token.set('type', 'ASSIGN').set('value', '<<=').setEnd @getPos()
                     # then it's just '<<'
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'BITWISE'
-                        value: '<<'
-                    }, token
+                    return @addToken token.set('type', 'BITWISE').set('value', '<<').setEnd @getPos()
                 # look for '<->'
                 if @charCode() is 45 and @charCode(@pos + 1) is 62 # 45 is '-' and 62 is '>'
                     @colAdvance(2)
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'CONCAT'
-                    }, token
+                    return @addToken token.set('type', 'CONCAT').setEnd @getPos()
                 # look for '<='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'COMPARE'
-                        value: '<='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: 'COMPARE'
-                    value: '<'
-                }, token
+                    return @addToken token.set('type', 'COMPARE').set('value', '<=').setEnd @getPos()
+                return @addToken token.set('type', 'COMPARE').set('value', '<').setEnd @getPos()
             when 61 # 61 is '='
-                @colAdvance()
                 # look for '=>'
                 if @charCode() is 62 # 62 is '>'
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: '=>'
-                    }, token
+                    return @addToken token.set('type', '=>').setEnd @getPos()
                 # look for '==='
                 if @charCode() is 61 and @charCode(@pos + 1) is 61 # 61 is '='
                     @colAdvance(2)
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'COMPARE'
-                        value: '==='
-                    }, token
+                    return @addToken token.set('type', 'COMPARE').set('value', '===').setEnd @getPos()
                 # look for '=='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'COMPARE'
-                        value: '=='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: '='
-                }, token
+                    return @addToken token.set('type', 'COMPARE').set('value', '==').setEnd @getPos()
+                return @addToken token.set('type', '=').setEnd @getPos()
             when 62 # 62 is '>'
-                @colAdvance()
                 if @charCode() is 62 # 62 is '>'
                     @colAdvance()
                     # look for '>>='
                     if @charCode() is 61 # 61 is '='
                         @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'ASSIGN'
-                            value: '>>='
-                        }, token
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'BITWISE'
-                        value: '>>'
-                    }, token
+                        return @addToken token.set('type', 'ASSIGN').set('value', '>>=').setEnd @getPos()
+                    return @addToken token.set('type', 'BITWISE').set('value', '>>').setEnd @getPos()
                 # look for '>='
                 if @charCode() is 61
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'COMPARE'
-                        value: '>='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: 'COMPARE'
-                    value: '>'
-                }, token
+                    return @addToken token.set('type', 'COMPARE').set('value', '>=').setEnd @getPos()
+                return @addToken token.set('type', 'COMPARE').set('value', '>').setEnd @getPos()
             when 63 # 63 is '?'
-                @colAdvance()
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: '?'
-                }, token
+                return @addToken token.set('type', '?').setEnd @getPos()
             when 64 # 61 is '@'
-                @colAdvance()
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: '@'
-                }, token
+                return @addToken token.set('type', '@').setEnd @getPos()
             when 91 # 58 is ']'
-                @colAdvance()
-                @addIndentLevel()
-                @Track.into.array = on
-                token.loc.end = @getPos()
-                return @addToken collect {
+                @track.opened.unshift {
                     type: '['
-                }, token
+                    closableBy: ']'
+                }
+                @addIndentLevel()
+                return @addToken token.set('type', '[').setEnd @getPos()
             when 93 # 58 is ']'
                 @colAdvance()
-                token.loc.end = @getPos()
-                @Track.into.array = off
-                tokens = [
-                    collect {
-                        type: ']'
-                    }, token
-                ]
-                tokens = @closeIndent(0, token).concat tokens
+                tokens = @closeIndent(@currentIndentTracker(), token.location)
                 @closeIndentLevel()
+                if @track.opened[0].type is '['
+                    @track.opened.shift()
+                    tokens = tokens.concat token.set('type', ']').setEnd @getPos()
                 return @addToken tokens
             when 94 # 94 is '^'
-                @colAdvance()
                 # look for '^='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'ASSIGN'
-                        value: '^='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: 'BITWISE'
-                    value: '^'
-                }, token
+                    return @addToken token.set('type', 'ASSIGN').set('value', '^=').setEnd @getPos()
+                return @addToken token.set('type', 'BITWISE').set('value', '^').setEnd @getPos()
             when 96 # 96 is '`'
-                @colAdvance()
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: '`'
-                }, token
+                return @addToken token.set('type', '`').setEnd @getPos()
             when 124 # 124 is '|'
-                @colAdvance()
                 # look for '||'
                 if @charCode() is 124 # 124 is '|'
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'BITWISE'
-                        value: '||'
-                    }, token
+                    return @addToken token.set('type', 'BITWISE').set('value', '||').setEnd @getPos()
                 # look for '|='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'ASSIGN'
-                        value: '|='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: 'BITWISE'
-                    value: '|'
-                }, token
+                    return @addToken token.set('type', 'ASSIGN').set('value', '|=').setEnd @getPos()
+                return @addToken token.set('type', 'BITWISE').set('value', '|').setEnd @getPos()
             when 126 # 126 is '~'
-                @colAdvance()
                 if @charCode() is 126 # 126 is '~'
                     @colAdvance()
                     # look for '~~='
                     if @charCode() is 61 # 61 is '='
                         @colAdvance()
-                        token.loc.end = @getPos()
-                        return @addToken collect {
-                            type: 'ASSIGN'
-                            value: '.='
-                        }, token
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'CONCAT'
-                    }, token
+                        return @addToken token.set('type', 'ASSIGN').set('value', '.=').setEnd @getPos()
+                    return @addToken token.set('type', 'CONCAT').setEnd @getPos()
                 # look for '~='
                 if @charCode() is 61 # 61 is '='
                     @colAdvance()
-                    token.loc.end = @getPos()
-                    return @addToken collect {
-                        type: 'ASSIGN'
-                        value: '.='
-                    }, token
-                token.loc.end = @getPos()
-                return @addToken collect {
-                    type: 'CONCAT'
-                }, token
+                    return @addToken token.set('type', 'ASSIGN').set('value', '.=').setEnd @getPos()
+                return @addToken token.set('type', 'CONCAT').setEnd @getPos()
             else
                 # throw error
+                return @addToken {
+                    type: code
+                }
 
     readLineTerminator: () ->
-        token = @newToken()
+        token = (new Token 'LINETERMINATOR').setStart @getPos()
         @rowAdvance()
         if @charCode() in [10, 13, 8232]
             return @readLineTerminator()
-        token.loc.end = @getPos()
-        return @addToken collect {
-            type: 'LINETERMINATOR'
-        }, token
+        return @addToken token.setEnd @getPos()
 
     skipEmptyLines: () ->
         value = @input.slice(@pos).match(REGEX.EMPTYLINE)[0]
         @posAdvance value
         return @nextToken()
 
+    lookLinearBlock: (loc) ->
+        tokens = []
+        next = @next(2).type
+        if next isnt 'INDENT'
+            indentTracker = @currentIndentTracker()
+            length = indentTracker.currentIndent + 1
+            if next in ['MINDENT', 'OUTDENT']
+                tokens.push (new Token 'INDENT', loc).set('length', indentTracker.currentIndent + 1)
+                tokens.push (new Token 'OUTDENT', loc).set('length', indentTracker.currentIndent + 1)
+            else
+                indentTracker.currentIndent = length
+                indentTracker.openedIndent++
+                indentTracker.indentStack.push {
+                    length: length
+                    sensible: on
+                }
+                tokens.push (new Token 'INDENT', loc).set('length', length)
+        return tokens
+
     # Scanning
     isStartTag: (pos = @pos) ->
-        return false if @pos + 1 > @inputLength - 1
+        return false if @pos + 1 > @input.length - 1
         return @charCode(pos) is 123 and @charCode(@pos + 1) is 123 # 123 is '{'
 
     isEndTag: (pos = @pos) ->
-        return false if @pos + 1 > @inputLength - 1
+        return false if @pos + 1 > @input.length - 1
         return @charCode(pos) is 125 and @charCode(@pos + 1) is 125 # 125 is '}'
 
-    isEmptyLines: (pos = @pos) ->
-        return @input.slice(pos).match(REGEX.EMPTYLINE) isnt null
+    isEmptyLines: (pos = @pos) -> @input.slice(pos).match(REGEX.EMPTYLINE) isnt null
 
-    isIdentifier: (pos = @pos) ->
-        return @input.slice(pos).match(REGEX.IDENTIFIER) isnt null
+    isIdentifier: (pos = @pos) -> @input.slice(pos).match(REGEX.IDENTIFIER) isnt null
 
-    isIndent: (pos = @pos) ->
-        return @input.slice(pos).match(REGEX.INDENT) isnt null and @last().type isnt 'INDENT'
+    isIndent: (pos = @pos) -> @input.slice(pos).match(REGEX.INDENT) isnt null and @last().type isnt 'INDENT'
 
-    isNumber: (pos = @pos) ->
-        return @input.slice(pos).match(REGEX.NUMBER) isnt null
+    isNumber: (pos = @pos) -> @input.slice(pos).match(REGEX.NUMBER) isnt null
 
-    isString: (pos = @pos) ->
-        return @input.slice(pos).match(REGEX.STRING) isnt null
+    isString: (pos = @pos) -> @input.slice(pos).match(REGEX.STRING) isnt null
 
-    # Rewriting
-    rewrite: () ->  
-        for token, i in @Tokens
+    # Rewrite
+    rewrite: () ->
+        for token, i in @tokens
             if token
-                if token.type is 'MINDENT' and @Tokens[i + 1] and @Tokens[i + 1].type in ['CATCH', 'ELSE', 'FINALLY']
-                    @Tokens.splice i, 1
-        
+                if token.type is 'MINDENT' and @tokens[i + 1] and @tokens[i + 1].type in ['CATCH', 'ELSE', 'FINALLY']
+                    @tokens.splice i, 1
+
     # helpers
-    newToken: () ->
-        return {
-            loc:
-                start: @getPos()
-        }
-
-    addIndentLevel: () ->
-        @Track.indent.unshift {
-            indentStack: []
-            currentIndent: -1
-            openedIndent: 0
-        }
-
-    closeIndentLevel: () -> @Track.indent.shift()
-
-    reversedIndentStack: (level = 0) ->
+    reversedIndentStack: (indentTracker) ->
         reversed = []
-        for i in @Track.indent[level].indentStack
+        for i in indentTracker.indentStack
             reversed.unshift i
         return reversed
 
-    closeIndent: (level = 0, posTok = {}) ->
+    closeIndent: (indentTracker, loc) ->
         tokens = []
-        reversed = @reversedIndentStack()
-        while @Track.indent[level].openedIndent
+        reversed = @reversedIndentStack(indentTracker)
+        while indentTracker.openedIndent
             if @last().type in ['LINETERMINAROR', 'MINDENT']
-                @Tokens.pop()
-            tokens.unshift collect {
-                type: 'OUTDENT'
-                length: reversed[@Track.indent[0].openedIndent - 1].length
-            }, posTok
-            @Track.indent[0].openedIndent--
+                @tokens.pop()
+            tokens.unshift (new Token 'OUTDENT', loc).set('length', reversed[indentTracker.openedIndent - 1].length)
+            indentTracker.openedIndent--
         if @last().type is 'LINETERMINATOR'
-            @Tokens.pop()
+            @tokens.pop()
         return tokens
 
-    closeSensibleIndent: (level = 0, posTok = 0) ->
-        res = [off]
-        if @Track.indent[level].indentStack[@Track.indent[level].indentStack.length - 1] and @Track.indent[level].indentStack[@Track.indent[level].indentStack.length - 1].sensible is on
-            (res[0] = on) and (res.push [])
-            length = @Track.indent[0].indentStack.pop().length - 1
-            @Track.indent[0].currentIndent = length
-            @Track.indent[0].openedIndent--
-            res[1].push collect {
-                type: 'OUTDENT'
-                length: length
-            }, posTok
+    closeIndentLevel: () -> @track.opened.shift()
+
+    closeSensibleIndent: (indentTracker, loc) ->
+        res = []
+        if indentTracker.indentStack[indentTracker.indentStack.length - 1] and indentTracker.indentStack[indentTracker.indentStack.length - 1].sensible is on
+            length = indentTracker.indentStack.pop().length - 1
+            indentTracker.currentIndent = length
+            indentTracker.openedIndent--
+            res.push (new Token 'OUTDENT', loc).set('length', length)
         return res
 
 
-collect = -> # {n:1} + {l:2} = {n:1, l:2}
-    ret = {}
-    for object in arguments
-        for key, value of object
-            ret[key] = value
-    return ret
+class Token
+    constructor: (@type = null, @location = {}, obj = {}) ->
+        for key, value of obj
+            @[key] = value
+        if @location is null then delete @location
+
+    set: (key, value) ->
+        @[key] = value
+        return @
+
+    get: (key) -> @[key]
+
+    setStart: (value) ->
+        @location.start = value
+        return @
+
+    setEnd: (value) ->
+        @location.end = value
+        return @
+
+    clone: ->
+        token = new Token
+        for k, v of @
+            token.set(k, v)
+        return token
+        
+
+class Position
+    constructor: (@row = 1, @col = 0) ->
+
+    clone: -> new Position @row, @col
+
+    @from: (pos) -> new Position pos.row or 1, pos.col or 0
 
 REGEX = # some useful regular expression
     EMPTYLINE: /(^[\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]*[\n\r\u2028\u2029])/
@@ -879,8 +629,8 @@ REGEX = # some useful regular expression
     STRING: /^('[^\\']*(?:\\[\s\S][^\\']*)*'|"[^\\"]*(?:\\[\s\S][^\\"]*)*")/
 
 KEYWORDS =
-    CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@']
     BOOL: ['TRUE', 'FALSE']
+    CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@']
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
     LOGIC: ['and', 'or', 'xor']

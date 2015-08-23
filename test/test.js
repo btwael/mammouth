@@ -7,14 +7,18 @@ code = heredoc(function() {
 /*
 wael
 boutglay{{
- alert(func () -> x*x)
-}}
+    try dsfsdf
+    catch sdf
+      dsfsdf
+    finally dfsdf
+    var
+}}fsdf
 */
 })
 
-//console.log(mammouth.parse(code).sections[1].body.body[0])
+console.log(mammouth.parse(code).sections[1].body.body)
 
 var lexer = require('../lib/lexer');
 lexer.setInput(code);
 
-console.log(lexer.tokenize())
+//console.log(lexer.tokenize())
