@@ -88,11 +88,30 @@ Existence = class exports.Existence
         @type = 'Existence'
         @value = value
 
+Range = class exports.Range
+    constructor: (from, to, tag) ->
+        @type = 'Range'
+        @from = from
+        @to = to
+        @exclusive = tag is 'exclusive'
+
 # Operations
 Assign = class exports.Assign
     constructor: (operator, left, right) ->
         @type = 'Assign'
         @operator = operator
+        @left = left
+        @right = right
+
+GetKeyAssign = class exports.GetKeyAssign
+    constructor: (keys, source) ->
+        @type = 'GetKeyAssign'
+        @keys = keys
+        @source = source
+
+Constant = class exports.Constant
+    constructor: (left, right) ->
+        @type = 'Constant'
         @left = left
         @right = right
 
@@ -178,3 +197,10 @@ Try = class exports.Try
         @CatchBody = CatchBody
         @CatchIdentifier = CatchIdentifier
         @FinallyBody = FinallyBody
+
+# For
+For = class exports.For
+    constructor: (properties, block) ->
+        @type = 'For'
+        @properties = properties
+        @body = block

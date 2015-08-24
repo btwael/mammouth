@@ -7,11 +7,7 @@ code = heredoc(function() {
 /*
 wael
 boutglay{{
-    try dsfsdf
-    catch sdf
-      dsfsdf
-    finally dfsdf
-    var
+    hello(x) for key, value in dsfs when true
 }}fsdf
 */
 })

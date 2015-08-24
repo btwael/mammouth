@@ -66,6 +66,7 @@ grammar =
         o 'While'
         # dowhile
         o 'Try'
+        o 'For'
     ]
 
     # A world of values
@@ -74,6 +75,7 @@ grammar =
         o 'Literal', '$$ = new yy.Value($1);'
         o 'Parenthetical', '$$ = new yy.Value($1);'
         o 'Existence', '$$ = new yy.Value($1);'
+        o 'Range', '$$ = new yy.Value($1);'
         # heredoc
     ]
 
@@ -83,6 +85,15 @@ grammar =
 
     Existence: [
         o 'Value ?', '$$ = new yy.Existence($1);'
+    ]
+
+    RangeDots: [
+        o '...', '$$ = "inclusive";'
+        o '....', '$$ = "exclusive";'
+    ]
+
+    Range: [
+        o '[ Expression RangeDots Expression ]', '$$ = new yy.Range($2, $4, $3);'
     ]
 
     Assignable: [
@@ -148,6 +159,19 @@ grammar =
     Assign: [
         o 'Assignable = Expression', '$$ = new yy.Assign("=", $1, $3);'
         o 'Assignable = INDENT Expression OUTDENT', '$$ = new yy.Assign("=", $1, $4);'
+        o '{ KeysList } = Expression', '$$ = new yy.GetKeyAssign($2, $5);'
+        o '{ KeysList } = INDENT Expression OUTDENT', '$$ = new yy.GetKeyAssign($2, $6);'
+        o 'CONST Identifier = Expression', '$$ = new yy.Constant($2, $4);'
+        o 'CONST Identifier = INDENT Expression OUTDENT', '$$ = new yy.Constant($2, $5);'
+    ]
+
+    KeysList: [
+        o 'Identifier', '$$ = [$1];'
+        o 'KeysList , Identifier', '$$ = $1.concat($3);'
+        o 'KeysList OptComma MINDENT Identifier', '$$ = $1.concat($4);'
+        o 'INDENT OUTDENT', '$$ = [];'
+        o 'INDENT KeysList OptComma OUTDENT', 2
+        o 'KeysList OptComma INDENT KeysList OptComma OUTDENT', '$$ = $1.concat($4);'
     ]
 
     Casting: [
@@ -246,8 +270,48 @@ grammar =
     ]
 
     Catch: [
-        o 'CATCH Identifier Block', '$$ = [$3, $2]'
-        o 'CATCH Block', '$$ = [$2, false]'
+        o 'CATCH Identifier Block', '$$ = [$3, $2];'
+        o 'CATCH Block', '$$ = [$2, false];'
+    ]
+
+    # For
+    For: [
+        o 'Statement ForBody', '$$ = new yy.For($2, new yy.Block([$1]));'
+        o 'Expression ForBody', '$$ = new yy.For($2, new yy.Block([$1]));'
+        o 'ForBody Block', '$$ = new yy.For($1, $2);'
+    ]
+
+    ForBody: [
+        o 'FOR Range', '$$ = {source: $2, };'
+        o 'FOR Range BY Expression', '$$ = {source: $2, step: $4};'
+        o 'FOR Range AS Identifier', '$$ = {source: $2, name: $6};'
+        o 'FOR Range BY Expression AS IDENTIFIER', '$$ = {source: $2, step: $4, name: $6};'
+        o 'FOR Range AS IDENTIFIER BY Expression', '$$ = {source: $2, step: $6, name: $4};'
+        o 'ForStart ForSource', '$2.name = $1[0]; $2.index = $1[1]; $$ = $2;'
+    ]
+
+    ForStart: [
+        o 'FOR ForVariables', '$$ = $2;'
+    ]
+
+    ForValue: [
+        o 'Identifier'
+        o 'Array', '$$ = new yy.Value($1);'
+    ]
+
+    ForVariables: [
+        o 'ForValue', '$$ = [$1];'
+        o 'ForValue , ForValue', '$$ = [$1, $3];'
+    ]
+
+    ForSource: [
+        o 'FORIN Expression', '$$ = {source: $2};'
+        o 'FOROF Expression', '$$ = {source: $2, object: true};'
+        o 'FORIN Expression WHEN Expression', '$$ = {source: $2, guard: $4};'
+        o 'FOROF Expression WHEN Expression', '$$ = {source: $2, guard: $4, object: true};'
+        o 'FORIN Expression BY Expression', '$$ = {source: $2, step: $4};'
+        o 'FORIN Expression WHEN Expression BY Expression', '$$ = {source: $2, guard: $4, step: $6};'
+        o 'FORIN Expression BY Expression WHEN Expression', '$$ = {source: $2, guard: $6, step: $4};'
     ]
 
     # Operation
@@ -291,8 +355,8 @@ operators = [
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
     ['right', '=', ':', 'ASSIGN']
     ['right', 'CLONE']
-    ['right', 'WHEN']
-    ['right', 'IF', 'ELSE', 'WHILE', 'UNTIL', 'LOOP']
+    ['right', 'FORIN', 'FOROF', 'BY', 'WHEN']
+    ['right', 'IF', 'ELSE', 'FOR', 'WHILE', 'UNTIL', 'LOOP']
     ['left', 'POST_IF']
 ]
 

@@ -23,6 +23,8 @@ class Lexer
     addToken: (tokens) -> # add tokens to the tokens stream list
         if tokens instanceof Array
             for token in tokens
+                if token.type in ['INDENT', 'MINDENT', 'LINETERMINATOR']
+                    @track.into.for = off
                 @tokens.push token
         else
             @tokens.push tokens
@@ -229,6 +231,8 @@ class Lexer
             return @addToken token.set('type', 'CASTTYPE').set('value', value)
 
         if value in KEYWORDS.RESERVED
+            if value in ['cte', 'const']
+                return @addToken token.set('type', 'CONST')
             if (value in ['if', 'unless']) and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ','])
                 return @addToken token.set('type', 'POST_IF')
                                       .set('value', if value is 'if' then off else on)
@@ -248,18 +252,19 @@ class Lexer
             if value is 'else'
                 res = @closeSensibleIndent(@currentIndentTracker(), token.location)
                 return @addToken res.concat(token.set('type', 'ELSE')).concat @lookLinearBlock(token.location)
-
             if value is 'try'
                 return @addToken [].concat(token.set('type', 'TRY')).concat @lookLinearBlock(token.location)
-
             if value is 'catch'
                 res = @closeSensibleIndent(@currentIndentTracker(), token.location)
                 return @addToken res.concat(token.set('type', 'CATCH'))
-
             if value is 'finally'
                 res = @closeSensibleIndent(@currentIndentTracker(), token.location)
                 return @addToken res.concat(token.set('type', 'FINALLY')).concat @lookLinearBlock(token.location)
-
+            if value is 'for'
+                @track.into.for = on
+            if value in ['of', 'in'] and @track.into.for
+                value = 'for' + value
+                @track.into.for = off
             return @addToken token.set('type', value.toUpperCase())
 
         # other php reserved words can't be identifiers
@@ -383,6 +388,14 @@ class Lexer
                 # look for '..'
                 if @charCode() is 46 # 46 is '.'
                     @colAdvance()
+                    # look for '...'
+                    if @charCode() is 46 # 46 is '.'
+                        @colAdvance()
+                        # look for '....'
+                        if @charCode() is 46 # 46 is '.'
+                            @colAdvance()
+                            return @addToken token.set('type', '....').setEnd @getPos()
+                        return @addToken token.set('type', '...').setEnd @getPos()
                     return @addToken token.set('type', '..').setEnd @getPos()
                 return @addToken token.set('type', '.').setEnd @getPos()
             when 47 # 47 is '/'
@@ -397,6 +410,8 @@ class Lexer
                     @colAdvance()
                     return @addToken token.set('type', '::').setEnd @getPos()
                 return @addToken token.set('type', ':').setEnd @getPos()
+            when 59 # 59 is ';'
+                return @addToken token.set('type', ';').setEnd @getPos()
             when 60 # 60 is '<'
                 if @charCode() is 60 # 60 is '<'
                     @colAdvance()
@@ -469,6 +484,8 @@ class Lexer
                 return @addToken token.set('type', 'BITWISE').set('value', '^').setEnd @getPos()
             when 96 # 96 is '`'
                 return @addToken token.set('type', '`').setEnd @getPos()
+            when 123 # 123 is '{'
+                return @addToken token.set('type', '{').setEnd @getPos()
             when 124 # 124 is '|'
                 # look for '||'
                 if @charCode() is 124 # 124 is '|'
@@ -479,6 +496,8 @@ class Lexer
                     @colAdvance()
                     return @addToken token.set('type', 'ASSIGN').set('value', '|=').setEnd @getPos()
                 return @addToken token.set('type', 'BITWISE').set('value', '|').setEnd @getPos()
+            when 125 # 125 is '}'
+                return @addToken token.set('type', '}').setEnd @getPos()
             when 126 # 126 is '~'
                 if @charCode() is 126 # 126 is '~'
                     @colAdvance()
@@ -634,7 +653,20 @@ KEYWORDS =
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
     LOGIC: ['and', 'or', 'xor']
-    RESERVED: ['catch', 'clone', 'const', 'cte', 'else', 'finally', 'func', 'if', 'in', 'instanceof', 'loop', 'new', 'not', 'null', 'then', 'try', 'unless', 'until', 'use', 'when', 'while']
+    RESERVED: [
+        'as'
+        'by'
+        'catch', 'clone', 'const', 'cte'
+        'else'
+        'finally', 'for', 'func'
+        'if', 'in', 'instanceof'
+        'loop'
+        'new', 'not', 'null'
+        'of'
+        'then', 'try'
+        'unless', 'until', 'use'
+        'when', 'while'
+    ]
     PHPRESERVED: [
         'abstract', 'and', 'array', 'as'
         'break'
