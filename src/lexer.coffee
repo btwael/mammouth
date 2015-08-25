@@ -263,8 +263,10 @@ class Lexer
             if value is 'for'
                 @track.into.for = on
             if value in ['of', 'in'] and @track.into.for
-                value = 'for' + value
                 @track.into.for = off
+                return @addToken token.set('type', 'FOR' + value.toUpperCase())
+            if (value is 'when' and @last().type in ['INDENT', 'MINDENT', 'OUTDENT']) or value is 'case'
+                return @addToken token.set('type', 'LEADING_WHEN')
             return @addToken token.set('type', value.toUpperCase())
 
         # other php reserved words can't be identifiers
@@ -462,19 +464,29 @@ class Lexer
             when 64 # 61 is '@'
                 return @addToken token.set('type', '@').setEnd @getPos()
             when 91 # 58 is ']'
-                @track.opened.unshift {
-                    type: '['
-                    closableBy: ']'
-                }
-                @addIndentLevel()
-                return @addToken token.set('type', '[').setEnd @getPos()
+                if @last().type in KEYWORDS.INDEXABLE
+                    @track.opened.unshift {
+                        type: 'INDEX_START'
+                        closableBy: 'INDEX_END'
+                    }
+                    @addIndentLevel()
+                    return @addToken token.set('type', 'INDEX_START').setEnd @getPos()
+                else
+                    @track.opened.unshift {
+                        type: '['
+                        closableBy: ']'
+                    }
+                    @addIndentLevel()
+                    return @addToken token.set('type', '[').setEnd @getPos()
             when 93 # 58 is ']'
-                @colAdvance()
                 tokens = @closeIndent(@currentIndentTracker(), token.location)
                 @closeIndentLevel()
                 if @track.opened[0].type is '['
                     @track.opened.shift()
                     tokens = tokens.concat token.set('type', ']').setEnd @getPos()
+                else if @track.opened[0].type is 'INDEX_START'
+                    @track.opened.shift()
+                    tokens = tokens.concat token.set('type', 'INDEX_END').setEnd @getPos()
                 return @addToken tokens
             when 94 # 94 is '^'
                 # look for '^='
@@ -652,38 +664,43 @@ KEYWORDS =
     CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@']
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
+    INDEXABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@', 'NUMBER', 'STRING', 'BOOL', 'NULL']
     LOGIC: ['and', 'or', 'xor']
     RESERVED: [
         'as'
-        'by'
-        'catch', 'clone', 'const', 'cte'
-        'else'
+        'break', 'by'
+        'catch', 'case', 'clone', 'const', 'continue', 'cte'
+        'declare', 'delete'
+        'echo', 'else'
         'finally', 'for', 'func'
+        'goto'
         'if', 'in', 'instanceof'
         'loop'
         'new', 'not', 'null'
         'of'
-        'then', 'try'
+        'return'
+        'switch'
+        'then', 'throw', 'try'
         'unless', 'until', 'use'
         'when', 'while'
     ]
     PHPRESERVED: [
-        'abstract', 'and', 'array', 'as'
+        'abstract', 'and', 'as' # array
         'break'
         'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue'
-        'declare', 'default', 'die', 'do'
-        'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'eval', 'exit', 'extends'
+        'declare', 'default', 'do' # die
+        'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'extends' # eval, exit
         'final', 'finally', 'for', 'foreach', 'function'
         'global', 'goto'
-        'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'isset'
-        'list'
+        'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface' # isset
+        # list
         'namespace', 'new'
         'or'
         'print', 'private', 'protected', 'public'
         'require', 'require_once', 'return'
         'static', 'switch'
         'throw', 'trait', 'try'
-        'unset', 'use'
+        'unset', 'use' # unset
         'var'
         'while'
     ]

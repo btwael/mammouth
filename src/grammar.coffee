@@ -46,12 +46,22 @@ grammar =
     ]
 
     BigStatement: [
-        #o 'Statement'
+        o 'Statement'
         o 'Function'
     ]
 
     Statement: [
+        o 'JumpStatement'
+        o 'Declare'
+        o 'SectionStatement'
+    ]
 
+    JumpStatement: [
+        o 'Goto'
+        o 'Break'
+        o 'Continue'
+        o 'Return'
+        o 'Throw'
     ]
 
     Expression: [
@@ -67,6 +77,8 @@ grammar =
         # dowhile
         o 'Try'
         o 'For'
+        o 'Switch'
+        o 'Intrinsic'
     ]
 
     # A world of values
@@ -118,7 +130,19 @@ grammar =
         o '. Identifier', '$$ = new yy.Access($2);'
         o '.. Identifier', '$$ = new yy.Access($2, "..");'
         o ':: Identifier', '$$ = new yy.Access($2, "::");'
-        o '[ Expression ]', '$$ = new yy.Access($2, "[]");'
+        o 'Index'
+    ]
+
+    Index: [
+        o 'INDEX_START Expression INDEX_END', '$$ = new yy.Access($2, "[]");'
+        o 'INDEX_START Slice INDEX_END', '$$ = new yy.Slice($2);'
+    ]
+
+    Slice: [
+        o 'Expression RangeDots Expression', '$$ = new yy.Range($1, $3, $2);'
+        o 'Expression RangeDots','$$ = new yy.Range($1, null, $2);'
+        o 'RangeDots Expression', '$$ = new yy.Range(null, $2, $1);'
+        o 'RangeDots', '$$ = new yy.Range(null, null, $2);'
     ]
 
     Literal: [
@@ -192,6 +216,20 @@ grammar =
     Arguments: [
         o 'CALL_START CALL_END', '$$ = [];'
         o 'CALL_START ArgList OptComma CALL_END', 2
+    ]
+
+    # Intrinsic
+    Intrinsic: [
+        o 'Echo'
+        o 'Delete'
+    ]
+
+    Echo: [
+        o 'ECHO SimpleArg', '$$ = new yy.Echo($2)'
+    ]
+
+    Delete: [
+        o 'DELETE SimpleArg', '$$ = new yy.Delete($2)'
     ]
 
     # Functions
@@ -314,6 +352,68 @@ grammar =
         o 'FORIN Expression BY Expression WHEN Expression', '$$ = {source: $2, guard: $6, step: $4};'
     ]
 
+    # Switch
+    Switch: [
+        o 'SWITCH Expression INDENT Whens OUTDENT', '$$ = new yy.Switch($2, $4);'
+        o 'SWITCH Expression INDENT Whens ELSE Block OUTDENT', '$$ = new yy.Switch($2, $4, $6);'
+        o 'SWITCH INDENT Whens OUTDENT', '$$ = new yy.Switch(null, $3);'
+        o 'SWITCH INDENT Whens ELSE Block OUTDENT', '$$ = new yy.Switch(null, $3, $5);'
+    ]
+
+    Whens: [
+        o 'When', '$$ = [$1];'
+        o 'Whens MINDENT When', '$$ = $1.concat($3);'
+    ]
+
+    When: [
+        o 'LEADING_WHEN SimpleArgs Block', '$$ = [$2, $3];'
+    ]
+
+    SimpleArgs: [
+        o 'Expression', '$$ = [$1];'
+        o 'SimpleArgs , Expression', '$$ = $1.concat($3);'
+    ]
+
+    # Declare
+    Declare: [
+        o 'DECLARE SimpleArg', '$$ = new yy.Declare($2);'
+        o 'DECLARE SimpleArg -> Block', '$$ = new yy.Declare($2, $4);'
+    ]
+
+    SimpleArg: [
+        o 'Expression'
+        o '( Expression )', 2
+    ]
+
+    # Sections
+    SectionStatement: [
+        o 'IDENTIFIER :', '$$ = new yy.Section($1);'
+    ]
+
+    # Jump statement
+    Goto: [
+        o 'GOTO IDENTIFIER', '$$ = new yy.Goto($2);'
+    ]
+
+    Break: [
+        o 'BREAK', '$$ = new yy.Break();'
+        o 'BREAK NUMBER', '$$ = new yy.Break(new yy.Literal($2));'
+    ]
+
+    Continue: [
+        o 'CONTINUE', '$$ = new yy.Continue();'
+        o 'CONTINUE NUMBER', '$$ = new yy.Continue(new yy.Literal($2));'
+    ]
+
+    Return: [
+        o 'RETURN SimpleArg', '$$ = new yy.Return($2);'
+        o 'RETURN', '$$ = new yy.Return();'
+    ]
+
+    Throw: [
+        o 'THROW Expression', '$$ = new yy.Throw($2);'
+    ]
+
     # Operation
     Operation: [
         o '-- Expression', '$$ = new yy.Update("--", $2);'
@@ -353,10 +453,9 @@ operators = [
     ['left', 'LOGIC'; '&']
     ['left', '=>']
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
-    ['right', '=', ':', 'ASSIGN']
-    ['right', 'CLONE']
+    ['right', '=', ':', 'ASSIGN', 'RETURN', 'THROW', 'GOTO', 'BREAK', 'CONTINUE', 'CLONE', 'ECHO', 'DELETE']
     ['right', 'FORIN', 'FOROF', 'BY', 'WHEN']
-    ['right', 'IF', 'ELSE', 'FOR', 'WHILE', 'UNTIL', 'LOOP']
+    ['right', 'IF', 'ELSE', 'FOR', 'WHILE', 'UNTIL', 'LOOP', 'FUNC']
     ['left', 'POST_IF']
 ]
 

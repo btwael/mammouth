@@ -95,6 +95,11 @@ Range = class exports.Range
         @to = to
         @exclusive = tag is 'exclusive'
 
+Slice = class exports.Slice
+    constructor: (range) ->
+        @type = 'Slice'
+        @range = range
+
 # Operations
 Assign = class exports.Assign
     constructor: (operator, left, right) ->
@@ -204,3 +209,60 @@ For = class exports.For
         @type = 'For'
         @properties = properties
         @body = block
+
+# For
+Switch = class exports.Switch
+    constructor: (subject, whens, otherwise = null) ->
+        @type = 'Switch'
+        @subject = subject
+        @whens = whens
+        @otherwise = otherwise
+
+# Declare
+Declare = class exports.Declare
+    constructor: (expression, script = false) ->
+        @type = 'Declare'
+        @expression = expression
+        @script = script
+
+# Section
+Section = class exports.Section
+    constructor: (name) ->
+        @type = 'Section'
+        @name = name
+
+# Jump Statement
+Goto = class exports.Goto
+    constructor: (section) ->
+        @type = 'Goto'
+        @section = section
+
+Break = class exports.Break
+    constructor: (arg = false) ->
+        @type = 'Break'
+        @arg = arg
+
+Continue = class exports.Continue
+    constructor: (arg = false) ->
+        @type = 'Continue'
+        @arg = arg
+
+Return = class exports.Return
+    constructor: (value = false) ->
+        @type = 'Return'
+        @value = value
+
+Throw = class exports.Throw
+    constructor: (expression) ->
+        @type = 'Throw'
+        @expression = expression
+
+Echo = class exports.Echo
+    constructor: (value) ->
+        @type = 'Echo'
+        @value = value
+
+Delete = class exports.Delete
+    constructor: (value) ->
+        @type = 'Delete'
+        @value = value

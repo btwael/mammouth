@@ -5,14 +5,13 @@ function heredoc (f) {
 };
 code = heredoc(function() {
 /*
-wael
-boutglay{{
-    hello(x) for key, value in dsfs when true
+{{
+  delete vari
 }}fsdf
 */
 })
 
-console.log(mammouth.parse(code).sections[1].body.body)
+console.log(mammouth.parse(code).sections[1].body.body[0])
 
 var lexer = require('../lib/lexer');
 lexer.setInput(code);
