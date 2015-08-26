@@ -6,7 +6,9 @@ function heredoc (f) {
 code = heredoc(function() {
 /*
 {{
-  delete vari
+  abstract class wael extends sdf implements q'fdsf\dsfsdf', q'sqd'
+    public static const wael = 12
+    protected func cube() -> x*x
 }}fsdf
 */
 })
@@ -16,4 +18,4 @@ console.log(mammouth.parse(code).sections[1].body.body[0])
 var lexer = require('../lib/lexer');
 lexer.setInput(code);
 
-//console.log(lexer.tokenize())
+//onsole.log(lexer.tokenize())

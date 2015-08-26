@@ -18,6 +18,11 @@ Block = class exports.Block
         @type = 'Block'
         @body = instructions
 
+Expression = class exports.Expression
+    constructor: (expression) ->
+        @type = 'Expression'
+        @expression = expression
+
 Value = class exports.Value
     constructor: (value, properties = []) ->
         @type = 'Value'
@@ -99,6 +104,11 @@ Slice = class exports.Slice
     constructor: (range) ->
         @type = 'Slice'
         @range = range
+
+QualifiedName = class exports.QualifiedName
+    constructor: (path) ->
+        @type = 'QualifiedName'
+        @path = path
 
 # Operations
 Assign = class exports.Assign
@@ -266,3 +276,13 @@ Delete = class exports.Delete
     constructor: (value) ->
         @type = 'Delete'
         @value = value
+
+# Class
+Class = class exports.Class
+    constructor: (@name, @body, @extendable = false, @implement = false, @modifier = false) ->
+        @type = "Class"
+
+ClassLine = class exports.ClassLine
+    constructor: (@visibility, @statically, @element) ->
+        @type = 'ClassLine'
+        @abstract = false

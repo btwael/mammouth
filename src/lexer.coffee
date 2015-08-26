@@ -127,6 +127,10 @@ class Lexer
             @tokens.pop()
             return @readIndent()
 
+        # check for Qualifiedstring
+        if @isQualifiedString()
+            return @readTokenQualifiedString()
+
         # check for identifier
         if @isIdentifier()
             return @readTokenIdentifier()
@@ -288,6 +292,12 @@ class Lexer
         value = @input.slice(@pos).match(REGEX.STRING)[0]
         @posAdvance value
         return @addToken token.set('value', value).setEnd @getPos()
+
+    readTokenQualifiedString: () ->
+        token = (new Token 'QUALIFIEDQTRING').setStart @getPos()
+        value = @input.slice(@pos).match(REGEX.QUALIFIEDQTRING)[0]
+        @posAdvance value
+        return @addToken token.set('value', eval value[1..]).setEnd @getPos()
 
     getTokenFromCode: (code) ->
         token = (new Token).setStart @getPos()
@@ -461,9 +471,9 @@ class Lexer
                 return @addToken token.set('type', 'COMPARE').set('value', '>').setEnd @getPos()
             when 63 # 63 is '?'
                 return @addToken token.set('type', '?').setEnd @getPos()
-            when 64 # 61 is '@'
+            when 64 # 64 is '@'
                 return @addToken token.set('type', '@').setEnd @getPos()
-            when 91 # 58 is ']'
+            when 91 # 91 is ']'
                 if @last().type in KEYWORDS.INDEXABLE
                     @track.opened.unshift {
                         type: 'INDEX_START'
@@ -478,7 +488,9 @@ class Lexer
                     }
                     @addIndentLevel()
                     return @addToken token.set('type', '[').setEnd @getPos()
-            when 93 # 58 is ']'
+            when 92 # 92 is '\'
+                return @addToken token.set('type', 'BS').setEnd @getPos()
+            when 93 # 93 is ']'
                 tokens = @closeIndent(@currentIndentTracker(), token.location)
                 @closeIndentLevel()
                 if @track.opened[0].type is '['
@@ -579,6 +591,8 @@ class Lexer
 
     isString: (pos = @pos) -> @input.slice(pos).match(REGEX.STRING) isnt null
 
+    isQualifiedString: (pos = @pos) -> @input.slice(pos).match(REGEX.QUALIFIEDQTRING) isnt null
+
     # Rewrite
     rewrite: () ->
         for token, i in @tokens
@@ -658,28 +672,30 @@ REGEX = # some useful regular expression
     LINETERMINATOR: /[\n\r\u2028]/
     NUMBER: /^(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)/
     STRING: /^('[^\\']*(?:\\[\s\S][^\\']*)*'|"[^\\"]*(?:\\[\s\S][^\\"]*)*")/
+    QUALIFIEDQTRING: /^q('[^\\']*(?:\\[\s\S][^\\']*)*'|"[^\\"]*(?:\\[\s\S][^\\"]*)*")/
 
 KEYWORDS =
     BOOL: ['TRUE', 'FALSE']
-    CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@']
+    CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@', 'QUALIFIEDQTRING']
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
-    INDEXABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@', 'NUMBER', 'STRING', 'BOOL', 'NULL']
+    INDEXABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@', 'QUALIFIEDQTRING', 'NUMBER', 'STRING', 'BOOL', 'NULL']
     LOGIC: ['and', 'or', 'xor']
     RESERVED: [
-        'as'
+        'abstract', 'as'
         'break', 'by'
-        'catch', 'case', 'clone', 'const', 'continue', 'cte'
+        'catch', 'case', 'class', 'clone', 'const', 'continue', 'cte'
         'declare', 'delete'
-        'echo', 'else'
-        'finally', 'for', 'func'
+        'echo', 'else', 'extends'
+        'final', 'finally', 'for', 'func'
         'goto'
-        'if', 'in', 'instanceof'
+        'if', 'implements', 'in', 'instanceof'
         'loop'
-        'new', 'not', 'null'
+        'namespace', 'new', 'not', 'null'
         'of'
+        'private', 'protected', 'public'
         'return'
-        'switch'
+        'static', 'switch'
         'then', 'throw', 'try'
         'unless', 'until', 'use'
         'when', 'while'

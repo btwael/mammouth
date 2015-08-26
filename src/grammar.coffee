@@ -48,6 +48,7 @@ grammar =
     BigStatement: [
         o 'Statement'
         o 'Function'
+        o 'Class'
     ]
 
     Statement: [
@@ -88,6 +89,7 @@ grammar =
         o 'Parenthetical', '$$ = new yy.Value($1);'
         o 'Existence', '$$ = new yy.Value($1);'
         o 'Range', '$$ = new yy.Value($1);'
+        o 'QualifiedName', '$$ = new yy.Value($1);'
         # heredoc
     ]
 
@@ -185,8 +187,8 @@ grammar =
         o 'Assignable = INDENT Expression OUTDENT', '$$ = new yy.Assign("=", $1, $4);'
         o '{ KeysList } = Expression', '$$ = new yy.GetKeyAssign($2, $5);'
         o '{ KeysList } = INDENT Expression OUTDENT', '$$ = new yy.GetKeyAssign($2, $6);'
-        o 'CONST Identifier = Expression', '$$ = new yy.Constant($2, $4);'
-        o 'CONST Identifier = INDENT Expression OUTDENT', '$$ = new yy.Constant($2, $5);'
+        o 'CONST IDENTIFIER = Expression', '$$ = new yy.Constant($2, $4);'
+        o 'CONST IDENTIFIER = INDENT Expression OUTDENT', '$$ = new yy.Constant($2, $5);'
     ]
 
     KeysList: [
@@ -323,8 +325,8 @@ grammar =
         o 'FOR Range', '$$ = {source: $2, };'
         o 'FOR Range BY Expression', '$$ = {source: $2, step: $4};'
         o 'FOR Range AS Identifier', '$$ = {source: $2, name: $6};'
-        o 'FOR Range BY Expression AS IDENTIFIER', '$$ = {source: $2, step: $4, name: $6};'
-        o 'FOR Range AS IDENTIFIER BY Expression', '$$ = {source: $2, step: $6, name: $4};'
+        o 'FOR Range BY Expression AS Identifier', '$$ = {source: $2, step: $4, name: $6};'
+        o 'FOR Range AS Identifier BY Expression', '$$ = {source: $2, step: $6, name: $4};'
         o 'ForStart ForSource', '$2.name = $1[0]; $2.index = $1[1]; $$ = $2;'
     ]
 
@@ -414,6 +416,70 @@ grammar =
         o 'THROW Expression', '$$ = new yy.Throw($2);'
     ]
 
+    # Classes
+    Class: [
+        o 'ClassModifier CLASS IDENTIFIER Extends OptImplements INDENT ClassMembers OUTDENT', '$$ = new yy.Class($3, $7, $4, $5, $1);'
+    ]
+
+    ClassModifier: [
+        o '', '$$ = false;'
+        o 'ABSTRACT', '$$ = "abstract";'
+        o 'FINAL', '$$ = "final";'
+    ]
+
+    Extends: [
+        o '', '$$ = false;'
+        o 'EXTENDS Qualified', 2
+    ]
+
+    OptImplements: [
+        o 'Implements'
+    ]
+
+    Implements: [
+        o 'IMPLEMENTS Qualified', '$$ = [$2];'
+        o 'Implements , Qualified', '$$ = $1.concat($3);'
+    ]
+
+    ClassMembers: [
+        o 'ClassMember', '$$ = [$1];'
+        o 'ClassMembers MINDENT ClassMember', '$$ = $1.concat($3);'
+    ]
+
+    ClassMember: [
+        o 'Visibility Statically Identifier', '$$ = new yy.ClassLine($1, $2, $$ = new yy.Expression($3));'
+        o 'Visibility Statically Assign', '$$ = new yy.ClassLine($1, $2, $$ = new yy.Expression($3));'
+        o 'Visibility Statically Function', '$$ = new yy.ClassLine($1, $2, $3);'
+        o 'FINAL Visibility Statically Function', 'n = new yy.ClassLine($2, $3, $4); n.finaly = true; $$ = n;'
+        o 'ABSTRACT ClassMember', '$2.abstract = true; $$ = $2;'
+    ]
+
+    Finaly: [
+        o '', '$$ = false'
+        o 'FINAL', '$$ = true'
+    ]
+
+    Visibility: [
+        o '', '$$ = false'
+        o 'PUBLIC', '$$ = "public"'
+        o 'PRIVATE', '$$ = "private"'
+        o 'PROTECTED', '$$ = "protected"'
+    ]
+
+    Statically: [
+        o '', '$$ = false'
+        o 'STATIC', '$$ = "static"'
+    ]
+
+    # Qualified
+    Qualified: [
+        o 'IDENTIFIER', '$$ = yy.QualifiedName($1);'
+        o 'QualifiedName'
+    ]
+
+    QualifiedName: [
+        o 'QUALIFIEDQTRING', '$$ = new yy.QualifiedName($1);'
+    ]
     # Operation
     Operation: [
         o '-- Expression', '$$ = new yy.Update("--", $2);'
@@ -453,9 +519,9 @@ operators = [
     ['left', 'LOGIC'; '&']
     ['left', '=>']
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
-    ['right', '=', ':', 'ASSIGN', 'RETURN', 'THROW', 'GOTO', 'BREAK', 'CONTINUE', 'CLONE', 'ECHO', 'DELETE']
+    ['right', '=', ':', 'ASSIGN', 'RETURN', 'THROW', 'GOTO', 'BREAK', 'CONTINUE', 'CLONE', 'ECHO', 'DELETE', 'EXTENDS', 'IMPLEMENTS']
     ['right', 'FORIN', 'FOROF', 'BY', 'WHEN']
-    ['right', 'IF', 'ELSE', 'FOR', 'WHILE', 'UNTIL', 'LOOP', 'FUNC']
+    ['right', 'IF', 'ELSE', 'FOR', 'WHILE', 'UNTIL', 'LOOP', 'FUNC', 'NAMESPACE', 'ABSTRACT', 'FINAL', 'CLASS']
     ['left', 'POST_IF']
 ]
 
