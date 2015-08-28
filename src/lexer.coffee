@@ -689,7 +689,7 @@ KEYWORDS =
         'echo', 'else', 'extends'
         'final', 'finally', 'for', 'func'
         'goto'
-        'if', 'implements', 'in', 'instanceof'
+        'if', 'implements', 'in', 'instanceof', 'interface'
         'loop'
         'namespace', 'new', 'not', 'null'
         'of'

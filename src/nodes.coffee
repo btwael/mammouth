@@ -279,10 +279,33 @@ Delete = class exports.Delete
 
 # Class
 Class = class exports.Class
-    constructor: (@name, @body, @extendable = false, @implement = false, @modifier = false) ->
+    constructor: (name, body, extendable = false, implement = false, modifier = false) ->
         @type = "Class"
+        @name = name
+        @body = body
+        @extendable = extendable
+        @implement = implement
+        @modifier = modifier
 
 ClassLine = class exports.ClassLine
-    constructor: (@visibility, @statically, @element) ->
+    constructor: (visibility, statically, element) ->
         @type = 'ClassLine'
         @abstract = false
+        @visibility = visibility
+        @statically = statically
+        @element = element
+
+# Interface
+Interface = class exports.Interface
+    constructor: (name, body, extendable = false) ->
+        @type = "Interface"
+        @name = name
+        @body = body
+        @extendable = extendable
+
+# Namespace
+Namespace = class exports.Namespace
+    constructor: (name, body = false) ->
+        @type = 'Namespace'
+        @name = Namespace
+        @body = body

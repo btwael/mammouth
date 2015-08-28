@@ -49,6 +49,8 @@ grammar =
         o 'Statement'
         o 'Function'
         o 'Class'
+        o 'Interface'
+        o 'Namespace'
     ]
 
     Statement: [
@@ -471,6 +473,22 @@ grammar =
         o 'STATIC', '$$ = "static"'
     ]
 
+    # Interface
+    Interface: [
+        o 'INTERFACE IDENTIFIER Extends INDENT InterfaceBody OUTDENT', '$$ = new yy.Interface($2, $5, $3);'
+    ]
+
+    InterfaceBody: [
+        o 'InterfaceLine', '$$ = [$1];'
+        o 'InterfaceBody MINDENT InterfaceLine', '$$ = $1.concat($3);'
+    ]
+
+    InterfaceLine: [
+        o 'Visibility Statically Assign', '$$ = new yy.ClassLine($1, $2, $$ = new yy.Expression($3));'
+        o 'Visibility Statically Function', '$$ = new yy.ClassLine($1, $2, $3);'
+        o 'FINAL Visibility Statically Function', 'n = new yy.ClassLine($2, $3, $4); n.finaly = true; $$ = n;'
+    ]
+
     # Qualified
     Qualified: [
         o 'IDENTIFIER', '$$ = yy.QualifiedName($1);'
@@ -480,6 +498,14 @@ grammar =
     QualifiedName: [
         o 'QUALIFIEDQTRING', '$$ = new yy.QualifiedName($1);'
     ]
+
+    # Namespaces
+
+    Namespace: [
+        o 'NAMESPACE Qualified', '$$ = new yy.Expression(new yy.Namespace($2));'
+        o 'NAMESPACE Qualified Block', '$$ = new yy.Namespace($2, $3);'
+    ]
+
     # Operation
     Operation: [
         o '-- Expression', '$$ = new yy.Update("--", $2);'
@@ -521,7 +547,7 @@ operators = [
     ['nonassoc',  'INDENT', 'MINDENT', 'OUTDENT']
     ['right', '=', ':', 'ASSIGN', 'RETURN', 'THROW', 'GOTO', 'BREAK', 'CONTINUE', 'CLONE', 'ECHO', 'DELETE', 'EXTENDS', 'IMPLEMENTS']
     ['right', 'FORIN', 'FOROF', 'BY', 'WHEN']
-    ['right', 'IF', 'ELSE', 'FOR', 'WHILE', 'UNTIL', 'LOOP', 'FUNC', 'NAMESPACE', 'ABSTRACT', 'FINAL', 'CLASS']
+    ['right', 'IF', 'ELSE', 'FOR', 'WHILE', 'UNTIL', 'LOOP', 'FUNC', 'NAMESPACE', 'ABSTRACT', 'FINAL', 'CLASS', 'INTERFACE', 'NAMESPACE']
     ['left', 'POST_IF']
 ]
 

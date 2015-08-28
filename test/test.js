@@ -6,9 +6,8 @@ function heredoc (f) {
 code = heredoc(function() {
 /*
 {{
-  abstract class wael extends sdf implements q'fdsf\dsfsdf', q'sqd'
-    public static const wael = 12
-    protected func cube() -> x*x
+  namespace moha
+   sdfsdf
 }}fsdf
 */
 })
