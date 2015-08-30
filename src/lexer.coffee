@@ -1,3 +1,5 @@
+{errorAt} = require './utils'
+
 class Lexer
     setInput: (input) ->
         @yytext = '' # value passed to parser (eg. identifier name)
@@ -214,7 +216,8 @@ class Lexer
             return @addToken tokens
 
     readTokenIdentifier: ->
-        token = (new Token).setStart @getPos()
+        startPos = @getPos()
+        token = (new Token).setStart startPos
         value = @input.slice(@pos).match(REGEX.IDENTIFIER)[0]
         @colAdvance value.length
         token.setEnd @getPos()
@@ -275,8 +278,7 @@ class Lexer
 
         # other php reserved words can't be identifiers
         if value in KEYWORDS.PHPRESERVED
-            # throw error
-            return @addToken token.set('type', 'UNEXPECTED').set('value', value)
+            throw "Unexpected, PHP reserved words can't be identifier at line #{startPos.row}, col #{startPos.col}:\n" + errorAt(@input, startPos)
 
         # then it's an identifier
         return @addToken token.set('type', 'IDENTIFIER').set('value', value)
@@ -300,7 +302,8 @@ class Lexer
         return @addToken token.set('value', eval value[1..]).setEnd @getPos()
 
     getTokenFromCode: (code) ->
-        token = (new Token).setStart @getPos()
+        startPos = @getPos()
+        token = (new Token).setStart startPos
         @colAdvance()
         switch code
             when 10, 13, 8232 # 10 is "\n", 13 is "\r", 8232 is "\u2028"
@@ -488,8 +491,6 @@ class Lexer
                     }
                     @addIndentLevel()
                     return @addToken token.set('type', '[').setEnd @getPos()
-            when 92 # 92 is '\'
-                return @addToken token.set('type', 'BS').setEnd @getPos()
             when 93 # 93 is ']'
                 tokens = @closeIndent(@currentIndentTracker(), token.location)
                 @closeIndentLevel()
@@ -536,10 +537,8 @@ class Lexer
                     return @addToken token.set('type', 'ASSIGN').set('value', '.=').setEnd @getPos()
                 return @addToken token.set('type', 'CONCAT').setEnd @getPos()
             else
-                # throw error
-                return @addToken {
-                    type: code
-                }
+                throw "Unexpected caharacter at line #{startPos.row}, col #{startPos.col}:\n" + errorAt(@input, startPos)
+
 
     readLineTerminator: () ->
         token = (new Token 'LINETERMINATOR').setStart @getPos()

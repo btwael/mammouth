@@ -8,6 +8,7 @@ code = heredoc(function() {
 {{
   namespace moha
    sdfsdf
+  m = 5 \ 3
 }}fsdf
 */
 })
