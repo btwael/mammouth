@@ -69,9 +69,9 @@ grammar =
 
     Expression: [
         o 'Value'
-        o 'Invocation'
+        o 'Invocation', '$$ = new yy.Value($1);';
         o 'Code'
-        o 'Operation'
+        o 'Operation', '$$ = new yy.Value($1);';
         o 'Assign'
         o 'Casting'
         o 'Clone'
@@ -92,7 +92,11 @@ grammar =
         o 'Existence', '$$ = new yy.Value($1);'
         o 'Range', '$$ = new yy.Value($1);'
         o 'QualifiedName', '$$ = new yy.Value($1);'
-        # heredoc
+        o 'Heredoc', '$$ = new yy.Value($1);'
+    ]
+
+    Heredoc: [
+        o 'HEREDOC', '$$ = new yy.HereDoc($1);';
     ]
 
     Parenthetical: [
@@ -119,7 +123,19 @@ grammar =
 
     SimpleAssignable: [
         o 'Identifier', '$$ = new yy.Value($1);'
-        o 'Value Accessor', '$1.add($2); $$ = $1;'
+        o 'Value Accessor', 'if($2.type == "Slice") {
+                                $2.value = $1;
+                                $$ = new yy.Value($2);
+                            } else {
+                                $$ = $1.add($2);
+                            }'
+        o 'Invocation Accessor', '$1 = new yy.Value($1);
+                            if($2.type == "Slice") {
+                                $2.value = $1;
+                                $$ = new yy.Value($2);
+                            } else {
+                                $$ = $1.add($2);
+                            }'
         o '@ Identifier', 'var value = new yy.Value(new yy.Identifier("this"));
                             value.add(new yy.Access($2));
                             $$ = value;'
@@ -229,11 +245,11 @@ grammar =
     ]
 
     Echo: [
-        o 'ECHO SimpleArg', '$$ = new yy.Echo($2)'
+        o 'ECHO Expression', '$$ = new yy.Echo($2)'
     ]
 
     Delete: [
-        o 'DELETE SimpleArg', '$$ = new yy.Delete($2)'
+        o 'DELETE Expression', '$$ = new yy.Delete($2)'
     ]
 
     # Functions
@@ -279,7 +295,7 @@ grammar =
     ]
 
     IfBlock: [
-        o 'IF Expression Block', '$$ = new yy.If($2, $3, $1)'
+        o 'IF Expression Block', '$$ = new yy.If($2, $3, $1);'
         o 'IfBlock ELSE IF Expression Block', '$$ = $1.addElse(new yy.ElseIf($4, $5));'
     ]
 
@@ -326,9 +342,6 @@ grammar =
     ForBody: [
         o 'FOR Range', '$$ = {source: $2, };'
         o 'FOR Range BY Expression', '$$ = {source: $2, step: $4};'
-        o 'FOR Range AS Identifier', '$$ = {source: $2, name: $6};'
-        o 'FOR Range BY Expression AS Identifier', '$$ = {source: $2, step: $4, name: $6};'
-        o 'FOR Range AS Identifier BY Expression', '$$ = {source: $2, step: $6, name: $4};'
         o 'ForStart ForSource', '$2.name = $1[0]; $2.index = $1[1]; $$ = $2;'
     ]
 

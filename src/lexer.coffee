@@ -145,6 +145,10 @@ class Lexer
         if @isString()
             return @readTokenString()
 
+        # check for heredoc
+        if @isHereDoc()
+            return @readTokenHereDoc()
+
         return @getTokenFromCode @charCode()
 
     readTokenRAW: ->
@@ -240,7 +244,7 @@ class Lexer
         if value in KEYWORDS.RESERVED
             if value in ['cte', 'const']
                 return @addToken token.set('type', 'CONST')
-            if (value in ['if', 'unless']) and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ','])
+            if (value in ['if', 'unless']) and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ',', 'ELSE'])
                 return @addToken token.set('type', 'POST_IF')
                                       .set('value', if value is 'if' then off else on)
             if value in ['if', 'unless']
@@ -258,7 +262,7 @@ class Lexer
                 return @addToken token.set('type', 'INDENT').set('length', length)
             if value is 'else'
                 res = @closeSensibleIndent(@currentIndentTracker(), token.location)
-                return @addToken res.concat(token.set('type', 'ELSE')).concat @lookLinearBlock(token.location)
+                return @addToken res.concat(token.set('type', 'ELSE')).concat @lookLinearBlock(token.location, 'ELSE')
             if value is 'try'
                 return @addToken [].concat(token.set('type', 'TRY')).concat @lookLinearBlock(token.location)
             if value is 'catch'
@@ -294,6 +298,12 @@ class Lexer
         value = @input.slice(@pos).match(REGEX.STRING)[0]
         @posAdvance value
         return @addToken token.set('value', value).setEnd @getPos()
+
+    readTokenHereDoc: () ->
+        token = (new Token 'HEREDOC').setStart @getPos()
+        value = @input.slice(@pos).match(REGEX.HEREDOC)[0]
+        @posAdvance value
+        return @addToken token.set('value', value[1...value.length - 1]).setEnd @getPos()
 
     readTokenQualifiedString: () ->
         token = (new Token 'QUALIFIEDQTRING').setStart @getPos()
@@ -507,8 +517,6 @@ class Lexer
                     @colAdvance()
                     return @addToken token.set('type', 'ASSIGN').set('value', '^=').setEnd @getPos()
                 return @addToken token.set('type', 'BITWISE').set('value', '^').setEnd @getPos()
-            when 96 # 96 is '`'
-                return @addToken token.set('type', '`').setEnd @getPos()
             when 123 # 123 is '{'
                 return @addToken token.set('type', '{').setEnd @getPos()
             when 124 # 124 is '|'
@@ -552,8 +560,10 @@ class Lexer
         @posAdvance value
         return @nextToken()
 
-    lookLinearBlock: (loc) ->
+    lookLinearBlock: (loc, tok = '') ->
         tokens = []
+        if tok is 'ELSE' and @next().type in ['IF', 'POST_IF']
+            return tokens
         next = @next(2).type
         if next isnt 'INDENT'
             indentTracker = @currentIndentTracker()
@@ -589,6 +599,8 @@ class Lexer
     isNumber: (pos = @pos) -> @input.slice(pos).match(REGEX.NUMBER) isnt null
 
     isString: (pos = @pos) -> @input.slice(pos).match(REGEX.STRING) isnt null
+
+    isHereDoc: (pos = @pos) -> @input.slice(pos).match(REGEX.HEREDOC) isnt null
 
     isQualifiedString: (pos = @pos) -> @input.slice(pos).match(REGEX.QUALIFIEDQTRING) isnt null
 
@@ -668,6 +680,7 @@ REGEX = # some useful regular expression
     EMPTYLINE: /(^[\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]*[\n\r\u2028\u2029])/
     IDENTIFIER: /((^[$A-Za-z_\x7f-\uffff][$\w\x7f-\uffff]*)( [^\n\S]* : (?!:) )?)/
     INDENT: /(^[ \t]*)/
+    HEREDOC: /^`(((?!(\`|{{|}}))([\n\r\u2028\u2029]|.))*)`/
     LINETERMINATOR: /[\n\r\u2028]/
     NUMBER: /^(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)/
     STRING: /^('[^\\']*(?:\\[\s\S][^\\']*)*'|"[^\\"]*(?:\\[\s\S][^\\"]*)*")/

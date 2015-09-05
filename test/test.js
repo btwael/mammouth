@@ -5,17 +5,18 @@ function heredoc (f) {
 };
 code = heredoc(function() {
 /*
-{{
-  namespace moha
-   sdfsdf
-  m = 5 \ 3
-}}fsdf
+fsdfsdfsdf{{
+    result = 1
+    alert((sdf while true), sdf while true)
+}}
 */
 })
 
-console.log(mammouth.parse(code).sections[1].body.body[0])
+//console.log(mammouth.parse(code).sections[1].body.body)
+
+console.log(mammouth.compile(code))
 
 var lexer = require('../lib/lexer');
 lexer.setInput(code);
 
-//onsole.log(lexer.tokenize())
+//console.log(lexer.tokenize())
