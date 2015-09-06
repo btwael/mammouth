@@ -49,6 +49,7 @@ Block = class exports.Block extends Base
         @expands = off
 
     activateReturn: (returnGen = Express) ->
+        return if @body.length is 0
         lastIndex = @body.length - 1
         switch @body[lastIndex].type
             when 'For', 'If', 'Switch', 'Try', 'While'
@@ -64,8 +65,12 @@ Block = class exports.Block extends Base
     prepare: ->
         for instruction, i in @body
             switch instruction.type
-                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Delete', 'GetKeyAssign', 'Echo', 'NewExpression', 'Operation', 'Return', 'Throw', 'typeCasting', 'Value'
+                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Echo', 'Namespace', 'NewExpression', 'Operation', 'Return', 'Throw', 'typeCasting', 'Value'
                     if instruction.type is 'Code' and instruction.body isnt false
+                        break
+                    if instruction.type is 'Namespace' and instruction.body isnt false
+                        break
+                    if instruction.type is 'Declare' and instruction.script isnt false
                         break
                     if instruction.type is 'Value' and instruction.value.type is 'Parens' and instruction.properties.length is 0
                         instruction = instruction.value.expression
@@ -77,6 +82,8 @@ Block = class exports.Block extends Base
         @
 
     compile: (system) ->
+        if @braces and @body.length is 0
+            return '{}'
         code = ''
         code += '{' if @braces
         if @body.length is 1 and @body[0].type is 'Expression' and not @expands
@@ -137,6 +144,8 @@ Identifier = class exports.Identifier extends Base
         @name = name
 
     compile: (system) ->
+        if not system.context.has @name 
+            system.context.push new Context.Name @name
         return system.context.Identify(@name)
 
 HereDoc = class exports.HereDoc extends Base
@@ -304,8 +313,6 @@ Assign = class exports.Assign extends Base
         @right = right
 
     compile: (system) ->
-        if @left instanceof Value and @left.value instanceof Identifier
-            system.context.push new Context.Name @left.value.name
         code = @left.prepare(system).compile(system)
         code += ' ' + @operator + ' ' 
         code += @right.prepare(system).compile(system)
@@ -369,6 +376,14 @@ Operation = class exports.Operation extends Base
         @right = right
 
     compile: (system) ->
+        if @operator is 'in'
+            return (new Value(new Call(
+                new Value(new Identifier 'in_array')
+                [
+                   @left
+                   @right 
+                ]
+            ))).prepare(system).compile(system)
         # if concat look if strict mode
         code = @left.prepare(system).compile(system)
         space = if @operator isnt '~' then ' ' else ''
@@ -377,6 +392,7 @@ Operation = class exports.Operation extends Base
         code += space + @operator + space
         # mammouth super + check
         code += @right.prepare(system).compile(system)
+        return code
 
 Code = class exports.Code extends Base
     constructor: (parameters, body = false, asStatement = false, name = null) ->
@@ -523,7 +539,7 @@ While = class exports.While extends Base
             delete @guard
 
     addBody: (block) ->
-        @body = if @guard isnt null then new Block([new If(@guard, block.body)]) else block
+        @body = if @guard isnt null then new Block([new If(@guard, block)]) else block
         delete @guard
         return @
 
@@ -539,7 +555,6 @@ While = class exports.While extends Base
                     new Value(new Identifier('array_push')),
                     [new Value(cacheRes), exp]
                 ))
-                console.log m.expression.arguments
                 return m
             @body.activateReturn(funcgen);
         @
@@ -577,12 +592,198 @@ Try = class exports.Try extends Base
         @CatchIdentifier = CatchIdentifier
         @FinallyBody = FinallyBody
 
+    activateReturn: (returnGen) ->
+        @TryBody.activateReturn(returnGen)
+        @CatchBody.activateReturn(returnGen)
+        if @FinallyBody isnt false
+            @FinallyBody.activateReturn(returnGen)
+
+    prepare: (system) ->
+        @TryBody.expands = on
+        @CatchBody.expands = on
+        if @FinallyBody isnt false
+            @FinallyBody.expands = on
+        @
+
+    compile: (system) ->
+        code = ''
+        if @isStatement
+            code += 'try '
+            code += @TryBody.prepare(system).compile(system)
+            code += ' catch(Exception '
+            if @CatchIdentifier is false
+                code += system.context.free('error').prepare(system).compile(system)
+            else
+                code += @CatchIdentifier.prepare(system).compile(system)
+            code += ') ' + @CatchBody.prepare(system).compile(system)
+        else
+            @isStatement = on
+            code += (new Value(
+                new Call(
+                    new Code(
+                        []
+                        new Block [@]
+                    )
+                )
+            )).prepare(system).compile(system)
+        return code
+l = 0
 # For
 For = class exports.For extends Base
-    constructor: (properties, block) ->
+    constructor: (source, block) ->
         @type = 'For'
-        @properties = properties
+        @source = source
         @body = block
+        @returnactived = off
+        @isPrepared = off
+
+    activateReturn: (returnGen) ->
+        @returnactived = on
+
+    prepare: (system) ->
+        @body.expands = on
+        @object = !!@source.object
+        if not(@source.range? and @source.range is true)
+            if not @object
+                @cacheIndex = system.context.free('i')
+                @cacheLen = system.context.free('len')
+                if @source.source.type is 'Value' and @source.source.value.type is 'Identifier'
+                    @initRef = false
+                    @cacheRef = @source.source.value
+                else
+                    @initRef = true
+                    @cacheRef = system.context.free('ref')
+                valfromRef = new Value(@cacheRef)
+                valfromRef.add(new Access((if @source.index? then @source.index else @cacheIndex), '[]'))
+                addTop = true
+        if @source.guard? and not @isPrepared
+            @body = new Block([new If(@source.guard, @body)])
+        if addTop is true and not @isPrepared
+            @body.body.unshift new Expression new Assign(
+                '='
+                @source.name
+                valfromRef
+            )
+        if @returnactived
+                @cacheRes = cacheRes = system.context.free('result')
+                funcgen = (exp) ->
+                    m = new Expression(new Call(
+                        new Value(new Identifier('array_push')),
+                        [new Value(cacheRes), exp]
+                    ))
+                    return m
+                @body.activateReturn(funcgen);
+        @
+
+    compile: (system) ->
+        code = ''
+        if @isStatement
+            if @returnactived
+                init = new Expression new Assign '=', new Value(@cacheRes), new Value(new Array())
+                code += init.prepare(system).compile(system)
+                code += '\n' + system.indent.get()
+            if @source.range? and @source.range is true
+                index = system.context.free('i')
+                code += 'for(' 
+                code += (new Assign(
+                    '='
+                    index
+                    @source.source.from
+                )).prepare(system).compile(system)
+                code += '; '
+                code += (new Operation(
+                    if @source.source.exclusive then '<' else '<='
+                    index
+                    @source.source.to
+                )).prepare(system).compile(system)
+                code += '; '
+                if @source.step?
+                    update = new Assign '+=', index, @source.step
+                else
+                    update = new Update '++', index, false
+                code += (update).prepare(system).compile(system)
+                code += ') '
+                code += @body.prepare(system).compile(system)
+            else
+                if @object
+                    code += 'foreach(' + @source.source.prepare(system).compile(system) + ' as '
+                    code += @source.name.prepare(system).compile(system)
+                    code += ' => '
+                    if @source.index?
+                        code += @source.index.prepare(system).compile(system)
+                    else
+                        code += system.context.free('value').prepare(system).compile(system)
+                    code += ') '
+                    code += @body.prepare(system).compile(system)
+                else
+                    index = @cacheIndex
+                    len = @cacheLen
+                    if @initRef
+                        init = new Expression new Assign '=', new Value(@cacheRef), @source.source
+                        code += init.prepare(system).compile(system)
+                        code += '\n' + system.indent.get()
+                    code += 'for(' 
+                    if @source.index?
+                        code += (new Assign(
+                            '='
+                            @source.index
+                            new Value(new Assign('=', index, new Value(new Literal('0'))))
+                        )).prepare(system).compile(system)
+                    else
+                        code += (new Assign(
+                            '='
+                            index
+                            new Value new Literal '0'
+                        )).prepare(system).compile(system)
+                    code += ', '
+                    code += (new Assign(
+                        '='
+                        len
+                        new Value new Call(
+                            new Identifier('mammouth')
+                            [
+                                new Value new Literal("'length'")
+                                @cacheRef
+                            ]
+                        )
+                    )).prepare(system).compile(system)
+                    code += '; '
+                    code += (new Operation(
+                        '<'
+                        index
+                        len
+                    )).prepare(system).compile(system)
+                    code += '; '
+                    if @source.step?
+                        update = new Assign '+=', index, @source.step
+                    else
+                        update = new Update '++', index, false
+                    if @source.index?
+                        code += (new Assign(
+                            '='
+                            @source.index
+                            new Value(update)
+                        )).prepare(system).compile(system)
+                    else
+                        code += (update).prepare(system).compile(system)
+                    code += ') '
+                    code += @body.prepare(system).compile(system)
+            if @returnactived
+                code += '\n' + system.indent.get()
+                code += (new Expression new Return new Value @cacheRes).prepare(system).compile(system)
+        else
+            @isStatement = on
+            @isPrepared = on
+            code += (new Value(
+                new Call(
+                    new Code(
+                        []
+                        new Block [@]
+                    )
+                )
+            )).prepare(system).compile(system)
+        return code
+
 
 # For
 Switch = class exports.Switch extends Base
@@ -598,6 +799,19 @@ Declare = class exports.Declare extends Base
         @type = 'Declare'
         @expression = expression
         @script = script
+
+    prepare: (system) ->
+        if @script isnt false
+            @script.expands = on
+        @
+
+    compile: (system) ->
+        if @expression.type is 'Assign' and @expression.left.type is 'Value' and @expression.left.value.type is 'Identifier'
+            system.context.push new Context.Name @expression.left.value.name, 'const'
+        code = 'declare(' + @expression.prepare(system).compile(system) + ')'
+        if @script isnt false
+            code += ' ' + @script.prepare(system).compile(system)
+        return code
 
 # Section
 Section = class exports.Section extends Base
@@ -666,7 +880,7 @@ Delete = class exports.Delete extends Base
         return 'delete ' + @value.prepare(system).compile(system)
 
 # Class
-Class = class exports.Class
+Class = class exports.Class extends Base
     constructor: (name, body, extendable = false, implement = false, modifier = false) ->
         @type = "Class"
         @name = name
@@ -675,7 +889,7 @@ Class = class exports.Class
         @implement = implement
         @modifier = modifier
 
-ClassLine = class exports.ClassLine
+ClassLine = class exports.ClassLine extends Base
     constructor: (visibility, statically, element) ->
         @type = 'ClassLine'
         @abstract = false
@@ -684,7 +898,7 @@ ClassLine = class exports.ClassLine
         @element = element
 
 # Interface
-Interface = class exports.Interface
+Interface = class exports.Interface extends Base
     constructor: (name, body, extendable = false) ->
         @type = "Interface"
         @name = name
@@ -692,8 +906,21 @@ Interface = class exports.Interface
         @extendable = extendable
 
 # Namespace
-Namespace = class exports.Namespace
+Namespace = class exports.Namespace extends Base
     constructor: (name, body = false) ->
         @type = 'Namespace'
-        @name = Namespace
+        @name = name
         @body = body
+
+    prepare: (system) ->
+        if @body isnt false
+            @body.expands = on
+        @
+
+    compile: (system) ->
+        code = 'namespace ' + @name.prepare(system).compile(system)
+        if @body isnt false
+            system.context.scopeStarts()
+            code += ' ' + @body.prepare(system).compile(system)
+            system.context.scopeEnds()
+        return code

@@ -340,8 +340,8 @@ grammar =
     ]
 
     ForBody: [
-        o 'FOR Range', '$$ = {source: $2, };'
-        o 'FOR Range BY Expression', '$$ = {source: $2, step: $4};'
+        o 'FOR Range', '$$ = {source: $2, range: true};'
+        o 'FOR Range BY Expression', '$$ = {source: $2, step: $4, range:true};'
         o 'ForStart ForSource', '$2.name = $1[0]; $2.index = $1[1]; $$ = $2;'
     ]
 
@@ -504,7 +504,7 @@ grammar =
 
     # Qualified
     Qualified: [
-        o 'IDENTIFIER', '$$ = yy.QualifiedName($1);'
+        o 'IDENTIFIER', '$$ = new yy.QualifiedName($1);'
         o 'QualifiedName'
     ]
 
@@ -513,7 +513,6 @@ grammar =
     ]
 
     # Namespaces
-
     Namespace: [
         o 'NAMESPACE Qualified', '$$ = new yy.Expression(new yy.Namespace($2));'
         o 'NAMESPACE Qualified Block', '$$ = new yy.Namespace($2, $3);'

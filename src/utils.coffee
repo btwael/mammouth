@@ -23,7 +23,7 @@ exports.IndentGenerator = class IndentGenerator
 
 exports.IndexGenerator = class IndexGenerator
     letter: ['i', 'j', 'k', 'c', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'a', 'b', 'c', 'd', 'e', 'f', 'j', 'h']
-    _level: 1
+    _level: 0
     letterLevel: 0
 
     generateAtLevel: ->

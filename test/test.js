@@ -6,13 +6,18 @@ function heredoc (f) {
 code = heredoc(function() {
 /*
 fsdfsdfsdf{{
-    result = 1
-    alert((sdf while true), sdf while true)
+eat(food) for food in ['toast', 'cheese', 'wine']
+
+courses = ['greens', 'caviar', 'truffles', 'roast', 'cake']
+menu(i + 1, dish) for dish, i in courses
+
+foods = ['broccoli', 'spinach', 'chocolate']
+eat(food) for food in foods when food isnt 'chocolate'
 }}
 */
 })
 
-//console.log(mammouth.parse(code).sections[1].body.body)
+//console.log(mammouth.parse(code).sections[1].body.body[1])
 
 console.log(mammouth.compile(code))
 

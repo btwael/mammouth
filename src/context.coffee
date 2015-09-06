@@ -49,9 +49,10 @@ exports.Context = class Context
 
     free: (name) ->
         if name is 'i'
-            next = @indexGen.next
-            until @has new Name next.name
-                next = @indexGen.next
+            next = @indexGen.get()
+            while @has next.name
+                next = @indexGen.get()
+            @push new Name next.name
             return next
         else
             i = 0
