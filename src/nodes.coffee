@@ -57,7 +57,7 @@ Block = class exports.Block extends Base
             when 'Break', 'Declare', 'Echo', 'Goto', 'Interface', 'Namespace', 'Section', 'Throw'
                 return
             when 'Return'
-                if @body[lastIndex].value is false
+                if @body[lastIndex].value is off
                     @body.pop()
             else
                 @body[lastIndex] = returnGen(@body[lastIndex])
@@ -66,11 +66,11 @@ Block = class exports.Block extends Base
         for instruction, i in @body
             switch instruction.type
                 when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Echo', 'Namespace', 'NewExpression', 'Operation', 'Return', 'Throw', 'typeCasting', 'Value'
-                    if instruction.type is 'Code' and instruction.body isnt false
+                    if instruction.type is 'Code' and instruction.body isnt off
                         break
-                    if instruction.type is 'Namespace' and instruction.body isnt false
+                    if instruction.type is 'Namespace' and instruction.body isnt off
                         break
-                    if instruction.type is 'Declare' and instruction.script isnt false
+                    if instruction.type is 'Declare' and instruction.script isnt off
                         break
                     if instruction.type is 'Value' and instruction.value.type is 'Parens' and instruction.properties.length is 0
                         instruction = instruction.value.expression
@@ -87,7 +87,7 @@ Block = class exports.Block extends Base
         code = ''
         code += '{' if @braces
         if @body.length is 1 and @body[0].type is 'Expression' and not @expands
-            code += ' ' + @body[0].prepare(system).compile(system) + ' }'
+            code += ' ' + @body[0].prepare(system).compile(system) + (if @braces then' }' else '')
         else
             system.indent.up()
             code += '\n'
@@ -271,12 +271,12 @@ Range = class exports.Range extends Base
         if @from instanceof Value and
                 @from.value instanceof Literal and
                 typeof @from.value.value is 'number'
-            @from = @from.value.value
+            @fromCache = @from.value.value
         if @to instanceof Value and
                 @to.value instanceof Literal and
                 typeof @to.value.value is 'number'
-            @to = @to.value.value
-        if typeof @from is 'number' and typeof @to is 'number' and Math.abs(@from - @to) <= 20
+            @toCache = @to.value.value
+        if typeof @fromCache is 'number' and typeof @toCache is 'number' and Math.abs(@fromCache - @toCache) <= 20
             @compileResult = 'Array'
         else
             @compileResult = 'function'
@@ -284,9 +284,19 @@ Range = class exports.Range extends Base
 
     compile: (system) ->
         if @compileResult is 'Array'
-            array = if @exclusive then [@from...@to] else [@from..@to]
+            array = if @exclusive then [@fromCache...@toCache] else [@fromCache..@toCache]
             return (new Array(new Literal(i.toString()) for i in array)).prepare(system).compile()
-        # to be continuous
+        else
+            index = system.context.free('i')
+            expression = new Call(
+                new Identifier 'call_user_func'
+                [new Code(
+                    [], new Block([
+                        new For {source: @, index: index, range: on}, new Block [new Value index]
+                    ])
+                )]
+            )
+            return expression.prepare(system).compile(system)
 
 Slice = class exports.Slice extends Base
     constructor: (range) ->
@@ -294,7 +304,22 @@ Slice = class exports.Slice extends Base
         @range = range
 
     compile: (system) ->
-        # to be continuous
+        param = []
+        if @range.from?
+            param.push @range.from
+        else
+            param.push new Value new Literal '0'
+        if @range.to?
+            param.push if @range.exclusive then @range.to else new Operation '+', @range.to, new Literal '1'
+        param = [
+            new Literal '"slice"'
+            @value
+        ].concat param
+        expression = new Call(
+            new Identifier 'mammouth'
+            param
+        )
+        return expression.prepare(system).compile(system)
 
 QualifiedName = class exports.QualifiedName extends Base
     constructor: (path) ->
@@ -357,7 +382,7 @@ Unary = class exports.Unary extends Base
         return @operator + @expression.prepare(system).compile(system)
 
 Update = class exports.Update extends Base
-    constructor: (operator, expression, prefix = true) ->
+    constructor: (operator, expression, prefix = on) ->
         @type = 'Update'
         @operator = operator
         @expression = expression
@@ -395,7 +420,7 @@ Operation = class exports.Operation extends Base
         return code
 
 Code = class exports.Code extends Base
-    constructor: (parameters, body = false, asStatement = false, name = null) ->
+    constructor: (parameters, body = off, asStatement = off, name = null) ->
         @type = 'Code'
         @parameters = parameters
         @body = body
@@ -403,8 +428,8 @@ Code = class exports.Code extends Base
         @name = name
 
     prepare: ->
-        if @body isnt false
-            @body.activateReturn((exp) -> new Expression new Return exp)
+        if @body isnt off
+            @body.activateReturn((exp) -> new Return exp)
         @
 
     compile: (system) ->
@@ -422,7 +447,7 @@ Code = class exports.Code extends Base
         return code;
         
 Param = class exports.Param extends Base
-    constructor: (name, passing = false, hasDefault = false, def = null) ->
+    constructor: (name, passing = off, hasDefault = off, def = null) ->
         @type = 'Param'
         @name = name
         @passing = passing
@@ -575,17 +600,18 @@ While = class exports.While extends Base
             @isStatement = on
             code += (new Value(
                 new Call(
-                    new Code(
+                    new Identifier 'call_user_func'
+                    [new Code(
                         []
                         new Block [@]
-                    )
+                    )]
                 )
             )).prepare(system).compile(system)
         return code
 
 # Try
 Try = class exports.Try extends Base
-    constructor: (TryBody, CatchBody = new Block, CatchIdentifier = false, FinallyBody = false) ->
+    constructor: (TryBody, CatchBody = new Block, CatchIdentifier = off, FinallyBody = off) ->
         @type = 'Try'
         @TryBody = TryBody
         @CatchBody = CatchBody
@@ -595,13 +621,13 @@ Try = class exports.Try extends Base
     activateReturn: (returnGen) ->
         @TryBody.activateReturn(returnGen)
         @CatchBody.activateReturn(returnGen)
-        if @FinallyBody isnt false
+        if @FinallyBody isnt off
             @FinallyBody.activateReturn(returnGen)
 
     prepare: (system) ->
         @TryBody.expands = on
         @CatchBody.expands = on
-        if @FinallyBody isnt false
+        if @FinallyBody isnt off
             @FinallyBody.expands = on
         @
 
@@ -611,7 +637,7 @@ Try = class exports.Try extends Base
             code += 'try '
             code += @TryBody.prepare(system).compile(system)
             code += ' catch(Exception '
-            if @CatchIdentifier is false
+            if @CatchIdentifier is off
                 code += system.context.free('error').prepare(system).compile(system)
             else
                 code += @CatchIdentifier.prepare(system).compile(system)
@@ -620,14 +646,15 @@ Try = class exports.Try extends Base
             @isStatement = on
             code += (new Value(
                 new Call(
-                    new Code(
+                    new Identifier 'call_user_func'
+                    [new Code(
                         []
                         new Block [@]
-                    )
+                    )]
                 )
             )).prepare(system).compile(system)
         return code
-l = 0
+
 # For
 For = class exports.For extends Base
     constructor: (source, block) ->
@@ -643,22 +670,22 @@ For = class exports.For extends Base
     prepare: (system) ->
         @body.expands = on
         @object = !!@source.object
-        if not(@source.range? and @source.range is true)
+        if not(@source.range? and @source.range is on) and not @isPrepared
             if not @object
                 @cacheIndex = system.context.free('i')
                 @cacheLen = system.context.free('len')
                 if @source.source.type is 'Value' and @source.source.value.type is 'Identifier'
-                    @initRef = false
+                    @initRef = off
                     @cacheRef = @source.source.value
                 else
-                    @initRef = true
+                    @initRef = on
                     @cacheRef = system.context.free('ref')
                 valfromRef = new Value(@cacheRef)
                 valfromRef.add(new Access((if @source.index? then @source.index else @cacheIndex), '[]'))
-                addTop = true
+                addTop = on
         if @source.guard? and not @isPrepared
             @body = new Block([new If(@source.guard, @body)])
-        if addTop is true and not @isPrepared
+        if addTop is on and not @isPrepared
             @body.body.unshift new Expression new Assign(
                 '='
                 @source.name
@@ -682,8 +709,8 @@ For = class exports.For extends Base
                 init = new Expression new Assign '=', new Value(@cacheRes), new Value(new Array())
                 code += init.prepare(system).compile(system)
                 code += '\n' + system.indent.get()
-            if @source.range? and @source.range is true
-                index = system.context.free('i')
+            if @source.range? and @source.range is on
+                index = if @source.index? then @source.index else system.context.free('i')
                 code += 'for(' 
                 code += (new Assign(
                     '='
@@ -700,7 +727,7 @@ For = class exports.For extends Base
                 if @source.step?
                     update = new Assign '+=', index, @source.step
                 else
-                    update = new Update '++', index, false
+                    update = new Update '++', index, off
                 code += (update).prepare(system).compile(system)
                 code += ') '
                 code += @body.prepare(system).compile(system)
@@ -757,7 +784,7 @@ For = class exports.For extends Base
                     if @source.step?
                         update = new Assign '+=', index, @source.step
                     else
-                        update = new Update '++', index, false
+                        update = new Update '++', index, off
                     if @source.index?
                         code += (new Assign(
                             '='
@@ -776,10 +803,11 @@ For = class exports.For extends Base
             @isPrepared = on
             code += (new Value(
                 new Call(
-                    new Code(
+                    new Identifier 'call_user_func'
+                    [new Code(
                         []
                         new Block [@]
-                    )
+                    )]
                 )
             )).prepare(system).compile(system)
         return code
@@ -787,21 +815,59 @@ For = class exports.For extends Base
 
 # For
 Switch = class exports.Switch extends Base
-    constructor: (subject, whens, otherwise = null) ->
+    constructor: (subject = null, whens, otherwise = off) ->
         @type = 'Switch'
-        @subject = subject
+        @subject = if subject is null then new Value(new Literal 'false') else subject
         @whens = whens
+        if subject is null
+            for whe in @whens
+                for val, i in whe[0]
+                    whe[0][i] = new Value new Unary '!', val
         @otherwise = otherwise
+
+    activateReturn: (returnGen) ->
+        for whe in @whens
+            whe[1].activateReturn(returnGen)
+        if @otherwise isnt off
+            @otherwise.activateReturn(returnGen)
+
+    prepare: () ->
+        for whe in @whens
+            whe[1].expands = on
+            whe[1].braces = off
+            lastndex = whe[1].body.length - 1
+            if not (whe[1].body[lastndex].type in ['Return', 'Break'])
+                whe[1].body.push new Break
+        @otherwise.expands = on
+        @otherwise.braces = off
+        @
+
+    compile: (system) ->
+        code =''
+        code += 'switch(' + @subject.prepare(system).compile(system) + ') {\n'
+        system.indent.up()
+        for whe in @whens
+            for val, i in whe[0]
+                if i isnt 0
+                    code += '\n'
+                code += system.indent.get() + 'case ' + val.prepare(system).compile(system) + ':'
+            code += whe[1].prepare(system).compile(system)
+        if @otherwise isnt off
+            code += system.indent.get() + 'default:'
+            code += @otherwise.prepare(system).compile(system)
+        system.indent.down()
+        code += system.indent.get() + '}'
+        return code
 
 # Declare
 Declare = class exports.Declare extends Base
-    constructor: (expression, script = false) ->
+    constructor: (expression, script = off) ->
         @type = 'Declare'
         @expression = expression
         @script = script
 
     prepare: (system) ->
-        if @script isnt false
+        if @script isnt off
             @script.expands = on
         @
 
@@ -809,7 +875,7 @@ Declare = class exports.Declare extends Base
         if @expression.type is 'Assign' and @expression.left.type is 'Value' and @expression.left.value.type is 'Identifier'
             system.context.push new Context.Name @expression.left.value.name, 'const'
         code = 'declare(' + @expression.prepare(system).compile(system) + ')'
-        if @script isnt false
+        if @script isnt off
             code += ' ' + @script.prepare(system).compile(system)
         return code
 
@@ -832,28 +898,28 @@ Goto = class exports.Goto extends Base
         return 'goto ' + @section
 
 Break = class exports.Break extends Base
-    constructor: (arg = false) ->
+    constructor: (arg = off) ->
         @type = 'Break'
         @arg = arg
 
     compile: (system) ->
-        return 'break' + (if @arg is false then '' else ' ' + @arg.prepare(system).compile(system))
+        return 'break' + (if @arg is off then '' else ' ' + @arg.prepare(system).compile(system))
 
 Continue = class exports.Continue extends Base
-    constructor: (arg = false) ->
+    constructor: (arg = off) ->
         @type = 'Continue'
         @arg = arg
 
     compile: (system) ->
-        return 'continue' + (if @arg is false then '' else ' ' + @arg.prepare(system).compile(system))
+        return 'continue' + (if @arg is off then '' else ' ' + @arg.prepare(system).compile(system))
 
 Return = class exports.Return extends Base
-    constructor: (value = false) ->
+    constructor: (value = off) ->
         @type = 'Return'
         @value = value
 
     compile: (system) ->
-        return 'return' + (if @value is false then '' else ' ' + @value.prepare(system).compile(system))
+        return 'return' + (if @value is off then '' else ' ' + @value.prepare(system).compile(system))
 
 Throw = class exports.Throw extends Base
     constructor: (expression) ->
@@ -881,7 +947,7 @@ Delete = class exports.Delete extends Base
 
 # Class
 Class = class exports.Class extends Base
-    constructor: (name, body, extendable = false, implement = false, modifier = false) ->
+    constructor: (name, body, extendable = off, implement = off, modifier = off) ->
         @type = "Class"
         @name = name
         @body = body
@@ -892,14 +958,14 @@ Class = class exports.Class extends Base
 ClassLine = class exports.ClassLine extends Base
     constructor: (visibility, statically, element) ->
         @type = 'ClassLine'
-        @abstract = false
+        @abstract = off
         @visibility = visibility
         @statically = statically
         @element = element
 
 # Interface
 Interface = class exports.Interface extends Base
-    constructor: (name, body, extendable = false) ->
+    constructor: (name, body, extendable = off) ->
         @type = "Interface"
         @name = name
         @body = body
@@ -907,19 +973,19 @@ Interface = class exports.Interface extends Base
 
 # Namespace
 Namespace = class exports.Namespace extends Base
-    constructor: (name, body = false) ->
+    constructor: (name, body = off) ->
         @type = 'Namespace'
         @name = name
         @body = body
 
     prepare: (system) ->
-        if @body isnt false
+        if @body isnt off
             @body.expands = on
         @
 
     compile: (system) ->
         code = 'namespace ' + @name.prepare(system).compile(system)
-        if @body isnt false
+        if @body isnt off
             system.context.scopeStarts()
             code += ' ' + @body.prepare(system).compile(system)
             system.context.scopeEnds()

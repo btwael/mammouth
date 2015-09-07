@@ -162,7 +162,7 @@ grammar =
         o 'Expression RangeDots Expression', '$$ = new yy.Range($1, $3, $2);'
         o 'Expression RangeDots','$$ = new yy.Range($1, null, $2);'
         o 'RangeDots Expression', '$$ = new yy.Range(null, $2, $1);'
-        o 'RangeDots', '$$ = new yy.Range(null, null, $2);'
+        o 'RangeDots', '$$ = new yy.Range(null, null, $1);'
     ]
 
     Literal: [
@@ -341,7 +341,10 @@ grammar =
 
     ForBody: [
         o 'FOR Range', '$$ = {source: $2, range: true};'
+        o 'FOR Range AS Identifier', '$$ = {source: $2, index: $4, range: true};'
         o 'FOR Range BY Expression', '$$ = {source: $2, step: $4, range:true};'
+        o 'FOR Range BY Expression AS Identifier', '$$ = {source: $2, index:$6, step: $4, range:true};'
+        o 'FOR Range AS Identifier BY Expression', '$$ = {source: $2, index:$4, step: $6, range:true};'
         o 'ForStart ForSource', '$2.name = $1[0]; $2.index = $1[1]; $$ = $2;'
     ]
 
@@ -379,7 +382,7 @@ grammar =
 
     Whens: [
         o 'When', '$$ = [$1];'
-        o 'Whens MINDENT When', '$$ = $1.concat($3);'
+        o 'Whens MINDENT When', '$1.push($3); $$ = $1;'
     ]
 
     When: [
