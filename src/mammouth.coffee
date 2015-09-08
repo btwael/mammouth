@@ -16,7 +16,17 @@ module.exports =
 
     compile: (code, context) ->
         tree = @parse code
-        result = tree.prepare().compile({
-            indent: new IndentGenerator
-            context: new Context.Context new Context.Scope
-        })
+        result = tree.prepare().compile(new System)
+
+class System
+    constructor: ->
+        @indent = new IndentGenerator
+        @context = new Context.Context new Context.Scope
+        @config = {}
+        @setDefaultConfig()
+
+    setDefaultConfig: ->
+        @config['+'] = on
+
+    setStrictMode: ->
+        @config['+'] = off

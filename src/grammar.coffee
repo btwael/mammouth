@@ -451,6 +451,7 @@ grammar =
     ]
 
     OptImplements: [
+        o '', '$$ = false;'
         o 'Implements'
     ]
 
@@ -470,11 +471,6 @@ grammar =
         o 'Visibility Statically Function', '$$ = new yy.ClassLine($1, $2, $3);'
         o 'FINAL Visibility Statically Function', 'n = new yy.ClassLine($2, $3, $4); n.finaly = true; $$ = n;'
         o 'ABSTRACT ClassMember', '$2.abstract = true; $$ = $2;'
-    ]
-
-    Finaly: [
-        o '', '$$ = false'
-        o 'FINAL', '$$ = true'
     ]
 
     Visibility: [

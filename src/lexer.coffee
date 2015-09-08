@@ -688,7 +688,7 @@ REGEX = # some useful regular expression
 
 KEYWORDS =
     BOOL: ['TRUE', 'FALSE']
-    CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@', 'QUALIFIEDQTRING']
+    CALLABLE: ['CALL_END', 'IDENTIFIER', ')', ']', 'INDEX_END', '?', '@', 'QUALIFIEDQTRING']
     CASTTYPE: ['array', 'binary', 'bool', 'boolean', 'double', 'int', 'integer', 'float', 'object', 'real', 'string', 'unset']
     COMPARE: ['is', 'isnt']
     INDEXABLE: ['CALL_END', 'IDENTIFIER', ')', ']', '?', '@', 'QUALIFIEDQTRING', 'NUMBER', 'STRING', 'BOOL', 'NULL']

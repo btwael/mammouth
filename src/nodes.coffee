@@ -1,4 +1,5 @@
 Context = require './context'
+{clone} = require './utils'
 
 class Base
     prepare: -> @
@@ -36,7 +37,7 @@ Script = class exports.Script extends Base
         @
 
     compile: (system) ->
-        code = '<?php '
+        code = '<?php'
         code += @body.prepare(system).compile(system);
         code += '?>'
         return code
@@ -64,6 +65,7 @@ Block = class exports.Block extends Base
 
     prepare: ->
         for instruction, i in @body
+            instruction.isStatement = on
             switch instruction.type
                 when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Echo', 'Namespace', 'NewExpression', 'Operation', 'Return', 'Throw', 'typeCasting', 'Value'
                     if instruction.type is 'Code' and instruction.body isnt off
@@ -77,8 +79,6 @@ Block = class exports.Block extends Base
                     expression = new Expression instruction
                     expression.isStatement = on
                     @body[i] = expression
-                else
-                    instruction.isStatement = on
         @
 
     compile: (system) ->
@@ -87,7 +87,7 @@ Block = class exports.Block extends Base
         code = ''
         code += '{' if @braces
         if @body.length is 1 and @body[0].type is 'Expression' and not @expands
-            code += ' ' + @body[0].prepare(system).compile(system) + (if @braces then' }' else '')
+            code += ' ' + @body[0].prepare(system).compile(system) + (if @braces then' }' else ' ')
         else
             system.indent.up()
             code += '\n'
@@ -117,6 +117,15 @@ Value = class exports.Value extends Base
         @
 
     compile: (system) ->
+        if @value.type is 'Existence' and @properties.length > 0
+            existence = new Existence @value.value
+            @value = @value.value
+            expression = new If existence, new Block([@])
+            if @isStatement
+                expression.isStatement = on
+            return expression.prepare(system).compile(system)
+        if @isStatement
+            @value.isStatement = on
         code = @value.prepare(system).compile(system)
         for propertie in @properties
             code += propertie.prepare(system).compile(system)
@@ -226,6 +235,17 @@ Call = class exports.Call extends Base
         @
 
     compile: (system) ->
+        if @callee.value.type is 'Existence'
+            existence = new Existence @callee.value.value
+            callee = new Value @callee.value.value
+            for prop in @callee.value.value
+                callee.add prop
+            for prop in @callee.properties
+                callee.add prop
+            expression = new If existence, new Block([new Call callee, @arguments])
+            if @isStatement
+                expression.isStatement = on
+            return expression.prepare(system).compile(system)
         code = @callee.prepare(system).compile(system)
         code += '('
         for arg, i in @arguments
@@ -257,7 +277,6 @@ Existence = class exports.Existence extends Base
         @value = value
 
     compile: (system) ->
-        # check fo properties
         return 'isset(' + @value.prepare(system).compile(system) + ')'
 
 Range = class exports.Range extends Base
@@ -409,13 +428,21 @@ Operation = class exports.Operation extends Base
                    @right 
                 ]
             ))).prepare(system).compile(system)
-        # if concat look if strict mode
         code = @left.prepare(system).compile(system)
-        space = if @operator isnt '~' then ' ' else ''
         if @operator is '~'
             @operator = '.'
+        space = if @operator isnt '.' then ' ' else ''
+        if @operator is '+' and system.config['+'] is on
+            expression = new Value new Call(
+                new Value new Identifier 'mammouth'
+                [
+                    new Value new Literal '"+"'
+                    @left
+                    @right
+                ]
+            )
+            return expression.prepare(system).compile(system)
         code += space + @operator + space
-        # mammouth super + check
         code += @right.prepare(system).compile(system)
         return code
 
@@ -441,7 +468,7 @@ Code = class exports.Code extends Base
             if i isnt @parameters.length - 1
                 code += ', '
         code += ')'
-        if @body isnt null
+        if @body isnt false
             code += ' ' + @body.prepare(system).compile(system)
         system.context.scopeEnds()
         return code;
@@ -955,13 +982,53 @@ Class = class exports.Class extends Base
         @implement = implement
         @modifier = modifier
 
+    prepare: (system) ->
+        for line, i in @body
+            if line.element.type is 'Code' and line.element.body is false
+                @body[i].element = new Expression line.element
+        @
+
+    compile: (system) ->
+        system.context.push new Context.Name @name, 'class'
+        code = (if @modifier isnt off then @modifier + ' ' else '') + 'class ' + @name
+        if @extendable isnt false
+            code += ' extends ' + @extendable.prepare(system).compile(system)
+        if @implement isnt false
+            code += ' implements '
+            for impl, i in @implement
+                code += impl.prepare(system).compile(system)
+                if i isnt @implement.length - 1
+                    code += ', '
+        code += '\n' + system.indent.get() + '{\n'
+        system.indent.up()
+        for line, i in @body
+            code += system.indent.get() + line.prepare(system).compile(system)
+            code += '\n'
+        system.indent.down()
+        code += system.indent.get() + '}'
+        return code
+
 ClassLine = class exports.ClassLine extends Base
     constructor: (visibility, statically, element) ->
         @type = 'ClassLine'
         @abstract = off
+        @finaly = off
         @visibility = visibility
         @statically = statically
         @element = element
+
+    compile: (system) ->
+        code = ''
+        if @abstract is on
+            code += 'abstract '
+        if @finaly is on
+            code += 'final '
+        if @visibility isnt off
+            code += @visibility + ' '
+        if @statically isnt off
+            code += @statically + ' '
+        code += @element.prepare(system).compile(system)
+        return code
 
 # Interface
 Interface = class exports.Interface extends Base
@@ -970,6 +1037,26 @@ Interface = class exports.Interface extends Base
         @name = name
         @body = body
         @extendable = extendable
+
+    prepare: (system) ->
+        for line, i in @body
+            if line.element.type is 'Code' and line.element.body is false
+                @body[i].element = new Expression line.element
+        @
+
+    compile: (system) ->
+        system.context.push new Context.Name @name, 'interface'
+        code = 'interface ' + @name
+        if @extendable isnt false
+            code += ' extends ' + @extendable.prepare(system).compile(system)
+        code += '\n' + system.indent.get() + '{\n'
+        system.indent.up()
+        for line, i in @body
+            code += system.indent.get() + line.prepare(system).compile(system)
+            code += '\n'
+        system.indent.down()
+        code += system.indent.get() + '}'
+        return code
 
 # Namespace
 Namespace = class exports.Namespace extends Base
