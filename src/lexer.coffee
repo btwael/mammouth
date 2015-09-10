@@ -129,6 +129,10 @@ class Lexer
             @tokens.pop()
             return @readIndent()
 
+        # check for comments and skip them
+        if @isComment()
+            return @skipComments()
+
         # check for Qualifiedstring
         if @isQualifiedString()
             return @readTokenQualifiedString()
@@ -560,6 +564,11 @@ class Lexer
         @posAdvance value
         return @nextToken()
 
+    skipComments: () ->
+        value = @input.slice(@pos).match(REGEX.COMMENT)[0]
+        @posAdvance value
+        return @nextToken()
+
     lookLinearBlock: (loc, tok = '') ->
         tokens = []
         if tok is 'ELSE' and @next().type in ['IF', 'POST_IF']
@@ -589,6 +598,8 @@ class Lexer
     isEndTag: (pos = @pos) ->
         return false if @pos + 1 > @input.length - 1
         return @charCode(pos) is 125 and @charCode(@pos + 1) is 125 # 125 is '}'
+
+    isComment: (pos = @pos) -> @input.slice(pos).match(REGEX.COMMENT) isnt null
 
     isEmptyLines: (pos = @pos) -> @input.slice(pos).match(REGEX.EMPTYLINE) isnt null
 
@@ -677,6 +688,7 @@ class Position
     @from: (pos) -> new Position pos.row or 1, pos.col or 0
 
 REGEX = # some useful regular expression
+    COMMENT: /^###([^#][\s\S]*?)(?:###[^\n\S]*|###$)|^(?:\s*#(?!##[^#]).*)+/
     EMPTYLINE: /(^[\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]*[\n\r\u2028\u2029])/
     IDENTIFIER: /((^[$A-Za-z_\x7f-\uffff][$\w\x7f-\uffff]*)( [^\n\S]* : (?!:) )?)/
     INDENT: /(^[ \t]*)/

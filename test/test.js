@@ -7,7 +7,11 @@ code = heredoc(function() {
 /*
 fsdfsdfsdf{{
 abstract class iTemplat extends dfs implements sdfsd, q'sdfsdf'
-    public dfg
+    public dfg ###
+    dfsdf
+
+dsfsdf
+###
     abstract final public static func wael()
     const fdg=123
 sdf
