@@ -5,7 +5,6 @@ module.exports =
     compile: (code, system) ->
         lexer.setInput(code)
         tokens = lexer.tokenize()
-        console.log tokens
         for token, i in tokens
             if token.type is 'VARIABLENAME'
                 system.context.push new Context.Name token.value
