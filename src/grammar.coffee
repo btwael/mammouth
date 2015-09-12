@@ -51,6 +51,8 @@ grammar =
         o 'Class'
         o 'Interface'
         o 'Namespace'
+        o 'Include'
+        o 'Require'
     ]
 
     Statement: [
@@ -118,7 +120,7 @@ grammar =
 
     Assignable: [
         o 'SimpleAssignable'
-        o 'Array'
+        o 'Array', '$$ = new yy.Value($1);'
     ]
 
     SimpleAssignable: [
@@ -517,6 +519,17 @@ grammar =
         o 'NAMESPACE Qualified Block', '$$ = new yy.Namespace($2, $3);'
     ]
 
+    # Importing
+    Include: [
+        o 'INCLUDE Expression', '$$ = new yy.Include($2);'
+        o 'INCLUDE ONCE Expression', '$$ = new yy.Include($3, true);'
+    ]
+
+    Require: [
+        o 'REQUIRE Expression', '$$ = new yy.Require($2);'
+        o 'REQUIRE ONCE Expression', '$$ = new yy.Require($3, true);'
+    ]
+
     # Operation
     Operation: [
         o '-- Expression', '$$ = new yy.Update("--", $2);'
@@ -526,6 +539,7 @@ grammar =
         o 'NOT Expression', '$$ = new yy.Unary("!", $2);'
         o '- Expression', '$$ = new yy.Unary("-", $2);'
         o '+ Expression', '$$ = new yy.Unary("+", $2);'
+        o '~ Expression', '$$ = new yy.Unary("~", $2);'
         o 'Expression + Expression', '$$ = new yy.Operation("+", $1, $3);'
         o 'Expression CONCAT Expression', '$$ = new yy.Operation("~", $1, $3);'
         o 'Expression - Expression', '$$ = new yy.Operation("-", $1, $3);'
@@ -547,7 +561,7 @@ operators = [
     ['left', '.', '..', '::']
     ['nonassoc', '++', '--']
     ['left', 'CALL_START', 'CALL_END']
-    ['right', 'NOT']
+    ['right', 'NOT', '~']
     ['left', '*', '**', '/', '%']
     ['left', '+', '-', 'CONCAT']
     ['left', 'BITWISE']

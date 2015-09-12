@@ -131,7 +131,7 @@ class Lexer
 
         # check for comments and skip them
         if @isComment()
-            return @skipComments()
+            return @skipComment()
 
         # check for Qualifiedstring
         if @isQualifiedString()
@@ -347,7 +347,7 @@ class Lexer
                 if @charCode() is 38 # 38 is '&'
                     @colAdvance()
                     return @addToken token.set('type', 'LOGIC').set('value', '&&').setEnd @getPos()
-                return @addToken token.set('type', '%').setEnd @getPos()
+                return @addToken token.set('type', '&').setEnd @getPos()
             when 40 # 40 is '('
                 if @last().type in KEYWORDS.CALLABLE and @last(2).type isnt 'FUNC'
                     @track.opened.unshift {
@@ -543,11 +543,7 @@ class Lexer
                         @colAdvance()
                         return @addToken token.set('type', 'ASSIGN').set('value', '.=').setEnd @getPos()
                     return @addToken token.set('type', 'CONCAT').setEnd @getPos()
-                # look for '~='
-                if @charCode() is 61 # 61 is '='
-                    @colAdvance()
-                    return @addToken token.set('type', 'ASSIGN').set('value', '.=').setEnd @getPos()
-                return @addToken token.set('type', 'CONCAT').setEnd @getPos()
+                return @addToken token.set('type', '~').setEnd @getPos()
             else
                 throw "Unexpected caharacter at line #{startPos.row}, col #{startPos.col}:\n" + errorAt(@input, startPos)
 
@@ -564,7 +560,7 @@ class Lexer
         @posAdvance value
         return @nextToken()
 
-    skipComments: () ->
+    skipComment: () ->
         value = @input.slice(@pos).match(REGEX.COMMENT)[0]
         @posAdvance value
         return @nextToken()
@@ -592,11 +588,11 @@ class Lexer
 
     # Scanning
     isStartTag: (pos = @pos) ->
-        return false if @pos + 1 > @input.length - 1
+        return off if @pos + 1 > @input.length - 1
         return @charCode(pos) is 123 and @charCode(@pos + 1) is 123 # 123 is '{'
 
     isEndTag: (pos = @pos) ->
-        return false if @pos + 1 > @input.length - 1
+        return off if @pos + 1 > @input.length - 1
         return @charCode(pos) is 125 and @charCode(@pos + 1) is 125 # 125 is '}'
 
     isComment: (pos = @pos) -> @input.slice(pos).match(REGEX.COMMENT) isnt null
@@ -713,12 +709,12 @@ KEYWORDS =
         'echo', 'else', 'extends'
         'final', 'finally', 'for', 'func'
         'goto'
-        'if', 'implements', 'in', 'instanceof', 'interface'
+        'if', 'implements', 'in', 'instanceof', 'interface', 'include'
         'loop'
         'namespace', 'new', 'not', 'null'
-        'of'
+        'of', 'once'
         'private', 'protected', 'public'
-        'return'
+        'require', 'return'
         'static', 'switch'
         'then', 'throw', 'try'
         'unless', 'until', 'use'

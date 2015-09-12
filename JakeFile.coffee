@@ -10,12 +10,12 @@ task 'compile', {async: on}, ->
             console.log 'Compiling: Files has successfully been compiled :)'
         complete()
 
-desc('Generate parser');
-task 'parsify', () ->
+desc('Generate mammouth parser');
+task 'generateParser', () ->
 	parser = require './lib/grammar'
 	fs.writeFile './lib/parser.js', parser.generate()
 	fs.unlinkSync './lib/grammar.js'
-	console.log 'Generating: Parser has successfully been generated :)'
+	console.log 'Generating: mammouth Pparser has successfully been generated :)'
 
 desc 'Build the project.'
-task 'build', ['compile', 'parsify'], -> # Do nothing
+task 'build', ['compile', 'generateParser'], -> # Do nothing

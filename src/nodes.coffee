@@ -1,5 +1,4 @@
 Context = require './context'
-{clone} = require './utils'
 
 class Base
     prepare: -> @
@@ -67,7 +66,7 @@ Block = class exports.Block extends Base
         for instruction, i in @body
             instruction.isStatement = on
             switch instruction.type
-                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Echo', 'Namespace', 'NewExpression', 'Operation', 'Return', 'Throw', 'typeCasting', 'Value'
+                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Echo', 'Include', 'Namespace', 'NewExpression', 'Operation', 'Require', 'Return', 'Throw', 'typeCasting', 'Value'
                     if instruction.type is 'Code' and instruction.body isnt off
                         break
                     if instruction.type is 'Namespace' and instruction.body isnt off
@@ -1076,4 +1075,42 @@ Namespace = class exports.Namespace extends Base
             system.context.scopeStarts()
             code += ' ' + @body.prepare(system).compile(system)
             system.context.scopeEnds()
+        return code
+
+# Importing
+Include = class exports.Include extends Base
+    constructor: (path, once = off) ->
+        @type = 'Include'
+        @path = path
+        @once = once
+
+    compile: (system) ->
+        code = ''
+        if @once
+            code += 'include_once '
+        else
+            code += 'include '
+        code += @path.prepare(system).compile(system)
+        return code
+
+Require = class exports.Require extends Base
+    constructor: (path, once = off) ->
+        @type = 'Require'
+        @path = path
+        @once = once
+
+    compile: (system) ->
+        code = ''
+        if @once
+            code += 'require_once '
+        else
+            code += 'require '
+        if @path.type is 'Value' and @path.value.type is 'Literal'
+            literal = @path.value.value
+            if typeof literal is 'string' and system.config['import']
+                path = literal
+                system.Mammouth.contextify(path)
+                if literal[-9...] is '.mammouth'
+                    @path.value.raw = @path.value.raw[...-10] + '.php' + @path.value.raw[-1...]
+        code += @path.prepare(system).compile(system)
         return code
