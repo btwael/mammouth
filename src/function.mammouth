@@ -3,7 +3,7 @@ func mammouth() ->
     switch arguments[0]
         when '+'
             if (is_string(arguments[1]) and is_numeric(arguments[2])) or (is_string(arguments[1]) and is_numeric(arguments[1]))
-                arguments[1] ~ arguments[2]
+                arguments[1] ~~ arguments[2]
             else
                 arguments[1] + arguments[2]
         when 'length'
