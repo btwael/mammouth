@@ -6,6 +6,7 @@ function heredoc (f) {
 code = heredoc(function() {
 /*
 fsdfsdfsdf{{
+#require once "dsfsdf"
 abstract class iTemplat extends dfs implements sdfsd, q'sdfsdf'
     public dfg ###
     dfsdf
@@ -14,7 +15,8 @@ dsfsdf
 ###
     abstract final public static func wael()
     const fdg=123
-sdf
+sdfsdf().dfsdf
+[][sdfsd]
 }}
 */
 })
