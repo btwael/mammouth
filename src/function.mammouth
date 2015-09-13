@@ -1,3 +1,4 @@
+{{
 func mammouth() ->
     arguments = func_get_args()
     switch arguments[0]
@@ -29,4 +30,4 @@ func mammouth() ->
                     mammouth('slice', arguments[1] => string, arguments[2])
                 else
                      mammouth('slice', arguments[1] => string, arguments[2], arguments[3] - arguments[2])
-                
+}}
