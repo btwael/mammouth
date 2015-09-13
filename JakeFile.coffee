@@ -44,6 +44,12 @@ task 'generateBrowser', () ->
     code += fs.readFileSync('./lib/context.js', 'utf8')
     code += 'return exports;'
     code += '})();\n'
+    # add predefined.js
+    code += 'require["./predefined"] = (function() {'
+    code += 'var exports = {}, module = {exports: exports};'
+    code += fs.readFileSync('./lib/predefined.js', 'utf8')
+    code += 'return exports;'
+    code += '})();\n'
     # add nodes.js
     code += 'require["./nodes"] = (function() {'
     code += 'var exports = {}, module = {exports: exports};'
