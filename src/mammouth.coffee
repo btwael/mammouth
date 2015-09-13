@@ -2,8 +2,9 @@ yy = require './nodes'
 parser = require('./parser').parser
 lexer = require './lexer'
 Context = require './context'
+Predefined = require './predefined'
 {IndentGenerator} = require './utils'
-PHP = require './php/php'
+PHP = require './php'
 
 parser.lexer = lexer
 parser.yy = yy
@@ -12,6 +13,7 @@ class System
     constructor: ->
         @indent = new IndentGenerator
         @context = new Context.Context new Context.Scope
+        Predefined.Initialize @context
         @config = {}
         @setDefaultConfig()
 
