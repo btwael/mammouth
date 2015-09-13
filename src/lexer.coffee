@@ -248,7 +248,7 @@ class Lexer
         if value in KEYWORDS.RESERVED
             if value in ['cte', 'const']
                 return @addToken token.set('type', 'CONST')
-            if (value in ['if', 'unless']) and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ',', 'ELSE'])
+            if (value in ['if', 'unless']) and not (@last().type in ['INDENT', 'MINDENT', 'OUTDENT', '(', 'CALL_START', ',', 'ELSE', '=', 'ASSIGN'])
                 return @addToken token.set('type', 'POST_IF')
                                       .set('value', if value is 'if' then off else on)
             if value in ['if', 'unless']
