@@ -1,4 +1,4 @@
-{errorAt} = require '../utils'
+{errorAt} = require './utils'
 
 class Lexer
     setInput: (input) ->

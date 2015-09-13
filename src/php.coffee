@@ -1,5 +1,5 @@
-lexer = require './lexer'
-Context = require '../context'
+lexer = require './phplexer'
+Context = require './context'
 
 module.exports =
     compile: (code, system) ->
