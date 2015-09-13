@@ -7,6 +7,7 @@
         "email": "btwael@gmail.com"
     },
     "bin": "./bin/mammouth",
+    "main": "lib/mammouth.js",
     "repository": {
         "type": "git",
         "url": "git://github.com/btwael/mammouth.git"
@@ -15,6 +16,7 @@
         "commander": "2.8.1"
     },
     "devDependencies": {
-        "jison": "0.4.15"
+        "jison": "0.4.15",
+        "node-minify": "1.2.0"
     }
 }
