@@ -1,5 +1,6 @@
 exec = require('child_process').exec
 fs = require 'fs'
+compressor = require 'node-minify'
 
 desc 'Compile all CoffeeScript files in /src to /lib.'
 task 'compile', {async: on}, ->
@@ -15,7 +16,7 @@ task 'generateParser', () ->
 	parser = require './lib/grammar'
 	fs.writeFile './lib/parser.js', parser.generate()
 	fs.unlinkSync './lib/grammar.js'
-	console.log 'Generating: mammouth Pparser has successfully been generated :)'
+	console.log 'Generating: mammouth parser has successfully been generated :)'
 
 desc('Generate mammouth for browser');
 task 'generateBrowser', () ->
@@ -77,6 +78,27 @@ task 'generateBrowser', () ->
     code = '(function(root) {\n' + 'function require(path){ return require[path]; }\n' + code + '\nmammouth = require["./mammouth"];\nreturn require["./mammouth"]' + ';\n' + '}(this));'
 
     fs.writeFileSync('./extras/mammouth.js', code, 'utf8')
+
+    addHeader = ->
+        header = "/**\n * Mammouth Compiler v" + require('./lib/mammouth').VERSION + "\n * http://mammouth.wamalaka.com\n *\n * Copyright 2015, Wael Boutglay\n * Released under the MIT License\n */\n"
+        fs.writeFile './extras/mammouth.js', header + fs.readFileSync('./extras/mammouth.js'), (err) ->
+            if err
+                console.log(err)
+        fs.writeFile './extras/mammouth.min.js', header + fs.readFileSync('./extras/mammouth.min.js'), (err) ->
+            if err
+                console.log(err)
+
+    new compressor.minify(
+        type: 'uglifyjs',
+        fileIn: './extras/mammouth.js',
+        fileOut: './extras/mammouth.min.js',
+        callback: (err, min) ->
+            if err
+                console.log err
+            else
+                console.log "Generating: browser minifed file has successfully been generated :)"
+                addHeader()
+    )
 
 desc 'Build the project.'
 task 'build', ['compile', 'generateParser', 'generateBrowser'], -> # Do nothing
