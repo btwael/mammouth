@@ -305,7 +305,7 @@ Range = class exports.Range extends Base
             array = if @exclusive then [@fromCache...@toCache] else [@fromCache..@toCache]
             return (new Array(new Literal(i.toString()) for i in array)).prepare(system).compile()
         else
-            index = system.context.free('i')
+            index = new Identifier system.context.free('i')
             expression = new Call(
                 new Identifier 'call_user_func'
                 [new Code(
@@ -574,7 +574,7 @@ Else = class exports.Else extends Base
             code = ' else '
             code += @body.prepare(system).compile(system)
         else
-            parentIf.closed = on
+            @parentIf.closed = on
             code = @body.prepare(system).compile(system)
         return code
 
@@ -600,7 +600,7 @@ While = class exports.While extends Base
     prepare: (system) ->
         @body.expands = on
         if @returnactived
-            @cacheRes = cacheRes = system.context.free('result')
+            @cacheRes = cacheRes = new Identifier system.context.free('result')
             funcgen = (exp) ->
                 m = new Expression(new Call(
                     new Value(new Identifier('array_push')),
@@ -664,7 +664,7 @@ Try = class exports.Try extends Base
             code += @TryBody.prepare(system).compile(system)
             code += ' catch(Exception '
             if @CatchIdentifier is off
-                code += system.context.free('error').prepare(system).compile(system)
+                code += (new Identifier system.context.free('error')).prepare(system).compile(system)
             else
                 code += @CatchIdentifier.prepare(system).compile(system)
             code += ') ' + @CatchBody.prepare(system).compile(system)
@@ -698,14 +698,14 @@ For = class exports.For extends Base
         @object = !!@source.object
         if not(@source.range? and @source.range is on) and not @isPrepared
             if not @object
-                @cacheIndex = system.context.free('i')
-                @cacheLen = system.context.free('len')
+                @cacheIndex = new Identifier system.context.free('i')
+                @cacheLen = new Identifier system.context.free('len')
                 if @source.source.type is 'Value' and @source.source.value.type is 'Identifier'
                     @initRef = off
                     @cacheRef = @source.source.value
                 else
                     @initRef = on
-                    @cacheRef = system.context.free('ref')
+                    @cacheRef = new Identifier system.context.free('ref')
                 valfromRef = new Value(@cacheRef)
                 valfromRef.add(new Access((if @source.index? then @source.index else @cacheIndex), '[]'))
                 addTop = on
@@ -718,7 +718,7 @@ For = class exports.For extends Base
                 valfromRef
             )
         if @returnactived
-                @cacheRes = cacheRes = system.context.free('result')
+                @cacheRes = cacheRes = new Identifier system.context.free('result')
                 funcgen = (exp) ->
                     m = new Expression(new Call(
                         new Value(new Identifier('array_push')),
@@ -736,7 +736,7 @@ For = class exports.For extends Base
                 code += init.prepare(system).compile(system)
                 code += '\n' + system.indent.get()
             if @source.range? and @source.range is on
-                index = if @source.index? then @source.index else system.context.free('i')
+                index = if @source.index? then @source.index else new Identifier system.context.free('i')
                 code += 'for(' 
                 code += (new Assign(
                     '='
@@ -765,7 +765,7 @@ For = class exports.For extends Base
                     if @source.index?
                         code += @source.index.prepare(system).compile(system)
                     else
-                        code += system.context.free('value').prepare(system).compile(system)
+                        code += (new Identifier system.context.free('value')).prepare(system).compile(system)
                     code += ') '
                     code += @body.prepare(system).compile(system)
                 else

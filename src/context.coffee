@@ -1,5 +1,4 @@
 nodes = require './nodes'
-{IndexGenerator} = require './utils'
 
 exports.Name = class Name
     constructor: (@name, @type = 'variable') ->
@@ -50,13 +49,39 @@ exports.Context = class Context
     free: (name) ->
         if name is 'i'
             next = @indexGen.get()
-            while @has next.name
+            while @has next
                 next = @indexGen.get()
-            @push new Name next.name
+            @push new Name next
             return next
         else
             i = 0
             loop
                 unless @has name + (if i is 0 then '' else i)
-                    return new nodes.Identifier name + (if i is 0 then '' else i)
+                    @push new Name name + (if i is 0 then '' else i)
+                    return name + (if i is 0 then '' else i)
                 i++
+
+exports.IndexGenerator = class IndexGenerator
+    letter: ['i', 'j', 'k', 'c', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'a', 'b', 'c', 'd', 'e', 'f', 'j', 'h']
+    _level: 0
+    letterLevel: 0
+
+    generateAtLevel: ->
+        r = ''
+        i = 0
+        while i < @_level
+            r += '_'
+            i++
+        return r
+        
+    next: ->
+        if (@letterLevel + 1) is @letter.length
+            @_level++
+            @letterLevel = 0
+        else
+            @letterLevel++
+
+    get: ->
+        r = @generateAtLevel() + @letter[@letterLevel]
+        @next()
+        return r
