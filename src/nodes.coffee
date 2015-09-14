@@ -93,8 +93,10 @@ Block = class exports.Block extends Base
             system.indent.up()
             code += '\n'
             for instruction, i in @body
-                code += system.indent.get() + instruction.prepare(system).compile(system)
-                code += '\n'
+                compiled = instruction.prepare(system).compile(system)
+                if compiled isnt off
+                    code += system.indent.get() + compiled
+                    code += '\n'
             system.indent.down()
             code += system.indent.get() + '}' if @braces
         return code
@@ -105,6 +107,13 @@ Expression = class exports.Expression extends Base
         @expression = expression
 
     compile: (system) ->
+        if @expression.type is 'Value' and @expression.value.type is 'Literal' and typeof @expression.value.value is 'string'
+            if @expression.value.value.replace(/[ ]+/g, ' ') is 'strict mode'
+                system.setStrictMode()
+                return off
+            if @expression.value.value.replace(/[ ]+/g, ' ') is 'default mode'
+                system.setDefaultConfig()
+                return off
         return @expression.prepare(system).compile(system) + ';'
 
 Value = class exports.Value extends Base
@@ -359,6 +368,8 @@ Assign = class exports.Assign extends Base
         @right = right
 
     compile: (system) ->
+        if @left.type is 'Value' and @left.value.type is 'Identifier'
+            system.context.push new Context.Name @left.value.name
         code = @left.prepare(system).compile(system)
         code += ' ' + @operator + ' ' 
         code += @right.prepare(system).compile(system)
@@ -1143,7 +1154,7 @@ mammouthFunction = "<?php
         if((is_string($arguments[1]) && is_numeric($arguments[2])) || (is_string($arguments[1]) && is_numeric($arguments[1]))) {
           return $arguments[1].$arguments[2];
         } else {
-          return mammouth('+', $arguments[1], $arguments[2]);
+          return $arguments[1] + $arguments[2];
         }
         break;
       case 'length':

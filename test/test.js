@@ -5,18 +5,39 @@ function heredoc (f) {
 };
 code = heredoc(function() {
 /*
-fsdfsdfsdf{{
-#require once "dsfsdf"
-abstract class iTemplat extends dfs implements sdfsd, q'sdfsdf'
-    public dfg ###
-    dfsdf
-
-dsfsdf
-###
-    abstract final public static func wael()
-    const fdg=123
-sdfsdf().dfsdf
-[][sdfsd]
+{{
+func mammouth() ->
+    arguments = func_get_args()
+    switch arguments[0]
+        when '+'
+            if (is_string(arguments[1]) and is_numeric(arguments[2])) or (is_string(arguments[1]) and is_numeric(arguments[1]))
+                arguments[1] ~~ arguments[2]
+            else
+                'strict mode'
+                arguments[1] + arguments[2]
+        when 'length'
+            if is_array(arguments[1])
+                count(arguments[1])
+            else if is_string(arguments[1])
+                strlen(arguments[1])
+            else if is_numeric(arguments[1])
+                strlen(arguments[1] => string)
+        when 'slice'
+            if is_array(arguments[1])
+                if count(arguments) is 3
+                    array_slice(arguments[1], arguments[2])
+                else
+                    array_slice(arguments[1], arguments[2], arguments[3] - arguments[2])
+            else if is_string(arguments[1])
+                if count(arguments) is 3
+                    substr(arguments[1], arguments[2])
+                else
+                    substr(arguments[1], arguments[2], arguments[3] - arguments[2])
+            else if is_numeric(arguments[1])
+                if count(arguments) is 3
+                    mammouth('slice', arguments[1] => string, arguments[2])
+                else
+                     mammouth('slice', arguments[1] => string, arguments[2], arguments[3] - arguments[2])
 }}
 */
 })
