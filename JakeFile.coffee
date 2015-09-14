@@ -12,14 +12,15 @@ task 'compile', {async: on}, ->
         complete()
 
 desc('Generate mammouth parser');
-task 'generateParser', () ->
-	parser = require './lib/grammar'
-	fs.writeFile './lib/parser.js', parser.generate()
-	fs.unlinkSync './lib/grammar.js'
-	console.log 'Generating: mammouth parser has successfully been generated :)'
+task 'generateParser', {async: on}, () ->
+    parser = require './lib/grammar'
+    fs.writeFileSync './lib/parser.js', parser.generate(), 'utf8'
+    fs.unlinkSync './lib/grammar.js'
+    console.log 'Generating: mammouth parser has successfully been generated :)'
+    complete()
 
 desc('Generate mammouth for browser');
-task 'generateBrowser', () ->
+task 'generateBrowser', {async: on}, () ->
     code = ''
     # add parser.js
     code += 'require["./parser"] = (function() {'
@@ -98,6 +99,7 @@ task 'generateBrowser', () ->
             else
                 console.log "Generating: browser minifed file has successfully been generated :)"
                 addHeader()
+            complete()
     )
 
 desc 'Build the project.'
