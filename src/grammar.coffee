@@ -27,6 +27,7 @@ grammar =
 
     Script: [
         o '{{ }}', '$$ = new yy.Script(new yy.Block([]));'
+        o '{{ Expression }}', '$$ = new yy.Script(new yy.Block([$2]));'
         o '{{ Block }}', '$$ = new yy.Script($2);'
     ]
 

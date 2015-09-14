@@ -619,6 +619,8 @@ class Lexer
             if token
                 if token.type is 'MINDENT' and @tokens[i + 1] and @tokens[i + 1].type in ['CATCH', 'ELSE', 'FINALLY']
                     @tokens.splice i, 1
+                if token.type is 'MINDENT' and @tokens[i + 1] and @tokens[i + 1].type is 'OUTDENT' and @tokens[i + 1].length is token.length
+                    @tokens.splice i, 1
 
     # helpers
     reversedIndentStack: (indentTracker) ->
@@ -727,7 +729,7 @@ KEYWORDS =
         'break'
         'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue'
         'declare', 'default', 'do' # die
-        'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'extends' # eval, exit
+        'echo', 'else', 'elseif', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'extends' # eval, exit, empty
         'final', 'finally', 'for', 'foreach', 'function'
         'global', 'goto'
         'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface' # isset
@@ -739,7 +741,7 @@ KEYWORDS =
         'static', 'switch'
         'throw', 'trait', 'try'
         'unset', 'use' # unset
-        'var'
+        #'var'
         'while'
     ]
 
