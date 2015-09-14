@@ -202,6 +202,8 @@ class Lexer
             }
             return @addToken token.set('type', 'INDENT').set('length', indent.length)
         else if indent.length is indentTracker.currentIndent
+            if @last().type is 'MINDENT'
+                return @nextToken()
             return @addToken token.set('type', 'MINDENT').set('length', indent.length)
         else
             tokens = []
