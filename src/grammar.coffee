@@ -103,6 +103,7 @@ grammar =
 
     Parenthetical: [
         o '( Expression )', '$$ = new yy.Parens($2);'
+        o '( INDENT Expression OUTDENT )', '$$ = new yy.Parens($3);'
     ]
 
     Existence: [
