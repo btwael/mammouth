@@ -32,6 +32,7 @@
           <a href="#class">Classes, interfaces, inheritance...</a>
           <a href="#namespace">Namespaces and qualified names...</a>
           <a href="#heredoc">Heredoc strings</a>
+          <a href="#strict">Strict and default mode</a>
           <a href="#changelog">Change Log</a>
         </div>
       </div>
@@ -1044,6 +1045,38 @@ Example of a string
 spanning multiple lines
 using heredoc syntax.
 <span class="keyword">EOT</span>;
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <h2>
+        <span id="strict" class="bookmark"></span>
+        Strict and default mode
+      </h2>
+
+      <p></p>
+
+      <div class='code'>
+<pre><code>{{
+str = <span class="string">'tex1'</span> ~~ <span class="string">'text2'</span> <span class="comment"># in all modes</span>
+
+str = <span class="string">'tex1'</span> + 123
+
+<span class="string">'strict mode'</span>
+str = <span class="string">'tex1'</span> + 123
+
+<span class="string">'default mode'</span>
+str = <span class="string">'tex1'</span> + 123
+}}</code></pre>
+<pre><code>&lt;?php
+$str = <span class="string">'tex1'</span>.<span class="string">'text2'</span>;
+
+$str = mammouth(<span class="string">"+"</span>, <span class="string">'tex1'</span>, 123);
+
+$str = <span class="string">'tex1'</span> + 123; <span class="comment">// by the way, it will throw an error</span>
+
+$str = mammouth(<span class="string">"+"</span>, <span class="string">'tex1'</span>, 123);
 ?&gt;
 </code></pre>
         <br class='clear' />
