@@ -16,6 +16,8 @@ Document = class exports.Document extends Base
         code = ''
         for section in @sections
             code += section.prepare(system).compile(system)
+        if system.config.addMammouth
+            code = mammouthFunction + code
         return code
 
 RawText = class exports.RawText extends Base
@@ -234,7 +236,7 @@ Call = class exports.Call extends Base
         @
 
     compile: (system) ->
-        if @callee.value.type is 'Existence'
+        if @callee.value? and @callee.value.type is 'Existence'
             existence = new Existence @callee.value.value
             callee = new Value @callee.value.value
             for prop in @callee.value.value
@@ -333,6 +335,7 @@ Slice = class exports.Slice extends Base
             new Literal '"slice"'
             @value
         ].concat param
+        system.config.addMammouth = on
         expression = new Call(
             new Identifier 'mammouth'
             param
@@ -432,6 +435,7 @@ Operation = class exports.Operation extends Base
             @operator = '.'
         space = if @operator isnt '.' then ' ' else ''
         if @operator is '+' and system.config['+'] is on
+            system.config.addMammouth = on
             expression = new Value new Call(
                 new Value new Identifier 'mammouth'
                 [
@@ -491,7 +495,7 @@ Param = class exports.Param extends Base
 If = class exports.If extends Base
     constructor: (condition, body, invert = off) ->
         @type = 'If'
-        @condition = if invert then new Unary("!", condition) else condition
+        @condition = if invert then new Unary("!", new Parens condition) else condition
         @body = body
         @elses = []
         @closed = off
@@ -789,6 +793,7 @@ For = class exports.For extends Base
                             new Value new Literal '0'
                         )).prepare(system).compile(system)
                     code += ', '
+                    system.config.addMammouth = on
                     code += (new Assign(
                         '='
                         len
@@ -848,41 +853,56 @@ Switch = class exports.Switch extends Base
         if subject is null
             for whe in @whens
                 for val, i in whe[0]
-                    whe[0][i] = new Value new Unary '!', val
+                    whe[0][i] = new Value new Unary '!', new Parens val
         @otherwise = otherwise
+        @isPrepared = off
+        @returnactived = off
 
     activateReturn: (returnGen) ->
+        @returnactived = true
         for whe in @whens
             whe[1].activateReturn(returnGen)
         if @otherwise isnt off
             @otherwise.activateReturn(returnGen)
 
-    prepare: () ->
-        for whe in @whens
-            whe[1].expands = on
-            whe[1].braces = off
-            lastndex = whe[1].body.length - 1
-            if not (whe[1].body[lastndex].type in ['Return', 'Break'])
-                whe[1].body.push new Break
-        @otherwise.expands = on
-        @otherwise.braces = off
-        @
-
     compile: (system) ->
         code =''
-        code += 'switch(' + @subject.prepare(system).compile(system) + ') {\n'
-        system.indent.up()
-        for whe in @whens
-            for val, i in whe[0]
-                if i isnt 0
-                    code += '\n'
-                code += system.indent.get() + 'case ' + val.prepare(system).compile(system) + ':'
-            code += whe[1].prepare(system).compile(system)
-        if @otherwise isnt off
-            code += system.indent.get() + 'default:'
-            code += @otherwise.prepare(system).compile(system)
-        system.indent.down()
-        code += system.indent.get() + '}'
+        if @isStatement
+            for whe in @whens
+                whe[1].expands = on
+                whe[1].braces = off
+                lastndex = whe[1].body.length - 1
+                if not (whe[1].body[lastndex].type in ['Return', 'Break']) and not @returnactived
+                    whe[1].body.push new Break
+            if @otherwise isnt off
+                @otherwise.expands = on
+                @otherwise.braces = off
+            code += 'switch(' + @subject.prepare(system).compile(system) + ') {\n'
+            system.indent.up()
+            for whe in @whens
+                for val, i in whe[0]
+                    if i isnt 0
+                        code += '\n'
+                    code += system.indent.get() + 'case ' + val.prepare(system).compile(system) + ':'
+                code += whe[1].prepare(system).compile(system)
+            if @otherwise isnt off
+                code += system.indent.get() + 'default:'
+                code += @otherwise.prepare(system).compile(system)
+            system.indent.down()
+            code += system.indent.get() + '}'
+        else
+            @isStatement = on
+            @isPrepared = on
+            @activateReturn((exp) -> new Return exp)
+            code += (new Value(
+                new Call(
+                    new Identifier 'call_user_func'
+                    [new Code(
+                        []
+                        new Block [@]
+                    )]
+                )
+            )).prepare(system).compile(system)
         return code
 
 # Declare
@@ -1114,3 +1134,48 @@ Require = class exports.Require extends Base
                     @path.value.raw = @path.value.raw[...-10] + '.php' + @path.value.raw[-1...]
         code += @path.prepare(system).compile(system)
         return code
+
+mammouthFunction = "<?php
+  function mammouth() {
+    $arguments = func_get_args();
+    switch($arguments[0]) {
+      case '+':
+        if((is_string($arguments[1]) && is_numeric($arguments[2])) || (is_string($arguments[1]) && is_numeric($arguments[1]))) {
+          return $arguments[1].$arguments[2];
+        } else {
+          return mammouth('+', $arguments[1], $arguments[2]);
+        }
+        break;
+      case 'length':
+        if(is_array($arguments[1])) {
+          return count($arguments[1]);
+        } elseif(is_string($arguments[1])) {
+          return strlen($arguments[1]);
+        } elseif(is_numeric($arguments[1])) {
+          return strlen((string) $arguments[1]);
+        }
+        break;
+      case 'slice':
+        if(is_array($arguments[1])) {
+          if(count($arguments) === 3) {
+            return array_slice($arguments[1], $arguments[2]);
+          } else {
+            return array_slice($arguments[1], $arguments[2], $arguments[3] - $arguments[2]);
+          }
+        } elseif(is_string($arguments[1])) {
+          if(count($arguments) === 3) {
+            return substr($arguments[1], $arguments[2]);
+          } else {
+            return substr($arguments[1], $arguments[2], $arguments[3] - $arguments[2]);
+          }
+        } elseif(is_numeric($arguments[1])) {
+          if(count($arguments) === 3) {
+            return mammouth('slice', (string) $arguments[1], $arguments[2]);
+          } else {
+            return mammouth('slice', (string) $arguments[1], $arguments[2], $arguments[3] - $arguments[2]);
+          }
+        }
+        break;
+    }
+  }
+?>\n"
