@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"
+
+    <title>Mammouth</title>
+    <meta name="author" content="Wael Boutglay">
+
+    <link rel="stylesheet" type="text/css" href="documentation/css/docs.css" />
+    <link rel="stylesheet" type="text/css" href="documentation/css/tomorrow.css" />
+  </head>
+  <body>
+    <div id="fadeout"></div>
+    <div id="flybar">
+      <a id="logo" href="#top"><img src="documentation/images/logo.png" width="225" height="39" alt="Mammouth" /></a>
+      <div class="navigation toc">
+        <div class="button">
+          Table of Contents
+        </div>
+        <div class="contents menu">
+          <a href="#overview">Overview</a>
+          <a href="#installation">Installation</a>
+          <a href="#usage">Usage</a>
+          <a href="#language">Language Reference</a>
+          <a href="#function">Functions</a>
+          <a href="#array">Arrays</a>
+          <a href="#conditionals">If, Else, Unless, and Conditional Assignment</a>
+          <a href="#loops">Loops and Comprehensions</a>
+          <a href="#slices">Array Slicing with Ranges</a>
+          <a href="#expressions">Everything is an Expression</a>
+          <a href="#operators">Operators and Aliases</a>
+          <a href="#class">Classes, interfaces, inheritance...</a>
+          <a href="#namespace">Namespaces and qualified names...</a>
+          <a href="#heredoc">Heredoc strings</a>
+          <a href="#changelog">Change Log</a>
+        </div>
+      </div>
+      <div class="navigation try">
+        <div class="button">
+          Try mammouth
+          <div class="repl_bridge"></div>
+        </div>
+        <div class="contents repl_wrapper">
+          <div class="code">
+            <div class="screenshadow tl"></div>
+            <div class="screenshadow tr"></div>
+            <div class="screenshadow bl"></div>
+            <div class="screenshadow br"></div>
+            <div id="repl_source_wrap">
+              <textarea id="repl_source" rows="100" spellcheck="false">&lt;p>{{ echo 'mammouth' }}&lt;/p></textarea>
+            </div>
+            <div id="repl_results_wrap"><pre id="repl_results"></pre></div>
+            <a class="minibutton permalink" id="repl_permalink">Link</a>
+            <br class="clear" />
+          </div>
+        </div>
+      </div>
+      <div class="navigation">
+        <div class="button">
+          <a href="https://github.com/btwael/mammouth">@GITHUB</a>
+        </div>
+      </div>
+      <div id="error" style="display:none;"></div>
+    </div>
+
+    <div class="container">
+      <span class="bookmark" id="top"></span>
+
+      <p>
+        <b>Mammouth is a small language that compiles into PHP</b>, inspired by CoffeeScript. It's compiled to PHP code/files that you can run on your PHP server.
+      </p>
+
+      <p>
+        We are now in the <b>3.0s versions</b>, in this version we implement the golden rule of CoffeeScript <i>"Everything is an expression"</i>, so you can use <b>if</b>, <b>for</b> and <b>while</b> as expressions or arguments, in addition this version has an improved scoping system who can read from others PHP or mammouth files, so mammouth will know where he must put <tt>$</tt>.
+      </p>
+
+      <p>
+        Mammouth is created and developed by <b>Wael Boutglay</b>.
+      </p>
+
+      <p>
+        <b>Latest Version:</b>
+        <a href="https://github.com/btwael/mammouth/archive/v2.0.1.zip">3.0.0</a>
+      </p>
+
+      <pre>npm install -g mammouth</pre>
+
+      <h2>
+        <span id="overview" class="bookmark"></span>
+        Overview
+      </h2>
+
+      <p><i>Mammouth on the left, compiled PHP output on the right.</i></p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="comment"># Assignement:</span>
+number   = <span class="number">42</span>
+opposite = <span class="literal">false</span>
+
+<span class="comment"># Condition:</span>
+number = <span class="keyword">if</span> opposite <span class="keyword">then</span> <span class="keyword">-</span><span class="number">42</span> <span class="keyword">else</span> <span class="number">13</span>
+
+<span class="comment"># Existence:</span>
+<span class="keyword">echo</span> <span class="string">"I knew it!"</span> <span class= "keyword">if</span> elvis<span class="keyword">?</span>
+
+<span class="comment">### look where it will put '$' ###</span>
+square = <span class="function">func</span> (x) <span class="function">-></span> x * x
+square(2) <span class="comment"># 4</span>
+
+<span class="function">func</span> Hello <span class="function">-></span>
+    <span class="keyword">echo</span> <span class="string">'Hello Mammouth'</span>
+Hello()
+
+<span class="comment"># Array:</span>
+num_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
+
+<span class="comment"># Keyed array:</span>
+obj = [
+    <span class="string">'square'</span>: square
+    <span class="string">'cube'</span>:   <span class="function">func</span> (x) <span class="function">-></span> x * square(x)
+]
+
+<span class="comment"># Array comprehensions:</span>
+squares = (square(num) <span class="keyword">for</span> num <span class="keyword">in</span> num_list)
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="comment">// mammouth helpers function will be added here
+// PHP look generally saller and compressed</span>
+$number = 42;
+$opposite = <span class="literal">false</span>;
+
+$number = $opposite ? -42 : 13;
+
+<span class="keyword">if</span>(isset($elvis)) {
+    <span class="keyword">echo</span> "I knew it!";
+}
+
+<span class="comment">// look where it will put '$'</span>
+$square = <span class="keyword">function</span>($x) {
+    <span class="keyword">return</span> $x * $x;
+};
+$square(2);
+
+<span class="keyword">function</span> Hello() {
+    <span class="keyword">echo</span> 'Hello Mammouth';
+}
+Hello();
+
+$num_list = array(1, 2, 3, 4, 5);
+
+$obj = array(
+    'square' <span class="keyword">=></span> $square,
+    'cube' <span class="keyword">=></span> <span class="keyword">function</span>($x) {
+        <span class="keyword">return</span> $x * $square($x);
+    }
+);
+
+$squares = (call_user_func(<span class="keyword">function</span>() {
+    $result = array();
+    <span class="keyword">for</span>($i = 0, $len = mammouth('length', $num_list); $i < $len; $i<span class="keyword">++</span>) {
+        $num = $num_list[$i];
+        array_push($result, $square($num));
+    }
+    <span class="keyword">return</span> $result;
+}));
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <h2>
+        <span id="installation" class="bookmark"></span>
+        Installation
+      </h2>
+
+      <p>
+        The Mammouth compiler is
+        <a href="https://github.com/btwael/mammouth">written in Javascript</a>,
+        using the <a href="http://jison.org">Jison parser generator</a>. The
+        command-line version of <tt>mammouth</tt> is available as a
+        <a href="http://nodejs.org/">Node.js</a> utility. The
+        <a href="extras/mammouth.min.js">core compiler</a> however, does not
+        depend on Node, and can be run in any JavaScript environment, or in the
+        browser (see "Try Mammouth", above), <i>We recommend to use mammouth in node for performance reason, it's very slow in browser</i>.
+      </p>
+
+      <p>
+        To install, first make sure you have a working copy of the latest stable version of
+        <a href="http://nodejs.org/">Node.js</a>, and <a href="http://npmjs.org">npm</a>
+        (the Node Package Manager). You can then install Mammouth with npm:
+      </p>
+
+      <pre>npm install -g mammouth</pre>
+
+      <p>
+        (Leave off the <tt>-g</tt> if you don't wish to install globally.)
+      </p>
+
+      <p>
+        If you'd prefer to install the latest <b>master</b> version of Mammouth, you
+        can clone the Mammouth
+        <a href="https://github.com/btwael/mammouth">source repository</a>
+        from GitHub, or download
+        <a href="https://github.com/btwael/mammouth">the source</a> directly.
+        To install the lastest master Mammouth compiler with npm:
+      </p>
+
+      <pre>npm install -g http://github.com/btwael/mammouth/tarball/master</pre>
+
+      <h2>
+        <span id="usage" class="bookmark"></span>
+        Usage
+      </h2>
+
+      <p>
+        Once installed, you should have access to the <tt>mammouth</tt> command,
+        which can execute scripts, compile <tt>.mammouth</tt> files into <tt>.php</tt>. The <tt>mammouth</tt> command takes the
+        following options:
+      </p>
+
+      <table>
+        <tr>
+          <td><code>-c, --compile</code></td>
+          <td>
+            Compile a <tt>.mammouth</tt> script into a <tt>.php</tt> PHP file
+            of the same name.
+          </td>
+        </tr>
+        <tr>
+          <td><code>-o, --output [DIR]</code></td>
+          <td>
+            Write out all compiled PHP files into the specified directory.
+            Use in conjunction with <tt>--compile</tt>.
+          </td>
+        </tr>
+      </table>
+
+      <p>
+        <b>Examples:</b>
+      </p>
+
+      <ul>
+        <li>
+          Compile <tt>codes.mammouth</tt> to <tt>codes.php</tt> in the same folder<br />
+          <tt>mammouth --compile --output lib/ src/</tt>
+        </li>
+        <li>
+          Compile all mammouth files in <tt>/codes</tt> folder to <tt>/result</tt> folder<br />
+          <tt>mammouth --compile --output /result /codes</tt>
+        </li>
+      </ul>
+
+      <h2>
+        <span id="language" class="bookmark"></span>
+        Language Reference
+      </h2>
+
+      <p>
+        <i>
+          This reference is structured so that it can be read from top to bottom,
+          if you like. Later sections use ideas and syntax previously introduced.
+          Familiarity with PHP is assumed.
+          In all of the following examples, the source Mammouth is provided on
+          the left, and the direct compilation into PHP is on the right.
+        </i>
+      </p>
+
+      <p>
+        First, the basics: Mammouth uses significant whitespace (indents) to delimit blocks of code.
+        You don't need to use semicolons <code>;</code> to terminate expressions,
+        ending the line will do just as well.
+        Instead of using curly braces
+        <code>{ }</code> to surround blocks of code in <a href="#functions">functions</a>,
+        <a href="#conditionals">if-statements</a>,
+        <a href="#switch">switch</a>, and <a href="#try">try/catch</a>,
+        use indentation.
+      </p>
+
+      <p>
+        Unlike Coffeescript, you must use parentheses to invoke a function.
+      </p>
+
+      <p>
+        You can too use anonymous <a href="#functions">functions</a>, <a href="#conditionals">if-statements</a> and <a href="#loops">loops (for/while)</a> as assignable expressions or arguments for an invocation.
+      </p>
+
+      <h2>
+        <span id="function" class="bookmark"></span>
+        Functions
+      </h2>
+
+      <p>
+        Unamed and anonymous functions are defined by the <tt>func</tt> keyword an optional list of parameters in parentheses, an arrow, and the function body. The empty function looks like this: <tt> func -></tt>
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+square = <span class="function">func</span> (x) <span class="function">-></span> x * x
+<span class="function">func</span> cube(x) <span class="function">-></span>
+    square(x) * x
+<span class="comment"># don' worry, mammouth will look after '$'</span>
+}}</code></pre>
+<pre><code>&lt;?php
+$square = <span class="keyword">function</span>($x) {
+    <span class="keyword">return</span> $x * $x;
+};
+<span class="keyword">function</span> cube($x) {
+    <span class="keyword">return</span> $square($x) * $x;
+}
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+        Functions may also have default values for arguments and you can pass an argument as reference using <tt>use</tt> keyword, you can too use them anonymouslly for callback as example. 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="function">func</span> fill(<span class="keyword">use</span> container, liquid = <span class="string">"coffee"</span>) <span class="function">-></span>
+    <span class="string">"Filling the "</span> ~~ container ~~ <span class="string">" with "</span> ~~ liquid
+
+<span class="comment"># Mammouth support also anonymous function</span>
+<span class="keyword">echo</span> preg_replace_callback(<span class="string">'~-([a-z])~'</span>, <span class="function">func</span> (match)->
+    strtoupper(match[1])
+, <span class="string">'hello-world'</span>)
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="keyword">function</span> fill(<span class="keyword">&</span>$container, $liquid = <span class="string">"coffee"</span>) {
+    <span class="keyword">return</span> <span class="string">"Filling the "</span>.$container.<span class="string">" with "</span>.$liquid;
+}
+
+<span class="keyword">echo</span> preg_replace_callback(<span class="string">'~-([a-z])~'</span>, <span class="keyword">function</span>($match) {
+    <span class="keyword">return</span> strtoupper($match[1]);
+}, <span class="string">'hello-world'</span>);
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <h2>
+        <span id="array" class="bookmark"></span>
+        Arrays
+      </h2>
+
+      <p>
+        Arrays in Mammouth can be defined between bracker <tt>[</tt> and <tt>]</tt> just like in Javascript.
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+song = [<span class="string">"do"</span>, <span class="string">"re"</span>, <span class="string">"mi"</span>, <span class="string">"fa"</span>, <span class="string">"so"</span>]
+
+<span class="comment"># an array with propeties</span>
+singers = [<span class="string">"Jagger"</span>: <span class="string">"Rock"</span>, <span class="string">"Elvis"</span>: <span class="string">"Roll"</span>]
+
+bitlist = [
+    1, 0, 1
+    0, 0, 1
+    1, 1, 0
+]
+}}</code></pre>
+<pre><code>&lt;?php
+$song = array(<span class="string">"do"</span>, <span class="string">"re"</span>, <span class="string">"mi"</span>, <span class="string">"fa"</span>, <span class="string">"so"</span>);
+
+$singers = array(
+    <span class="string">"Jagger"</span> => <span class="string">"Rock"</span>,
+    <span class="string">"Elvis"</span> => <span class="string">"Roll"</span>
+);
+
+$bitlist = array(1, 0, 1, 0, 0, 1, 1, 1, 0);
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+
+      <h2>
+        <span id="conditionals" class="bookmark"></span>
+          If, Else, Unless, and Conditional Assignment
+      </h2>
+
+      <p>
+        <b>If/else</b> statements can be written without the use of parentheses and curly brackets. As with functions and other block expressions, multi-line conditionals are delimited by indentation. There's also a handy postfix form, with the <tt>if</tt> or <tt>unless</tt> at the end. 
+      </p>
+
+      <p>
+      Mammouth can compile if statements into PHP expressions, using the ternary operator when possible, and closure wrapping otherwise. There is no explicit ternary statement in Mammmouth — you simply use a regular if statement on a single line. 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+mood = greatlyImproved <span class="keyword">if</span> singing
+
+working = <span class="literal">true</span> <span class="keyword">unless</span> saturday <span class="keyword">or</span> sunday
+
+<span class="keyword">if</span> happy <span class="keyword">and</span> knowsIt
+  clapsHands()
+  chaChaCha()
+<span class="keyword">else</span>
+  showIt()
+
+date = <span class="keyword">if</span> friday <span class="keyword">then</span> sue <span class="keyword">else</span> jill
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="keyword">if</span>($singing) {
+    $mood = $greatlyImproved;
+}
+
+<span class="keyword">if</span>(<span class="keyword">!</span>($saturday <span class="keyword">||</span> $sunday)) {
+    $working = <span class="literal">true</span>;
+}
+
+<span class="keyword">if</span>($happy <span class="keyword">&&</span> $knowsIt) {
+    $clapsHands();
+    $chaChaCha();
+} <span class="keyword">else</span> {
+    $showIt();
+}
+
+date = $friday ? $sue : $jill;
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+
+      <h2>
+        <span id="loops" class="bookmark"></span>
+        Loops and Comprehensions
+      </h2>
+
+      <p>
+      Most of the loops you'll write in Mammouth will be comprehensions over arrays, objects, and ranges. Comprehensions replace (and compile into) for loops, with optional guard clauses and the value of the current array index. Unlike for loops, array comprehensions are expressions, and can be returned and assigned. 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="comment"># Eat lunch.</span>
+eat(food) <span class="keyword">for</span> food <span class="keyword">in</span> [<span class="string">'toast'</span>, <span class="string">'cheese'</span>, <span class="string">'wine'</span>]
+
+<span class="comment"># Fine five course dining.</span>
+courses = [<span class="string">'greens'</span>, <span class="string">'caviar'</span>, <span class="string">'truffles'</span>, <span class="string">'roast'</span>, <span class="string">'cake'</span>]
+menu(i + 1, dish) <span class="keyword">for</span> dish, i <span class="keyword">in</span> courses
+
+<span class="comment"># Health conscious meal.</span>
+foods = [<span class="string">'broccoli'</span>, <span class="string">'spinach'</span>, <span class="string">'chocolate'</span>]
+eat(food) <span class="keyword">for</span> food <span class="keyword">in</span> foods <span class="keyword">when</span> food <span class="keyword">isnt</span> <span class="string">'chocolate'</span>
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="comment">// mammouth helper function is defined normally here</span>
+$ref = array(<span class="string">'toast'</span>, <span class="string">'cheese'</span>, <span class="string">'wine'</span>);
+<span class="keyword">for</span>($i = 0, $len = mammouth(<span class="string">'length'</span>, $ref); $i < $len; $i++) {
+    $food = $ref[$i];
+    $eat($food);
+}
+
+$courses = array(<span class="string">'greens'</span>, <span class="string">'caviar'</span>, <span class="string">'truffles'</span>, <span class="string">'roast'</span>, <span class="string">'cake'</span>);
+<span class="keyword">for</span>($i = $j = 0, $len1 = mammouth(<span class="string">'length'</span>, $courses); $j < $len1; $i = $j++) {
+    $dish = $courses[$i];
+    $menu(mammouth(<span class="string">"+"</span>, $i, 1), $dish);
+}
+
+$foods = array(<span class="string">'broccoli'</span>, <span class="string">'spinach'</span>, <span class="string">'chocolate'</span>);
+<span class="keyword">for</span>($k = 0, $len2 = mammouth('length', $foods); $k < $len2; $k++) {
+    $food = $foods[$k];
+    <span class="keyword">if</span>($food <span class="keyword">!=</span> <span class="string">'chocolate'</span>) {
+        $eat($food);
+    }
+}
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+        Comprehensions should be able to handle most places where you otherwise would use a <b>loop</b>, <b>each/forEach</b>, <b>map</b>, or <b>select/filter</b>, for example: <tt>shortNames = (name for name in names when strlen(name) < 5)</tt>
+      </p>
+      <p>
+        If you know the start and end of your loop, or would like to step through in fixed-size increments, you can use a range to specify the start and end of your comprehension. 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+countdown = (num <span class="keyword">for</span> num <span class="keyword">in</span> [10...1])
+
+countup = (num <span class="keyword">for</span> [1...10] <span class="keyword">as</span> num)
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="comment">// mammouth helper function is defined normally here</span>
+$countdown = (call_user_func(<span class="keyword">function</span>() {
+    $result = array();
+    $ref = array(10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+    <span class="keyword">for</span>($i = 0, $len = mammouth('length', $ref); $i < $len; $i++) {
+        $num = $ref[$i];
+        array_push($result, $num);
+    }
+    <span class="keyword">return</span> $result;
+}));
+
+$countup = (call_user_func(<span class="keyword">function</span>() {
+    $result = array();
+    <span class="keyword">for</span>($num = 1; $num <= 10; $num++) {
+        array_push($result, $num);
+    }
+    <span class="keyword">return</span> $result;
+}));
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+        Remember always in ranges that the equivalent of Coffeescript <tt>..</tt> is <tt>...</tt> in Mammouth and the equivalent of <tt>...</tt> is <tt>....</tt>
+      </p>
+
+      <p>
+        Note how because we are assigning the value of the comprehensions to a
+        variable in the example above, Mammouth is collecting the result of
+        each iteration into an array. Sometimes functions end with loops that are
+        intended to run only for their side-effects. Be careful that you're not
+        accidentally returning the results of the comprehension in these cases.
+      </p>
+      <p>
+        To step through a range comprehension in fixed-size chunks,
+        use <tt>by</tt>, for example:<br>
+        <tt>evens = (x for x in [0...10] by 2)</tt>
+      </p>
+      <p>
+        If you don't need the current iteration value you may omit it:<br>
+        <tt>closeCurrentTab() for [0....count]</tt>
+      </p>
+      <p>
+        Comprehensions can also be used to iterate over the keys and values in
+        an object. Use <tt>of</tt> to signal comprehension over the properties of
+        an object instead of the values in an array.
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+yearsOld = [<span class="string">"max"</span>: 10, <span class="string">"ida"</span>: 9, <span class="string">"tim"</span>: 11]
+
+ages = <span class="keyword">for</span> child, age <span class="keyword">of</span> yearsOld
+    child ~~ <span class="string">" is "</span> ~~ age
+}}</code></pre>
+<pre><code>&lt;?php
+$yearsOld = array(<span class="string">"max"</span> => 10, <span class="string">"ida"</span> => 9, <span class="string">"tim"</span> => 11);
+
+$ages = call_user_func(<span class="keyword">function</span>() {
+    $result = array();
+    <span class="keyword">foreach</span>($yearsOld <span class="keyword">as</span> $child => $age) {
+        array_push($result, $child.<span class="string">" is "</span>.$age);
+    }
+    <span class="keyword">return</span> $result;
+});
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+      The only low-level loop that Mammouth provides is the <b>while</b> loop. The main difference from PHP is that the <b>while</b> loop can be used as an expression, returning an array containing the result of each iteration through the loop. 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="comment"># Econ 101</span>
+<span class="keyword">if</span> this.studyingEconomics
+    buy()  <span class="keyword">while</span> supply > demand
+    sell() <span class="keyword">until</span> supply > demand
+
+<span class="comment"># Nursery Rhyme</span>
+num = 6
+lyrics = <span class="keyword">while</span> num -= 1
+    num ~~ <span class="string">" little monkeys, jumping on the bed One fell out"</span>
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="keyword">if</span>($this->studyingEconomics) {
+    <span class="keyword">while</span>($supply > $demand) {
+        $buy();
+    }
+    <span class="keyword">while</span>(<span class="keyword">!</span>$supply > $demand) {
+        $sell();
+    }
+}
+
+$num = 6;
+$lyrics = call_user_func(<span class="keyword">function</span>() {
+    $result = array();
+    <span class="keyword">while</span>($num <span class="keyword">-=</span> 1) {
+        array_push($result, $num.<span class="string">" little monkeys, jumping on the bed One fell out"</span>);
+    }
+    <span class="keyword">return</span> $result;
+});
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+        For readability, the <tt>until</tt> keyword is equivalent to <tt>while not</tt>, and the <tt>loop</tt> keyword is equivalent to <tt>while true</tt>.
+      </p>
+
+      <h2>
+        <span id="slices" class="bookmark"></span>
+        Array Slicing with Ranges
+      </h2>
+
+      <p>
+        Ranges can also be used to extract slices of arrays. With three dots (<tt>3...6</tt>), the range is inclusive (<tt>3, 4, 5, 6</tt>); with four dots (<tt>3....6</tt>), the range excludes the end (<tt>3, 4, 5</tt>). Slices indices have useful defaults. An omitted first index defaults to zero and an omitted second index defaults to the size of the array. 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+start   = numbers[0...2]
+
+end     = numbers[-2...]
+
+copy    = numbers[...]
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="comment">// mammouth helper function is defined normally here</span>
+$numbers = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+$start = mammouth(<span class="string">"slice"</span>, $numbers, 0, mammouth(<span class="string">"+"</span>, 2, 1));
+
+$end = mammouth(<span class="string">"slice"</span>, $numbers, -2);
+
+$copy = mammouth(<span class="string">"slice"</span>, $numbers, 0);
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+
+      <h2>
+        <span id="expressions" class="bookmark"></span>
+        Everything is an Expression (at least, as much as possible)
+      </h2>
+
+      <p>
+      You might have noticed how even though we don't add return statements to Mammouth functions, they nonetheless return their final value. The Mammouth compiler tries to make sure that all statements in the language can be used as expressions. Watch how the <tt>return</tt> gets pushed down into each possible branch of execution in the function below. 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+grade = <span class="function">func</span> (student) <span class="function">-></span>
+    <span class="keyword">if</span> student.excellentWork
+        <span class="string">"A+"</span>
+    <span class="keyword">else if</span> student.okayStuff
+        <span class="keyword">if</span> student.triedHard then <span class="string">"B"</span> <span class="keyword">else</span> <span class="string">"B-"</span>
+    <span class="keyword">else</span>
+        <span class="string">"C"</span>
+
+eldest = <span class="keyword">if</span> 24 > 21 <span class="keyword">then</span> <span class="string">"Liz"</span> <span class="keyword">else</span> <span class="string">"Ike"</span>
+}}</code></pre>
+<pre><code>&lt;?php
+$grade = <span class="keyword">function</span>($student) {
+    <span class="keyword">if</span>($student->excellentWork) {
+        <span class="keyword">return</span> <span class="string">"A+"</span>;
+    } <span class="keyword">elseif</span>($student->okayStuff) {
+        <span class="keyword">if</span>($student->triedHard) {
+            <span class="keyword">return</span> <span class="string">"B"</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> <span class="string">"B-"</span>;
+        }
+    } <span class="keyword">else</span> {
+        <span class="keyword">return</span> <span class="string">"C"</span>;
+    }
+};
+
+$eldest = 24 > 21 ? <span class="string">"Liz"</span> : <span class="string">"Ike"</span>;
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+        Even though functions will always return their final value, it's both possible and encouraged to return early from a function body writing out the explicit return (<tt>return value</tt>), when you know that you're done. 
+      </p>
+
+      <p>
+        Assignment can be used within expressions, even for variables that haven't been seen before: 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+six = (one = 1) + (two = 2) + (three = 3)
+}}</code></pre>
+<pre><code>&lt;?php
+six = (one = 1) * (two = 2) * (three = 3)
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+      Things that would otherwise be statements in PHP, when used as part of an expression in Mammouth, are converted into expressions by wrapping them in a closure. This lets you do useful things, like assign the result of a comprehension to a variable: 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="comment"># The first ten properties of an attay with properties</span>
+
+properties10 = (name <span class="keyword">for</span> name <span class="keyword">of</span> keyedarray)[0....10]
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="comment">// mammouth helper function is defined normally here</span>
+
+$properties10 = mammouth(<span class="string">"slice"</span>, call_user_func(<span class="keyword">function</span>() {
+    $result = array();
+    <span class="keyword">foreach</span>($keyedarray <span class="keyword">as</span> $name <span class="keyword">=></span> $value) {
+        array_push($result, $name);
+    }
+    <span class="keyword">return</span> $result;
+  }), 0, 10);
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+        As well as silly things, like passing a <b>try/catch</b> statement directly into a function call: 
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="keyword">echo</span> (
+    <span class="keyword">try</span>
+        nonexistent / <span class="literal">null</span>
+    <span class="keyword">catch</span> error
+        <span class="string">"And the error is ... "</span> ~~ error
+)
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="keyword">echo</span> (call_user_func(<span class="keyword">function</span>() {
+    <span class="keyword">try</span> {
+        <span class="keyword">return</span> $nonexistent / $undefined;
+    } <span class="keyword">catch</span>(Exception $error) {
+        <span class="keyword">return</span> <span class="string">"And the error is ... "</span>.$error;
+    }
+}));
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <p>
+        There are a handful of statements in PHP that can't be meaningfully converted into expressions, namely <tt>break</tt>, <tt>continue</tt>, and <tt>return</tt>. If you make use of them within a block of code, Mammmouth won't try to perform the conversion. 
+      </p>
+
+      <h2>
+        <span id="operators" class="bookmark"></span>
+        Operators and Aliases
+      </h2>
+
+      <p>
+        In Addition to PHP operators and symbols, Mammouth offers many shortform and aliases, So Mammouth compiles <tt>is</tt> into <tt>===</tt>, and <tt>isnt</tt> into <tt>!==</tt>
+      </p>
+
+      <p>
+        You can use <tt>not</tt> as an alias for <tt>!</tt>. 
+      </p>
+
+      <p>
+        For logic, <tt>and</tt> compiles to <tt>&&</tt>, and <tt>or</tt> into <tt>||</tt>. 
+      </p>
+
+      <p>
+        <tt>unless</tt> can be used as the inverse of <tt>if</tt>. 
+      </p>
+
+      <p>
+        As a shortcut for <tt>$this->property</tt>, you can use <tt>@property</tt>. 
+      </p>
+
+      <p>
+        You can use <tt>in</tt> to test for array presence
+      </p>
+
+      <table class="definitions">
+        <tbody><tr><th>Mammouth</th><th>PHP</th></tr>
+        <tr><td><code>is</code></td><td><code>===</code></td></tr>
+        <tr><td><code>isnt</code></td><td><code>!==</code></td></tr>
+        <tr><td><code>not</code></td><td><code>!</code></td></tr>
+        <tr><td><code>and</code></td><td><code>&amp;&amp;</code></td></tr>
+        <tr><td><code>or</code></td><td><code>||</code></td></tr>
+        <tr><td><code>@</code>, <code>this</code></td><td><code>$this</code></td></tr>
+        <tr><td><code>+</code></td><td><code>+</code>, <code>.</code> (only <code>+</code> in strict mode)</code></td></tr>
+        <tr><td><code>~~</code></td><td><code>.</code> (concat strings)</td></tr>
+        <tr><td><code>.</code></td><td><code>-></code></td></tr>
+        <tr><td><code>..</code>, <code>::</code></td><td><code>::</code></td></tr>
+        <tr><td><code>in</code></td><td><i><small>no PHP equivalent</small></i></td></tr>
+      </tbody></table>
+
+      <p>
+        Mammouth's existential operator can help you to check if a variable or an object exists or not.
+      </p>
+
+      <div class='code'>
+<pre><code>{{
+solipsism = <span class="literal">true</span> <span class="keyword">if</span> mind<span class="keyword">?</span> <span class="keyword">and not</span> world<span class="keyword">?</span>
+
+instance<span class="keyword">?</span>.method()
+
+<span class="keyword">echo</span> instance<span class="keyword">?</span>.method()
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="keyword">if</span>(isset($mind) <span class="keyword">&& !</span>isset($world)) {
+    $solipsism = <span class="literal">true</span>;
+}
+
+<span class="keyword">if</span>(isset($instance)) {
+    $instance->method();
+};
+
+<span class="keyword">echo</span> isset($instance) ? $instance->method() : <span class="literal">NULL</span>;
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+
+      <h2>
+        <span id="class" class="bookmark"></span>
+        Classes, interfaces, inheritance...
+      </h2>
+
+      <p></p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="comment"># A simple example</span>
+<span class="keyword">class</span> A
+    <span class="comment"># Mammouth support property Visibility</span>
+    <span class="keyword">private</span> vari = <span class="literal">true</span>
+    <span class="keyword">protected const</span> CONST = <span class="string">"yes"</span>
+    <span class="function">func</span> foo() <span class="function">-></span>
+        <span class="keyword">if</span> this<span class="keyword">?</span>
+            <span class="keyword">echo</span> <span class="string">'$this is defined ('</span>
+            <span class="keyword">echo</span> get_class(this)
+            <span class="keyword">echo</span> <span class="string">")\n"</span>
+        <span class="keyword">else</span>
+            <span class="keyword">echo</span> <span class="string">"\$this is not defined.\n"</span>
+    <span class="comment"># you can also use final and static</span>
+    <span class="keyword">final public static</span> <span class="function">func</span> fii <span class="function">-></span>
+        <span class="keyword">return</span> <span class="literal">true</span>
+
+a = <span class="keyword">new</span> A()
+a.foo()
+A..foo() <span class="comment"># you can also use A::foo()</span>
+
+<span class="comment"># an example about Inheritance</span>
+<span class="keyword">class</span> foo
+    <span class="keyword">public</span> <span class="keyword">func</span> printItem(string) <span class="function">-></span>
+        <span class="keyword">echo</span> <span class="string">'Foo: '</span> ~~ string ~~ PHP_EOL
+    <span class="keyword">public</span> <span class="keyword">func</span> printPHP <span class="function">-></span>
+        <span class="keyword">echo</span> <span class="string">'Mammouth is great.'</span> ~~ PHP_EOL
+
+<span class="keyword">class</span> bar <span class="keyword">extends</span> foo
+    <span class="keyword">public</span> <span class="keyword">func</span> printItem(string) <span class="function">-></span>
+        <span class="keyword">echo</span> <span class="string">'Bar: '</span> ~~ string ~~ PHP_EOL
+
+<span class="comment"># Abstract class example</span>
+<span class="keyword">abstract class</span> AbstractClass
+    <span class="keyword">abstract protected</span> <span class="function">func</span> getValue()
+    <span class="keyword">abstract protected</span> <span class="function">func</span> prefixValue(prefix)
+
+    <span class="keyword">public</span> <span class="function">func</span> printOut <span class="function">-></span>
+        <span class="keyword">echo</span> @getValue() ~~ <span class="string">"\n"</span>
+
+<span class="keyword">class</span> ConcreteClass1 <span class="keyword">extends</span> AbstractClass
+    <span class="keyword">protected</span> <span class="function">func</span> getValue <span class="function">-></span>
+        <span class="keyword">return</span> <span class="string">"ConcreteClass1"</span>
+
+    <span class="keyword">public</span> <span class="function">func</span> prefixValue(prefix) <span class="function">-></span>
+        <span class="keyword">return</span> <span class="string">"{$prefix}ConcreteClass1"</span>
+
+<span class="comment"># Interface example</span>
+<span class="keyword">interface</span> iTemplate
+    <span class="keyword">public</span> <span class="function">func</span> setVariable(name, vari)
+    <span class="keyword">public</span> <span class="function">func</span> getHtml(template)
+
+<span class="comment"># Implement the interface</span>
+<span class="keyword">class</span> Template <span class="keyword">implements</span> iTemplate
+    <span class="keyword">private</span> vars = []
+
+    <span class="keyword">public</span> <span class="function">func</span> setVariable(name, vari) <span class="function">-></span>
+        @vars[name] = vari
+
+    <span class="keyword">public</span> <span class="function">func</span> getHtml(template) <span class="function">-></span>
+        <span class="keyword">for</span> name, value <span class="keyword">of</span> @vars
+            template = <span class="string">'{$name}: {$value}'</span>
+        <span class="keyword">return</span> template
+
+<span class="comment"># Cloning objects/classes</span>
+variable = <span class="keyword">clone</span> a
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="keyword">class</span> A {
+    <span class="keyword">private</span> $vari = <span class="literal">true</span>;
+    <span class="keyword">protected</span> <span class="keyword">const</span> CONST = <span class="string">"yes"</span>;
+    <span class="keyword">function</span> foo() {
+        <span class="keyword">if</span>(isset($this)) {
+            <span class="keyword">echo</span> <span class="string">'$this is defined ('</span>;
+            <span class="keyword">echo</span> get_class($this);
+            <span class="keyword">echo</span> <span class="string">")\n"</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">echo</span> <span class="string">"\$this is not defined.\n"</span>;
+        }
+    }
+    <span class="keyword">final</span> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> fii() {
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+}
+
+$a = <span class="keyword">new</span> A();
+$a->foo();
+A::foo();
+
+<span class="keyword">class</span> foo {
+    <span class="keyword">public</span> <span class="keyword">function</span> printItem($string) {
+        <span class="keyword">echo</span> <span class="string">'Foo: '</span>.$string.PHP_EOL;
+    }
+    <span class="keyword">public</span> <span class="keyword">function</span> printPHP() {
+        <span class="keyword">echo</span> <span class="string">'Mammouth is great.'</span>.PHP_EOL;
+    }
+}
+
+<span class="keyword">class</span> bar <span class="keyword">extends</span> foo {
+    <span class="keyword">public</span> <span class="keyword">function</span> printItem($string) {
+        <span class="keyword">echo</span> <span class="string">'Bar: '</span>.$string.PHP_EOL;
+    }
+}
+
+<span class="keyword">abstract</span> <span class="keyword">class</span> AbstractClass {
+    <span class="keyword">abstract</span> <span class="keyword">protected</span> <span class="keyword">function</span> getValue();
+    <span class="keyword">abstract</span> <span class="keyword">protected</span> <span class="keyword">function</span> prefixValue($prefix);
+    <span class="keyword">public</span> <span class="keyword">function</span> printOut() {
+        <span class="keyword">echo</span> $this->getValue().<span class="string">"\n"</span>;
+    }
+}
+
+<span class="keyword">class</span> ConcreteClass1 <span class="keyword">extends</span> AbstractClass {
+    <span class="keyword">protected</span> <span class="keyword">function</span> getValue() {
+        <span class="keyword">return</span> <span class="string">"ConcreteClass1"</span>;
+    }
+    <span class="keyword">public</span> <span class="keyword">function</span> prefixValue($prefix) {
+        <span class="keyword">return</span> <span class="string">"{$prefix}ConcreteClass1"</span>;
+    }
+}
+
+<span class="keyword">interface</span> iTemplate {
+    <span class="keyword">public</span> <span class="keyword">function</span> setVariable($name, $vari);
+    <span class="keyword">public</span> <span class="keyword">function</span> getHtml($template);
+}
+
+<span class="keyword">class</span> Template <span class="keyword">implements</span> iTemplate {
+    <span class="keyword">private</span> $vars = array();
+    <span class="keyword">public</span> <span class="keyword">function</span> setVariable($name, $vari) {
+        <span class="keyword">return</span> $this->vars[$name] = $vari;
+    }
+    <span class="keyword">public</span> <span class="keyword">function</span> getHtml($template) {
+        <span class="keyword">foreach</span>($this->vars <span class="keyword">as</span> $name <span class="keyword">=></span> $value) {
+            $template = <span class="string">'{$name}: {$value}'</span>;
+        }
+        <span class="keyword">return</span> $template;
+    }
+}
+
+$variable = <span class="keyword">clone</span> $a;
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+
+      <h2>
+        <span id="namespace" class="bookmark"></span>
+        Namespaces and qualified names...
+      </h2>
+
+      <p></p>
+
+      <div class='code'>
+<pre><code>{{
+<span class="keyword">namespace</span> my <span class="comment"># Defining a namespace
+# code go here</span>
+<span class="keyword">namespace</span> q<span class="string">'my\name'</span> <span class="comment"># Defining a sub-namespace
+# code go here</span>
+
+<span class="keyword">namespace</span> AnotherProject
+  <span class="keyword">const</span> CONNECT_OK = 1
+  <span class="keyword">class</span> Connection
+    <span class="keyword">const</span> host = <span class="string">"12"</span>
+  <span class="function">func</span> connect() <span class="function">-></span>
+    <span class="keyword">return</span> <span class="string">'you are connected'</span>
+
+a = q<span class="string">'AnotherProject\\connect'</span>()
+<span class="keyword">echo</span> q<span class="string">'AnotherProject\\Connection'</span>..start()
+}}</code></pre>
+<pre><code>&lt;?php
+<span class="keyword">namespace</span> my;
+
+<span class="keyword">namespace</span> my\name;
+
+<span class="keyword">namespace</span> AnotherProject {
+    <span class="keyword">const</span> CONNECT_OK = 1;
+    <span class="keyword">class</span> Connection {
+        <span class="keyword">const</span> host = <span class="string">"12"</span>;
+    }
+    <span class="keyword">function</span> connect() {
+        <span class="keyword">return</span> <span class="string">'you are connected'</span>;
+    }
+}
+
+$a = AnotherProject\connect();
+<span class="keyword">echo</span> AnotherProject\Connection::start();
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+      <h2>
+        <span id="heredoc" class="bookmark"></span>
+        Heredoc strings
+      </h2>
+
+      <p>You can use a multi-line string using the syntax of mammouth heredocs. </p>
+
+      <div class='code'>
+<pre><code>{{
+str = <span class="string">`Example of a string
+spanning multiple lines
+using heredoc syntax.`</span>
+}}</code></pre>
+<pre><code>&lt;?php
+$str = <span class="keyword">&lt;&lt;&lt;EOT</span>
+Example of a string
+spanning multiple lines
+using heredoc syntax.
+<span class="keyword">EOT</span>;
+?&gt;
+</code></pre>
+        <br class='clear' />
+      </div>
+
+
+      <h2>
+        <span id="changelog" class="bookmark"></span>
+        Change Log
+      </h2>
+
+      <p>
+        <b class="header" style="margin-top: 20px;">3.0.0
+          <span class="timestamp"> &ndash; <small>Aug 15, 2015</small></span>
+        </b>
+  Rewriting the project, using JISON and a handwritten lexer for better performance. Improve scoping system with ability to read from other php or mammouth files, using <b>if</b>, <b>for</b> and <b>while</b> as expressions or arguments. Support for range, slice and existence...
+      </p>
+
+      <p>
+        <b class="header" style="margin-top: 20px;">2.0.0
+          <span class="timestamp"> &ndash; <small>Aug 15, 2014</small></span>
+        </b>
+  Rewriting the project using JISON, support many php structure, better context system, in short large changes
+      </p>
+
+      <p>
+        <b class="header" style="margin-top: 20px;">0.1.0
+          <span class="timestamp"> &ndash; <small>Jul 12, 2013</small></span>
+        </b>
+        Initial Mammouth release.
+      </p>
+    </div>
+
+    <script type="text/coffeescript">
+      sourceFragment = "try:"
+
+      # Set up the compilation function, to run when you stop typing.
+      compileSource = ->
+        source = $('#repl_source').val()
+        window.compiledPHP = ''
+        try
+          window.compiledPHP = mammouth.compile source
+          el = $('#repl_results')[0]
+          if el.innerText
+            el.innerText = window.compiledPHP
+          else
+            $(el).text window.compiledPHP
+          $('#error').hide()
+        catch {location, message}
+          if location?
+            message = "Error on line #{location.first_line + 1}: #{message}"
+          $('#error').text(message).show()
+
+        # Update permalink
+        $('#repl_permalink').attr 'href', "##{sourceFragment}#{encodeURIComponent source}"
+
+      # Listen for keypresses and recompile.
+      $('#repl_source').keyup -> compileSource()
+
+      # Eval the compiled js.
+      evalJS = ->
+        try
+          eval window.compiledPHP
+        catch error then alert error
+
+      # Load the console with a string of CoffeeScript.
+      window.loadConsole = (coffee) ->
+        $('#repl_source').val coffee
+        compileSource()
+        $('.navigation.try').addClass('active')
+        false
+
+      # Helper to hide the menus.
+      closeMenus = ->
+        $('.navigation.active').removeClass 'active'
+
+      $('.minibutton.run').click -> evalJS()
+
+      # Bind navigation buttons to open the menus.
+      $('.navigation').click (e) ->
+        return if e.target.tagName.toLowerCase() is 'a'
+        return false if $(e.target).closest('.repl_wrapper').length
+        if $(this).hasClass('active')
+          closeMenus()
+        else
+          closeMenus()
+          $(this).addClass 'active'
+        false
+
+      # Dismiss console if Escape pressed or click falls outside console
+      # Trigger Run button on Ctrl-Enter
+      $(document.body)
+        .keydown (e) ->
+          closeMenus() if e.which == 27
+          evalJS() if e.which == 13 and (e.metaKey or e.ctrlKey) and $('.minibutton.run:visible').length
+        .click (e) ->
+          return false if $(e.target).hasClass('minibutton')
+          closeMenus()
+
+      $("#repl_permalink").click (e) ->
+          window.location = $(this).attr("href")
+          false
+
+      # If source code is included in location.hash, display it.
+      hash = decodeURIComponent location.hash.replace(/^#/, '')
+      if hash.indexOf(sourceFragment) == 0
+          src = hash.substr sourceFragment.length
+          loadConsole src
+
+      compileSource()
+
+    </script>
+
+    <script src="documentation/vendor/jquery-1.6.4.js"></script>
+    <script src="extras/mammouth.min.js"></script>
+    <script src="documentation/vendor//coffee-script.js"></script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-31674521-2', 'wamalaka.com');
+    ga('send', 'pageview');
+
+  </script>
+  </body>
+</html>
