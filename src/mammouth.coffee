@@ -20,6 +20,7 @@ class System
     setDefaultConfig: ->
         @config['+'] = on
         @config['import'] = off
+        @config['addMammouth'] = off
 
     setStrictMode: ->
         @config['+'] = off
