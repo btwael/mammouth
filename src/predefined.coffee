@@ -179,8 +179,8 @@ exports.Initialize = (context) ->
 #        [ ] Java
 #        [ ] LDAP
 #        [ ] Lotus Notes
-#        [ ] Memcache
-#        [ ] Memcached
+#        [x] Memcache
+#        [x] Memcached
 #        [ ] mqseries
 #        [ ] Network
 #        [ ] RRD
@@ -3115,6 +3115,23 @@ PHPPredefined = {
     'http_throttle': 'function'
     'http_build_str': 'function'
     'http_build_url': 'function'
+
+    # Memcache
+    # Memcache classes
+    'Memcache': 'class'
+    # Memcache constants
+    'MEMCACHE_COMPRESSED': 'const'
+    'MEMCACHE_HAVE_SESSION': 'const'
+    'MEMCACHE_USER1': 'const'
+    'MEMCACHE_USER2': 'const'
+    'MEMCACHE_USER3': 'const'
+    'MEMCACHE_USER4': 'const'
+    # Memcache functions
+    'memcache_debug': 'function'
+
+    # Memcached
+    # Memcached classes
+    'Memcached': 'class'
 
     # Sockets
     # Sockets constants
