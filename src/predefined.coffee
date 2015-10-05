@@ -73,7 +73,15 @@ exports.Initialize = (context) ->
 #            [ ] MongoDB
 #            [ ] mSQL
 #            [ ] Mssql
-#            [ ] MySQL
+#            [x] MySQL
+#                [x] MySQL (Original)
+#                [n] MySQLi
+#                [n] Mysqlnd
+#                [n] mysqlnd_​ms
+#                [n] mysqlnd_​qc
+#                [n] mysqlnd_​uh
+#                [n] mysqlnd_​mux
+#                [n] mysqlnd_​memcache
 #            [ ] OCI8
 #            [ ] Paradox
 #            [ ] PostgreSQL
@@ -3255,4 +3263,68 @@ PHPPredefined = {
     # TCP
     # TCP functions
     'tcpwrap_check': 'function'
+
+
+    ### Database Extensions ###
+
+    # Vendor Specific Database Extensions
+
+    # MySQL
+    # MySQL constants
+    'MYSQL_CLIENT_COMPRESS': 'const'
+    'MYSQL_CLIENT_IGNORE_SPACE': 'const'
+    'MYSQL_CLIENT_INTERACTIVE': 'const'
+    'MYSQL_CLIENT_SSL': 'const'
+    'MYSQL_ASSOC': 'const'
+    'MYSQL_BOTH': 'const'
+    'MYSQL_NUM': 'const'
+    # MySQL functions
+    'mysql_affected_rows': 'function'
+    'mysql_client_encoding': 'function'
+    'mysql_close': 'function'
+    'mysql_connect': 'function'
+    'mysql_create_db': 'function'
+    'mysql_data_seek': 'function'
+    'mysql_db_name': 'function'
+    'mysql_db_query': 'function'
+    'mysql_drop_db': 'function'
+    'mysql_errno': 'function'
+    'mysql_error': 'function'
+    'mysql_escape_string': 'function'
+    'mysql_fetch_array': 'function'
+    'mysql_fetch_assoc': 'function'
+    'mysql_fetch_field': 'function'
+    'mysql_fetch_lengths': 'function'
+    'mysql_fetch_object': 'function'
+    'mysql_fetch_row': 'function'
+    'mysql_field_flags': 'function'
+    'mysql_field_len': 'function'
+    'mysql_field_name': 'function'
+    'mysql_field_seek': 'function'
+    'mysql_field_table': 'function'
+    'mysql_field_type': 'function'
+    'mysql_free_result': 'function'
+    'mysql_get_client_info': 'function'
+    'mysql_get_host_info': 'function'
+    'mysql_get_proto_info': 'function'
+    'mysql_get_server_info': 'function'
+    'mysql_info': 'function'
+    'mysql_insert_id': 'function'
+    'mysql_list_dbs': 'function'
+    'mysql_list_fields': 'function'
+    'mysql_list_processes': 'function'
+    'mysql_list_tables': 'function'
+    'mysql_num_fields': 'function'
+    'mysql_num_rows': 'function'
+    'mysql_pconnect': 'function'
+    'mysql_ping': 'function'
+    'mysql_query': 'function'
+    'mysql_real_escape_string': 'function'
+    'mysql_result': 'function'
+    'mysql_select_db': 'function'
+    'mysql_set_charset': 'function'
+    'mysql_stat': 'function'
+    'mysql_tablename': 'function'
+    'mysql_thread_id': 'function'
+    'mysql_unbuffered_query': 'function'
 }
