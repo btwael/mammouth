@@ -1,0 +1,35 @@
+<html>
+    
+    fhgfh
+</html>
+{{
+# Assignement:
+number   = 42
+opposite = false
+
+# Condition:
+number = if opposite then -42 else 13
+
+# Existence:
+echo "I knew it!" if elvis?
+
+### look where it will put '$' ###
+square = func (x) -> x * x
+square(2) # 4
+
+func Hello ->
+    echo 'Hello Mammouth'
+Hello()
+
+# Array:
+num_list = [1, 2, 3, 4, 5]
+
+# Keyed array:
+obj = [
+    'square': square
+    'cube':   func (x) -> x * square(x)
+]
+
+# Array comprehensions:
+squares = (square(num) for num in num_list)
+}}

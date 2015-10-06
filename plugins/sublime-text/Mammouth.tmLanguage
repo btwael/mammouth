@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>mammouth</string>
+	</array>
+	<key>name</key>
+	<string>Mammouth</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>begin</key>
+			<string>{{</string>
+			<key>end</key>
+			<string>}}</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#language</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>text.html.basic</string>
+		</dict>
+	</array>
+	<key>repository</key>
+	<dict>
+		<key>language</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>"</string>
+					<key>end</key>
+					<string>"</string>
+					<key>name</key>
+					<string>string.quoted.double.untitled</string>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>'</string>
+					<key>end</key>
+					<string>'</string>
+					<key>name</key>
+					<string>string.quoted.double.untitled</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>scopeName</key>
+	<string>source.mammouth</string>
+	<key>uuid</key>
+	<string>4341ee97-4eee-47f3-84c3-416c661e7096</string>
+</dict>
+</plist>

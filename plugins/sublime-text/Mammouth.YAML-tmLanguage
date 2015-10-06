@@ -1,0 +1,27 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: Mammouth
+scopeName: source.mammouth
+fileTypes: [mammouth]
+uuid: 4341ee97-4eee-47f3-84c3-416c661e7096
+
+patterns:
+- begin: '{{'
+  end: '}}'
+  patterns:
+  - include: '#language'
+- include: 'text.html.basic'
+
+#######################################
+
+# mammouth language
+repository:
+  language:
+    patterns:
+    - name: string.quoted.double.untitled
+      begin: '"'
+      end: '"'
+    - name: string.quoted.double.untitled
+      begin: "'"
+      end: "'"
+...
