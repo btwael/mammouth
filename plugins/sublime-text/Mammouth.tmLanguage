@@ -77,9 +77,21 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>[-=]</string>
+					<string>[-+*/%=^||]</string>
 					<key>name</key>
 					<string>keyword.operator</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>if|else|for|while|until|unless|while|when|then|in</string>
+					<key>name</key>
+					<string>keyword.control</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>func</string>
+					<key>name</key>
+					<string>storage.type</string>
 				</dict>
 			</array>
 		</dict>

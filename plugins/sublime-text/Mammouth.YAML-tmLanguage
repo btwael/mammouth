@@ -38,5 +38,11 @@ repository:
       match: "(0b[01]+|0o[0-7]+|0(x|X)[0-9a-fA-F]+|[0-9]*[0-9].?[0-9]+(?:(e|E)[+-]?[0-9]+)?)"
     # Symbols
     - name: keyword.operator
-      match: "[-+*/%=\^||]"
+      match: "[-+*/%=^||]"
+    # reserved names
+    - name: keyword.control
+      match: "if|else|for|while|until|unless|while|when|then|in"
+    # function keyword
+    - name: storage.type
+      match: "func"
 ...
