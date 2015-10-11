@@ -71,7 +71,7 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>(0b[01]+|0o[0-7]+|0(x|X)[0-9a-fA-F]+|[0-9]*[0-9].?[0-9]+(?:(e|E)[+-]?[0-9]+)?)</string>
+					<string>(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)</string>
 					<key>name</key>
 					<string>constant.numeric</string>
 				</dict>
@@ -88,10 +88,38 @@
 					<string>keyword.control</string>
 				</dict>
 				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>storage.type</string>
+						</dict>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.function</string>
+						</dict>
+					</dict>
 					<key>match</key>
-					<string>func</string>
-					<key>name</key>
-					<string>storage.type</string>
+					<string>(func)(\s+)(([^()&gt;+\*/ -]+)?)</string>
+				</dict>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>variable.parameter</string>
+						</dict>
+						<key>5</key>
+						<dict>
+							<key>name</key>
+							<string>storage.type</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>((\([^()]*\))?)((\s*)?)(-&gt;)</string>
 				</dict>
 			</array>
 		</dict>

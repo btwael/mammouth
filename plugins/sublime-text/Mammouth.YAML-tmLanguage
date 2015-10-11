@@ -35,7 +35,7 @@ repository:
       match: "true|false"
     # numbers
     - name: constant.numeric
-      match: "(0b[01]+|0o[0-7]+|0(x|X)[0-9a-fA-F]+|[0-9]*[0-9].?[0-9]+(?:(e|E)[+-]?[0-9]+)?)"
+      match: (0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)
     # Symbols
     - name: keyword.operator
       match: "[-+*/%=^||]"
@@ -43,6 +43,17 @@ repository:
     - name: keyword.control
       match: "if|else|for|while|until|unless|while|when|then|in"
     # function keyword
-    - name: storage.type
-      match: "func"
+    - match: (func)(\s+)(([^()>+\*/ -]+)?)
+      captures:
+        '1':
+          name: storage.type
+        '3':
+          name: entity.name.function
+    # function symbol
+    - match: ((\([^()]*\))?)((\s*)?)(->)
+      captures:
+        '1':
+          name: variable.parameter
+        '5':
+          name: storage.type
 ...
