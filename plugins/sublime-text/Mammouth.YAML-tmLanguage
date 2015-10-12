@@ -20,9 +20,9 @@ repository:
     patterns:
     # comment
     - match: "#.*"
-      name: comment.line.number-sign
+      name: comment.line.number-sign.mammouth
     - match: "###[^#].*?(?:###[^\n]*|###$)"
-      name: comment.block
+      name: comment.block.mammouth
     # String
     - name: string.quoted.double.untitled
       begin: '"'
@@ -31,29 +31,33 @@ repository:
       begin: "'"
       end: "'"
     # boolean
-    - name: constant.language
-      match: "true|false"
+    - name: constant.language.mammouth
+      match: "true|false|null"
     # numbers
-    - name: constant.numeric
+    - name: constant.numeric.mammouth
       match: (0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)
     # Symbols
-    - name: keyword.operator
-      match: "[-+*/%=^||]"
+    - name: keyword.operator.mammouth
+      match: "[-+*/%=^||~]"
     # reserved names
-    - name: keyword.control
-      match: "if|else|for|while|until|unless|while|when|then|in"
+    - name: keyword.control.mammouth
+      match: \b(abstract|and|as|break|by|catch|case|class|const|continue|cte|declare|delete|else|extends|final|finally|for|func|goto|if|implements|in|instanceof|interface|include|loop|namespace|new|not|null|of|once|or|private|protected|public|require|return|static|switch|then|throw|try|unless|until|use|when|while)\b
+    - name: support.function.construct.mammouth
+      match: \b(echo|print)\b
+    - name: storage.type.mammouth
+      match: \b(clone)\b
     # function keyword
     - match: (func)(\s+)(([^()>+\*/ -]+)?)
       captures:
         '1':
-          name: storage.type
+          name: storage.type.mammouth
         '3':
-          name: entity.name.function
+          name: entity.name.function.mammouth
     # function symbol
     - match: ((\([^()]*\))?)((\s*)?)(->)
       captures:
         '1':
-          name: variable.parameter
+          name: variable.parameter.mammouth
         '5':
-          name: storage.type
+          name: storage.type.mammouth
 ...

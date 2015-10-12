@@ -31,4 +31,168 @@ obj = [
 
 # Array comprehensions:
 squares = (square(num) for num in num_list)
+
+func fill(use container, liquid = "coffee") ->
+    "Filling the " ~~ container ~~ " with " ~~ liquid
+
+mood = greatlyImproved if singing
+
+working = true unless saturday or sunday
+
+if happy and knowsIt
+  clapsHands()
+  chaChaCha()
+else
+  showIt()
+
+date = if friday then sue else jill
+
+# Eat lunch.
+eat(food) for food in ['toast', 'cheese', 'wine']
+
+# Fine five course dining.
+courses = ['greens', 'caviar', 'truffles', 'roast', 'cake']
+menu(i + 1, dish) for dish, i in courses
+
+# Health conscious meal.
+foods = ['broccoli', 'spinach', 'chocolate']
+eat(food) for food in foods when food isnt 'chocolate'
+
+countdown = (num for num in [10...1])
+
+countup = (num for [1...10] as num)
+
+yearsOld = ["max": 10, "ida": 9, "tim": 11]
+
+ages = for child, age of yearsOld
+    child ~~ " is " ~~ age
+
+# Econ 101
+if this.studyingEconomics
+    buy()  while supply > demand
+    sell() until supply > demand
+
+# Nursery Rhyme
+num = 6
+lyrics = while num -= 1
+    num ~~ " little monkeys, jumping on the bed One fell out"
+
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+start   = numbers[0...2]
+
+end     = numbers[-2...]
+
+copy    = numbers[...]
+
+grade = func (student) ->
+    if student.excellentWork
+        "A+"
+    else if student.okayStuff
+        if student.triedHard then "B" else "B-"
+    else
+        "C"
+
+eldest = if 24 > 21 then "Liz" else "Ike"
+
+
+properties10 = (name for name of keyedarray)[0....10]
+
+echo (
+    try
+        nonexistent / null
+    catch error
+        "And the error is ... " ~~ error
+)
+
+solipsism = true if mind? and not world?
+
+instance?.method()
+
+echo instance?.method()
+
+# A simple example
+class A
+    # Mammouth support property Visibility
+    private vari = true
+    protected const CONST = "yes"
+    func foo() ->
+        if this?
+            echo '$this is defined ('
+            echo get_class(this)
+            echo ")\n"
+        else
+            echo "\$this is not defined.\n"
+    # you can also use final and static
+    final public static func fii ->
+        return true
+
+a = new A()
+a.foo()
+A..foo() # you can also use A::foo()
+
+# an example about Inheritance
+class foo
+    public func printItem(string) ->
+        echo 'Foo: ' ~~ string ~~ PHP_EOL
+    public func printPHP ->
+        echo 'Mammouth is great.' ~~ PHP_EOL
+
+class bar extends foo
+    public func printItem(string) ->
+        echo 'Bar: ' ~~ string ~~ PHP_EOL
+
+# Abstract class example
+abstract class AbstractClass
+    abstract protected func getValue()
+    abstract protected func prefixValue(prefix)
+
+    public func printOut ->
+        echo @getValue() ~~ "\n"
+
+class ConcreteClass1 extends AbstractClass
+    protected func getValue ->
+        return "ConcreteClass1"
+
+    public func prefixValue(prefix) ->
+        return "{$prefix}ConcreteClass1"
+
+# Interface example
+interface iTemplate
+    public func setVariable(name, vari)
+    public func getHtml(template)
+
+# Implement the interface
+class Template implements iTemplate
+    private vars = []
+
+    public func setVariable(name, vari) ->
+        @vars[name] = vari
+
+    public func getHtml(template) ->
+        for name, value of @vars
+            template = '{$name}: {$value}'
+        return template
+
+# Cloning objects/classes
+variable = clone a
+
+namespace my # Defining a namespace
+# code go here
+namespace q'my\name' # Defining a sub-namespace
+# code go here
+
+namespace AnotherProject
+  const CONNECT_OK = 1
+  class Connection
+    const host = "12"
+  func connect() ->
+    return 'you are connected'
+
+a = q'AnotherProject\\connect'()
+echo q'AnotherProject\\Connection'..start()
+
+str = `Example of a string
+spanning multiple lines
+using heredoc syntax.
 }}

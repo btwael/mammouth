@@ -38,14 +38,14 @@
 					<key>match</key>
 					<string>#.*</string>
 					<key>name</key>
-					<string>comment.line.number-sign</string>
+					<string>comment.line.number-sign.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
 					<string>###[^#].*?(?:###[^
 ]*|###$)</string>
 					<key>name</key>
-					<string>comment.block</string>
+					<string>comment.block.mammouth</string>
 				</dict>
 				<dict>
 					<key>begin</key>
@@ -65,27 +65,39 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>true|false</string>
+					<string>true|false|null</string>
 					<key>name</key>
-					<string>constant.language</string>
+					<string>constant.language.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
 					<string>(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)</string>
 					<key>name</key>
-					<string>constant.numeric</string>
+					<string>constant.numeric.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>[-+*/%=^||]</string>
+					<string>[-+*/%=^||~]</string>
 					<key>name</key>
-					<string>keyword.operator</string>
+					<string>keyword.operator.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>if|else|for|while|until|unless|while|when|then|in</string>
+					<string>\b(abstract|and|as|break|by|catch|case|class|const|continue|cte|declare|delete|else|extends|final|finally|for|func|goto|if|implements|in|instanceof|interface|include|loop|namespace|new|not|null|of|once|or|private|protected|public|require|return|static|switch|then|throw|try|unless|until|use|when|while)\b</string>
 					<key>name</key>
-					<string>keyword.control</string>
+					<string>keyword.control.mammouth</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\b(echo|print)\b</string>
+					<key>name</key>
+					<string>support.function.construct.mammouth</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\b(clone)\b</string>
+					<key>name</key>
+					<string>storage.type.mammouth</string>
 				</dict>
 				<dict>
 					<key>captures</key>
@@ -93,12 +105,12 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>storage.type</string>
+							<string>storage.type.mammouth</string>
 						</dict>
 						<key>3</key>
 						<dict>
 							<key>name</key>
-							<string>entity.name.function</string>
+							<string>entity.name.function.mammouth</string>
 						</dict>
 					</dict>
 					<key>match</key>
@@ -110,12 +122,12 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>variable.parameter</string>
+							<string>variable.parameter.mammouth</string>
 						</dict>
 						<key>5</key>
 						<dict>
 							<key>name</key>
-							<string>storage.type</string>
+							<string>storage.type.mammouth</string>
 						</dict>
 					</dict>
 					<key>match</key>
