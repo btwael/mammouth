@@ -194,5 +194,5 @@ echo q'AnotherProject\\Connection'..start()
 
 str = `Example of a string
 spanning multiple lines
-using heredoc syntax.
+using heredoc syntax.`
 }}

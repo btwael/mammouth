@@ -71,19 +71,19 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)</string>
+					<string>\b(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d+\.?\d+(?:(e|E)[+-]?\d+)?)\b</string>
 					<key>name</key>
 					<string>constant.numeric.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>[-+*/%=^||~]</string>
+					<string>([-+*/%=^||~]|\.|\?)</string>
 					<key>name</key>
 					<string>keyword.operator.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>\b(abstract|and|as|break|by|catch|case|class|const|continue|cte|declare|delete|else|extends|final|finally|for|func|goto|if|implements|in|instanceof|interface|include|loop|namespace|new|not|null|of|once|or|private|protected|public|require|return|static|switch|then|throw|try|unless|until|use|when|while)\b</string>
+					<string>\b(abstract|and|as|break|by|catch|case|class|const|continue|cte|declare|delete|else|extends|final|finally|for|func|goto|if|implements|in|instanceof|interface|include|isnt|loop|namespace|new|not|null|of|once|or|private|protected|public|require|return|static|switch|then|throw|try|unless|until|use|when|while)\b</string>
 					<key>name</key>
 					<string>keyword.control.mammouth</string>
 				</dict>

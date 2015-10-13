@@ -35,13 +35,13 @@ repository:
       match: "true|false|null"
     # numbers
     - name: constant.numeric.mammouth
-      match: (0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d*\.?\d+(?:(e|E)[+-]?\d+)?)
+      match: \b(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d+\.?\d+(?:(e|E)[+-]?\d+)?)\b
     # Symbols
     - name: keyword.operator.mammouth
-      match: "[-+*/%=^||~]"
+      match: ([-+*/%=^||~]|\.|\?)
     # reserved names
     - name: keyword.control.mammouth
-      match: \b(abstract|and|as|break|by|catch|case|class|const|continue|cte|declare|delete|else|extends|final|finally|for|func|goto|if|implements|in|instanceof|interface|include|loop|namespace|new|not|null|of|once|or|private|protected|public|require|return|static|switch|then|throw|try|unless|until|use|when|while)\b
+      match: \b(abstract|and|as|break|by|catch|case|class|const|continue|cte|declare|delete|else|extends|final|finally|for|func|goto|if|implements|in|instanceof|interface|include|isnt|loop|namespace|new|not|null|of|once|or|private|protected|public|require|return|static|switch|then|throw|try|unless|until|use|when|while)\b
     - name: support.function.construct.mammouth
       match: \b(echo|print)\b
     - name: storage.type.mammouth
