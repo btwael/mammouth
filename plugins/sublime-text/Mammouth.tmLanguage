@@ -53,7 +53,7 @@
 					<key>end</key>
 					<string>"</string>
 					<key>name</key>
-					<string>string.quoted.double.untitled</string>
+					<string>string.quoted.double.mammouth</string>
 				</dict>
 				<dict>
 					<key>begin</key>
@@ -61,7 +61,15 @@
 					<key>end</key>
 					<string>'</string>
 					<key>name</key>
-					<string>string.quoted.double.untitled</string>
+					<string>string.quoted.double.mammouth</string>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>`</string>
+					<key>end</key>
+					<string>`</string>
+					<key>name</key>
+					<string>string.interpolated.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
@@ -77,13 +85,19 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>([-+*/%=^||~]|\.|\?)</string>
+					<string>-&gt;</string>
+					<key>name</key>
+					<string>storage.type.mammouth</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>([-+*/%=^|~!&amp;&lt;&gt;]|\.|\?)</string>
 					<key>name</key>
 					<string>keyword.operator.mammouth</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>\b(abstract|and|as|break|by|catch|case|class|const|continue|cte|declare|delete|else|extends|final|finally|for|func|goto|if|implements|in|instanceof|interface|include|isnt|loop|namespace|new|not|null|of|once|or|private|protected|public|require|return|static|switch|then|throw|try|unless|until|use|when|while)\b</string>
+					<string>\b(and|as|break|by|catch|case|continue|declare|delete|else|finally|for|goto|if|in|instanceof|include|isnt|loop|namespace|not|null|of|once|or|require|return|switch|then|throw|try|unless|until|use|when|while)\b</string>
 					<key>name</key>
 					<string>keyword.control.mammouth</string>
 				</dict>
@@ -95,9 +109,15 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>\b(clone)\b</string>
+					<string>\b(class|clone|interface|new)\b</string>
 					<key>name</key>
 					<string>storage.type.mammouth</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\b(abstract|const|cte|final|private|protected|public|static)\b</string>
+					<key>name</key>
+					<string>storage.modifier.mammouth</string>
 				</dict>
 				<dict>
 					<key>captures</key>
@@ -112,9 +132,14 @@
 							<key>name</key>
 							<string>entity.name.function.mammouth</string>
 						</dict>
+						<key>5</key>
+						<dict>
+							<key>name</key>
+							<string>variable.parameter.mammouth</string>
+						</dict>
 					</dict>
 					<key>match</key>
-					<string>(func)(\s+)(([^()&gt;+\*/ -]+)?)</string>
+					<string>(func)(\s+)(([^()&gt;+\*/ -]+)?)((\([^()]*\))?)</string>
 				</dict>
 				<dict>
 					<key>captures</key>
@@ -122,16 +147,16 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>variable.parameter.mammouth</string>
+							<string>storage.modifier.mammouth</string>
 						</dict>
-						<key>5</key>
+						<key>3</key>
 						<dict>
 							<key>name</key>
-							<string>storage.type.mammouth</string>
+							<string>variable.parameter.mammouth</string>
 						</dict>
 					</dict>
 					<key>match</key>
-					<string>((\([^()]*\))?)((\s*)?)(-&gt;)</string>
+					<string>(extends|implements)(\s+)(([^()&gt;+\*/ -]+)?)</string>
 				</dict>
 			</array>
 		</dict>
