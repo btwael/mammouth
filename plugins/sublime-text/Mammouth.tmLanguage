@@ -79,7 +79,7 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>\b(0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d+\.?\d+(?:(e|E)[+-]?\d+)?)\b</string>
+					<string>\b(\d|0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d+\.?\d+(?:(e|E)[+-]?\d+)?)\b</string>
 					<key>name</key>
 					<string>constant.numeric.mammouth</string>
 				</dict>
