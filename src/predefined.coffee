@@ -209,8 +209,8 @@ exports.Initialize = (context) ->
 #        [ ] Solr
 #        [ ] Sphinx
 #        [ ] Swish
-#    [ ] Server Specific Extensions
-#        [ ] Apache
+#    [/] Server Specific Extensions
+#        [x] Apache
 #        [ ] FastCGI Process Manager
 #        [ ] IIS
 #        [ ] NSAPI
@@ -3475,4 +3475,21 @@ PHPPredefined = {
     'pg_untrace': 'function'
     'pg_update': 'function'
     'pg_version': 'function'
+
+    ### Server Specific Extensions ###
+
+    # Apache
+    # Apache functions
+    'apache_child_terminate': 'function'
+    'apache_get_modules': 'function'
+    'apache_get_version': 'function'
+    'apache_getenv': 'function'
+    'apache_lookup_uri': 'function'
+    'apache_note': 'function'
+    'apache_request_headers': 'function'
+    'apache_reset_timeout': 'function'
+    'apache_response_headers': 'function'
+    'apache_setenv': 'function'
+    'getallheaders': 'function'
+    'virtual': 'function'
 }
