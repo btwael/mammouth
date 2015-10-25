@@ -27,7 +27,7 @@ class System
         @config['import'] = off
 
 class Mammouth
-    @VERSION: '3.0.0'
+    @VERSION: '3.0.1'
 
     constructor: ->
         @_fs = require 'fs'
