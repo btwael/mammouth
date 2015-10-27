@@ -5,14 +5,7 @@ function heredoc (f) {
 };
 code = heredoc(function() {
 /*
-{{
-str = 'tex1' ~~ 'text2' # in all modes
-
-str = 'tex1' + 123
-
-'strict mode'
-str = 'tex1' + 123 
-}}
+<a href="{{> page.url }}">{{> page.title }}</a>
 */
 })
 
@@ -24,4 +17,4 @@ console.log(mammouth.compile(code))
 var lexer = require('../lib/lexer');
 lexer.setInput(code);
 
-//console.log(lexer.tokenize())
+console.log(lexer.tokenize())

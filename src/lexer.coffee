@@ -115,6 +115,8 @@ class Lexer
             return @readTokenRAW()
 
         # now let's lex what's into '{{ }}'
+        if @isInterpolationStartTag()
+            return @readTokenInterpolationStartTag()
         if @isStartTag()
             return @readTokenStartTag()
         if @isEndTag()
@@ -158,13 +160,25 @@ class Lexer
     readTokenRAW: ->
         token = (new Token 'RAW').setStart @getPos()
         startPos = @pos
-        while @pos < @input.length and not @isStartTag()
+        while @pos < @input.length and not @isInterpolationStartTag() and not @isStartTag()
             @pos++
+        if @isInterpolationStartTag()
+            @track.into.mammouth = on
         if @isStartTag()
             @track.into.mammouth = on
         value = @input.slice startPos, @pos
         @posAdvance value, off
         return @addToken token.set('value', value).setEnd(@getPos())
+
+    readTokenInterpolationStartTag: ->
+        token = (new Token '{{>').setStart @getPos()
+        @colAdvance(3)
+        @track.opened.unshift {
+            type: '{{'
+            closableBy: '}}'
+        }
+        @addIndentLevel()
+        return @addToken token.setEnd @getPos()
 
     readTokenStartTag: ->
         token = (new Token '{{').setStart @getPos()
@@ -589,6 +603,10 @@ class Lexer
         return tokens
 
     # Scanning
+    isInterpolationStartTag: (pos = @pos) ->
+        return off if @pos + 2 > @input.length - 1
+        return @charCode(pos) is 123 and @charCode(@pos + 1) is 123 and @charCode(@pos + 2) is 62 # 123 is '{' and 62 is '>'
+
     isStartTag: (pos = @pos) ->
         return off if @pos + 1 > @input.length - 1
         return @charCode(pos) is 123 and @charCode(@pos + 1) is 123 # 123 is '{'
