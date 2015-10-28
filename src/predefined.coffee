@@ -31,10 +31,10 @@ exports.Initialize = (context) ->
 #    [ ] Authentication Services
 #        [ ] KADM5
 #        [ ] Radius
-#    [ ] Command Line Specific Extensions
+#    [/] Command Line Specific Extensions
 #        [ ] Ncurses
 #        [ ] Newt
-#        [ ] Readline
+#        [x] Readline
 #    [x] Compression and Archive Extensions
 #        [x] Bzip2
 #        [x] LZF
@@ -3492,4 +3492,22 @@ PHPPredefined = {
     'apache_setenv': 'function'
     'getallheaders': 'function'
     'virtual': 'function'
+
+    ### Command Line Specific Extensions ###
+
+    # GNU Readline
+    # GNU Readline constants
+    'readline_add_history': 'function'
+    'readline_callback_handler_install': 'function'
+    'readline_callback_handler_remove': 'function'
+    'readline_callback_read_char': 'function'
+    'readline_clear_history': 'function'
+    'readline_completion_function': 'function'
+    'readline_info': 'function'
+    'readline_list_history': 'function'
+    'readline_on_new_line': 'function'
+    'readline_read_history': 'function'
+    'readline_redisplay': 'function'
+    'readline_write_history': 'function'
+    'readline': 'function'
 }

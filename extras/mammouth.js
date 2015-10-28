@@ -4895,7 +4895,22 @@ require["./predefined"] = (function() {var exports = {}, module = {exports: expo
     'apache_response_headers': 'function',
     'apache_setenv': 'function',
     'getallheaders': 'function',
-    'virtual': 'function'
+    'virtual': 'function',
+
+    /* Command Line Specific Extensions */
+    'readline_add_history': 'function',
+    'readline_callback_handler_install': 'function',
+    'readline_callback_handler_remove': 'function',
+    'readline_callback_read_char': 'function',
+    'readline_clear_history': 'function',
+    'readline_completion_function': 'function',
+    'readline_info': 'function',
+    'readline_list_history': 'function',
+    'readline_on_new_line': 'function',
+    'readline_read_history': 'function',
+    'readline_redisplay': 'function',
+    'readline_write_history': 'function',
+    'readline': 'function'
   };
 
 }).call(this);
