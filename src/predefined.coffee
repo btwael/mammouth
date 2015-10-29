@@ -15,7 +15,7 @@ exports.Initialize = (context) ->
 #        [ ] inclued
 #        [ ] Memtrack
 #        [ ] OPcache
-#        [ ] Output Control
+#        [x] Output Control
 #        [x] PHP Options/Info
 #        [ ] runkit
 #        [ ] scream
@@ -1870,6 +1870,38 @@ PHPPredefined = {
     'set_exception_handler': 'function'
     'trigger_error': 'function'
     'user_error': 'function'
+
+    # Output Control
+    # Output Control constants
+    'PHP_OUTPUT_HANDLER_START' : 'constant'
+    'PHP_OUTPUT_HANDLER_WRITE' : 'constant'
+    'PHP_OUTPUT_HANDLER_FLUSH' : 'constant'
+    'PHP_OUTPUT_HANDLER_CLEAN' : 'constant'
+    'PHP_OUTPUT_HANDLER_FINAL' : 'constant'
+    'PHP_OUTPUT_HANDLER_CONT' : 'constant'
+    'PHP_OUTPUT_HANDLER_END' : 'constant'
+    'PHP_OUTPUT_HANDLER_CLEANABLE' : 'constant'
+    'PHP_OUTPUT_HANDLER_FLUSHABLE' : 'constant'
+    'PHP_OUTPUT_HANDLER_REMOVABLE' : 'constant'
+    'PHP_OUTPUT_HANDLER_STDFLAGS' : 'constant'
+    # Output Control functions
+    'flush': 'function'
+    'ob_clean': 'function'
+    'ob_end_clean': 'function'
+    'ob_end_flush': 'function'
+    'ob_flush': 'function'
+    'ob_get_clean': 'function'
+    'ob_get_contents': 'function'
+    'ob_get_flush': 'function'
+    'ob_get_length': 'function'
+    'ob_get_level': 'function'
+    'ob_get_status': 'function'
+    'ob_gzhandler': 'function'
+    'ob_implicit_flush': 'function'
+    'ob_list_handlers': 'function'
+    'ob_start': 'function'
+    'output_add_rewrite_var': 'function'
+    'output_reset_rewrite_vars': 'function'
 
     # PHP Options/Info
     # PHP Options/Info constants
