@@ -42,8 +42,8 @@ exports.Initialize = (context) ->
 #        [x] Rar
 #        [x] Zip
 #        [x] Zlib
-#    [ ] Credit Card Processing
-#        [ ] MCVE
+#    [/] Credit Card Processing
+#        [x] MCVE
 #        [ ] SPPLUS
 #    [x] Cryptography Extensions
 #        [x] Crack
@@ -1873,17 +1873,17 @@ PHPPredefined = {
 
     # Output Control
     # Output Control constants
-    'PHP_OUTPUT_HANDLER_START' : 'constant'
-    'PHP_OUTPUT_HANDLER_WRITE' : 'constant'
-    'PHP_OUTPUT_HANDLER_FLUSH' : 'constant'
-    'PHP_OUTPUT_HANDLER_CLEAN' : 'constant'
-    'PHP_OUTPUT_HANDLER_FINAL' : 'constant'
-    'PHP_OUTPUT_HANDLER_CONT' : 'constant'
-    'PHP_OUTPUT_HANDLER_END' : 'constant'
-    'PHP_OUTPUT_HANDLER_CLEANABLE' : 'constant'
-    'PHP_OUTPUT_HANDLER_FLUSHABLE' : 'constant'
-    'PHP_OUTPUT_HANDLER_REMOVABLE' : 'constant'
-    'PHP_OUTPUT_HANDLER_STDFLAGS' : 'constant'
+    'PHP_OUTPUT_HANDLER_START': 'const'
+    'PHP_OUTPUT_HANDLER_WRITE': 'const'
+    'PHP_OUTPUT_HANDLER_FLUSH': 'const'
+    'PHP_OUTPUT_HANDLER_CLEAN': 'const'
+    'PHP_OUTPUT_HANDLER_FINAL': 'const'
+    'PHP_OUTPUT_HANDLER_CONT': 'const'
+    'PHP_OUTPUT_HANDLER_END': 'const'
+    'PHP_OUTPUT_HANDLER_CLEANABLE': 'const'
+    'PHP_OUTPUT_HANDLER_FLUSHABLE': 'const'
+    'PHP_OUTPUT_HANDLER_REMOVABLE': 'const'
+    'PHP_OUTPUT_HANDLER_STDFLAGS': 'const'
     # Output Control functions
     'flush': 'function'
     'ob_clean': 'function'
@@ -3542,4 +3542,54 @@ PHPPredefined = {
     'readline_redisplay': 'function'
     'readline_write_history': 'function'
     'readline': 'function'
+
+    ### Credit Card Processing ###
+
+    # MCVE (Monetra) Payment
+    # MCVE constants
+    'M_PENDING': 'const'
+    'M_DONE': 'const'
+    'M_ERROR': 'const'
+    'M_FAIL': 'const'
+    'M_SUCCESS': 'const'
+    # MCVE functions
+    'm_checkstatus': 'function'
+    'm_completeauthorizations': 'function'
+    'm_connect': 'function'
+    'm_connectionerror': 'function'
+    'm_deletetrans': 'function'
+    'm_destroyconn': 'function'
+    'm_destroyengine': 'function'
+    'm_getcell': 'function'
+    'm_getcellbynum': 'function'
+    'm_getcommadelimited': 'function'
+    'm_getheader': 'function'
+    'm_initconn': 'function'
+    'm_initengine': 'function'
+    'm_iscommadelimited': 'function'
+    'm_maxconntimeout': 'function'
+    'm_monitor': 'function'
+    'm_numcolumns': 'function'
+    'm_numrows': 'function'
+    'm_parsecommadelimited': 'function'
+    'm_responsekeys': 'function'
+    'm_responseparam': 'function'
+    'm_returnstatus': 'function'
+    'm_setblocking': 'function'
+    'm_setdropfile': 'function'
+    'm_setip': 'function'
+    'm_setssl_cafile': 'function'
+    'm_setssl_files': 'function'
+    'm_setssl': 'function'
+    'm_settimeout': 'function'
+    'm_sslcert_gen_hash': 'function'
+    'm_transactionssent': 'function'
+    'm_transinqueue': 'function'
+    'm_transkeyval': 'function'
+    'm_transnew': 'function'
+    'm_transsend': 'function'
+    'm_uwait': 'function'
+    'm_validateidentifier': 'function'
+    'm_verifyconnection': 'function'
+    'm_verifysslcert': 'function'
 }
