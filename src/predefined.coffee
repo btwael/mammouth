@@ -264,8 +264,14 @@ exports.Initialize = (context) ->
 #        [ ] XSLT (PHP 4)
 
 PHPPredefined = {
-    ### Mammouth function ###
+    ### Mammouth predefined ###
     'mammouth': 'function'
+
+    ### PHP language predefined ###
+    'self': 'class'
+    'SELF': 'class'
+    'this': 'variable'
+    'THIS': 'variable'
 
 
     ### Variable and Type Related Extensions ###
