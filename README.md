@@ -1,4 +1,12 @@
-# Mammouth - Unfancy PHP #
+```
+    .___  ___.      ___      .___  ___. .___  ___.   ______    __    __  .___________. __    __  
+    |   \/   |     /   \     |   \/   | |   \/   |  /  __  \  |  |  |  | |           ||  |  |  | 
+    |  \  /  |    /  ^  \    |  \  /  | |  \  /  | |  |  |  | |  |  |  | `---|  |----`|  |__|  | 
+    |  |\/|  |   /  /_\  \   |  |\/|  | |  |\/|  | |  |  |  | |  |  |  |     |  |     |   __   | 
+    |  |  |  |  /  _____  \  |  |  |  | |  |  |  | |  `--'  | |  `--'  |     |  |     |  |  |  | 
+    |__|  |__| /__/     \__\ |__|  |__| |__|  |__|  \______/   \______/      |__|     |__|  |__| 
+                                                                                               
+```                                                                                               
 Mammouth is a small language that compiles into PHP, inspired by CoffeeScript. It's compiled to PHP codes/files that you can run in your PHP server.
 
   For documentation, usage, and examples, see:
