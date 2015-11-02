@@ -3531,6 +3531,10 @@ PHPPredefined = {
     'getallheaders': 'function'
     'virtual': 'function'
 
+    # FastCGI Process Manager
+    # FastCGI Process Manager functions
+    'fastcgi_finish_request': 'function'
+
     ### Command Line Specific Extensions ###
 
     # GNU Readline
