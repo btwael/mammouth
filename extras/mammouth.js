@@ -4930,6 +4930,7 @@ require["./predefined"] = (function() {var exports = {}, module = {exports: expo
     'apache_setenv': 'function',
     'getallheaders': 'function',
     'virtual': 'function',
+    'fastcgi_finish_request': 'function',
 
     /* Command Line Specific Extensions */
     'readline_add_history': 'function',
@@ -6830,12 +6831,25 @@ require["./nodes"] = (function() {var exports = {}, module = {exports: exports};
     }
 
     Include.prototype.compile = function(system) {
-      var code;
+      var code, literal, path;
       code = '';
       if (this.once) {
         code += 'include_once ';
       } else {
         code += 'include ';
+      }
+      if (this.path.type === 'Value' && this.path.value.type === 'Literal') {
+        literal = this.path.value.value;
+        if (typeof literal === 'string' && system.config['import']) {
+          path = literal;
+          system.Mammouth.contextify(path);
+          if (literal.slice(-9) === '.mammouth') {
+            this.path.value.raw = this.path.value.raw.slice(0, -10) + '.php' + this.path.value.raw.slice(-1);
+          }
+          if (literal.slice(-4) === '.mmt') {
+            this.path.value.raw = this.path.value.raw.slice(0, -5) + '.php' + this.path.value.raw.slice(-1);
+          }
+        }
       }
       code += this.path.prepare(system).compile(system);
       return code;
@@ -6872,6 +6886,9 @@ require["./nodes"] = (function() {var exports = {}, module = {exports: exports};
           system.Mammouth.contextify(path);
           if (literal.slice(-9) === '.mammouth') {
             this.path.value.raw = this.path.value.raw.slice(0, -10) + '.php' + this.path.value.raw.slice(-1);
+          }
+          if (literal.slice(-4) === '.mmt') {
+            this.path.value.raw = this.path.value.raw.slice(0, -5) + '.php' + this.path.value.raw.slice(-1);
           }
         }
       }
@@ -7614,6 +7631,7 @@ require["./mammouth"] = (function() {var exports = {}, module = {exports: export
           type = 'php';
           break;
         case '.mammouth':
+        case '.mmt':
           type = 'mammouth';
           break;
         default:

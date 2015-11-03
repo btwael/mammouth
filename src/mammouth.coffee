@@ -48,7 +48,7 @@ class Mammouth
         switch @_path.extname path
             when '.php'
                 type = 'php'
-            when '.mammouth'
+            when '.mammouth', '.mmt'
                 type = 'mammouth'
             else
                 return

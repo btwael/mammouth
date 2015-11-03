@@ -1121,6 +1121,15 @@ Include = class exports.Include extends Base
             code += 'include_once '
         else
             code += 'include '
+        if @path.type is 'Value' and @path.value.type is 'Literal'
+            literal = @path.value.value
+            if typeof literal is 'string' and system.config['import']
+                path = literal
+                system.Mammouth.contextify(path)
+                if literal[-9...] is '.mammouth'
+                    @path.value.raw = @path.value.raw[...-10] + '.php' + @path.value.raw[-1...]
+                if literal[-4...] is '.mmt'
+                    @path.value.raw = @path.value.raw[...-5] + '.php' + @path.value.raw[-1...]
         code += @path.prepare(system).compile(system)
         return code
 
@@ -1143,6 +1152,8 @@ Require = class exports.Require extends Base
                 system.Mammouth.contextify(path)
                 if literal[-9...] is '.mammouth'
                     @path.value.raw = @path.value.raw[...-10] + '.php' + @path.value.raw[-1...]
+                if literal[-4...] is '.mmt'
+                    @path.value.raw = @path.value.raw[...-5] + '.php' + @path.value.raw[-1...]
         code += @path.prepare(system).compile(system)
         return code
 
