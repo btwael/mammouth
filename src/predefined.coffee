@@ -3602,4 +3602,11 @@ PHPPredefined = {
     'm_validateidentifier': 'function'
     'm_verifyconnection': 'function'
     'm_verifysslcert': 'function'
+
+    # SPPLUS
+    # SPPLUS constants
+    'calcul_hmac': 'function'
+    'calculhmac': 'function'
+    'nthmac': 'function'
+    'signeurlpaiement': 'function'
 }
