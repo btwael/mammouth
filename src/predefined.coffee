@@ -42,9 +42,9 @@ exports.Initialize = (context) ->
 #        [x] Rar
 #        [x] Zip
 #        [x] Zlib
-#    [/] Credit Card Processing
+#    [x] Credit Card Processing
 #        [x] MCVE
-#        [ ] SPPLUS
+#        [x] SPPLUS
 #    [x] Cryptography Extensions
 #        [x] Crack
 #        [x] Hash
