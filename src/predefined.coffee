@@ -7,7 +7,7 @@ exports.Initialize = (context) ->
 #    Precontext Addition todo list:
 #    [/] Affecting PHP's Behaviour
 #        [x] APC
-#        [ ] APD
+#        [x] APD
 #        [ ] bcompiler
 #        [ ] BLENC
 #        [x] Error Handling
@@ -1844,6 +1844,36 @@ PHPPredefined = {
     'apc_load_constants': 'function'
     'apc_sma_info': 'function'
     'apc_store': 'function'
+
+    # APD
+    # APD constants
+    'FUNCTION_TRACE': 'const'
+    'ARGS_TRACE': 'const'
+    'ASSIGNMENT_TRACE': 'const'
+    'STATEMENT_TRACE': 'const'
+    'MEMORY_TRACE': 'const'
+    'TIMING_TRACE': 'const'
+    'SUMMARY_TRACE': 'const'
+    'ERROR_TRACE': 'const'
+    'PROF_TRACE': 'const'
+    'APD_VERSION': 'const'
+    # APD functions
+    'apd_breakpoint': 'function'
+    'apd_callstack': 'function'
+    'apd_clunk': 'function'
+    'apd_continue': 'function'
+    'apd_croak': 'function'
+    'apd_dump_function_table': 'function'
+    'apd_dump_persistent_resources': 'function'
+    'apd_dump_regular_resources': 'function'
+    'apd_echo': 'function'
+    'apd_get_active_symbols': 'function'
+    'apd_set_pprof_trace': 'function'
+    'apd_set_session_trace_socket': 'function'
+    'apd_set_session_trace': 'function'
+    'apd_set_session': 'function'
+    'override_function': 'function'
+    'rename_function': 'function'
 
     # Error handling
     # Error Handling constants
