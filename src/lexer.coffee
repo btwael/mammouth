@@ -730,7 +730,7 @@ KEYWORDS =
         'declare', 'delete'
         'echo', 'else', 'extends'
         'final', 'finally', 'for', 'func'
-        'goto'
+        'global', 'goto'
         'if', 'implements', 'in', 'instanceof', 'interface', 'include'
         'loop'
         'namespace', 'new', 'not', 'null'

@@ -5,7 +5,9 @@ function heredoc (f) {
 };
 code = heredoc(function() {
 /*
-<a href="{{> page.url }}">{{> page.title }}</a>
+{{
+global abc, dfs
+}}
 */
 })
 

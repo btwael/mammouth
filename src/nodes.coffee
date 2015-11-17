@@ -68,7 +68,7 @@ Block = class exports.Block extends Base
         for instruction, i in @body
             instruction.isStatement = on
             switch instruction.type
-                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Echo', 'Include', 'Namespace', 'NewExpression', 'Operation', 'Require', 'Return', 'Throw', 'typeCasting', 'Value'
+                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Global', 'Echo', 'Include', 'Namespace', 'NewExpression', 'Operation', 'Require', 'Return', 'Throw', 'typeCasting', 'Value'
                     if instruction.type is 'Code' and instruction.body isnt off
                         break
                     if instruction.type is 'Namespace' and instruction.body isnt off
@@ -1001,6 +1001,19 @@ Delete = class exports.Delete extends Base
 
     compile: (system) ->
         return 'delete ' + @value.prepare(system).compile(system)
+
+Global = class exports.Global extends Base
+    constructor: (vars) ->
+        @type = 'Delete'
+        @vars = vars
+
+    compile: (system) ->
+        res = 'global '
+        for vari, i in @vars
+            res += vari.prepare(system).compile(system)
+            if i isnt @vars.length - 1
+                res += ', '
+        return res
 
 # Class
 Class = class exports.Class extends Base

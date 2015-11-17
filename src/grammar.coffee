@@ -247,6 +247,7 @@ grammar =
     Intrinsic: [
         o 'Echo'
         o 'Delete'
+        o 'Global'
     ]
 
     Echo: [
@@ -255,6 +256,10 @@ grammar =
 
     Delete: [
         o 'DELETE Expression', '$$ = new yy.Delete($2)'
+    ]
+
+    Global: [
+        o 'GLOBAL ArgList', '$$ = new yy.Global($2);'
     ]
 
     # Functions
