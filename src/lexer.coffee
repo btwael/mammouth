@@ -261,6 +261,9 @@ class Lexer
         if @last().type is '=>' and value in KEYWORDS.CASTTYPE
             return @addToken token.set('type', 'CASTTYPE').set('value', value)
 
+        if (@last().type is '.' or @last().type is 'FUNC') and value in KEYWORDS.RESERVED and not (value in KEYWORDS.PHPRESERVED)
+            return @addToken token.set('type', 'IDENTIFIER').set('value', value)
+
         if value in KEYWORDS.RESERVED
             if value in ['cte', 'const']
                 return @addToken token.set('type', 'CONST')

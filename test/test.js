@@ -6,7 +6,7 @@ function heredoc (f) {
 code = heredoc(function() {
 /*
 {{
-global abc, dfs
+matches = page.images.find("selector").not("selector") 
 }}
 */
 })
