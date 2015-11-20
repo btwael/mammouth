@@ -467,6 +467,11 @@ Code = class exports.Code extends Base
         @body = body
         @asStatement = asStatement
         @name = name
+        @uses = false
+
+    setUses: (list) ->
+        @uses = list
+        @
 
     prepare: ->
         if @body isnt off
@@ -482,6 +487,14 @@ Code = class exports.Code extends Base
             if i isnt @parameters.length - 1
                 code += ', '
         code += ')'
+        # Check for use
+        if @uses isnt false
+            code += ' use ('
+            for parameter, i in @uses
+                code += parameter.prepare(system).compile(system)
+                if i isnt @uses.length - 1
+                    code += ', '
+            code += ')'
         if @body isnt false
             code += ' ' + @body.prepare(system).compile(system)
         system.context.scopeEnds()

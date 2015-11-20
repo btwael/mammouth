@@ -6,7 +6,8 @@ function heredoc (f) {
 code = heredoc(function() {
 /*
 {{
-matches = page.images.find("selector").not("selector") 
+func wale(x)(use wael) ->
+    fdgdfg()
 }}
 */
 })

@@ -268,10 +268,12 @@ grammar =
         o 'FUNC IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2);'
         o 'FUNC IDENTIFIER ( ParametersList )', '$$ = new yy.Code($4, false, true, $2);'
         o 'FUNC IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2);'
+        o 'FUNC IDENTIFIER ( ParametersList ) CALL_START ParametersList CALL_END FuncGlyph Block', '$$ = (new yy.Code($4, $10, true, $2)).setUses($7);'
     ]
 
     Code: [
         o 'FUNC ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($3, $6);'
+        o 'FUNC ( ParametersList ) CALL_START ParametersList CALL_END FuncGlyph Block', '$$ = (new yy.Code($3, $9)).setUses($6);'
         o 'FUNC FuncGlyph Block', '$$ = new yy.Code([], $3);'
     ]
 
