@@ -5,7 +5,10 @@ var program = require('commander'),
     Path = require('path');
 
 var mammouth = new Mammouth();
-
+console.log('\n\tMammouth\n\tVersion ' + Mammouth.VERSION)
+if (process.argv.length - 2 <= 1) {
+    console.log('\n    USAGE:\n\t-c, --compile\t\tInput file to compile\n\t-o, --output [DIR]\toutput file/directory');
+}
 // set up an arguments parser
 program
     .version(Mammouth.VERSION)
