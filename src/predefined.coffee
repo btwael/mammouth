@@ -216,7 +216,7 @@ exports.Initialize = (context) ->
 #        [ ] NSAPI
 #    [ ] Session Extensions
 #        [ ] Msession
-#        [ ] Sessions
+#        [x] Sessions
 #        [ ] Session PgSQL
 #    [x] Text Processing
 #        [x] BBCode
@@ -3838,4 +3838,25 @@ PHPPredefined = {
     'calculhmac': 'function'
     'nthmac': 'function'
     'signeurlpaiement': 'function'
+    
+    # Session
+    'session_name': 'function'
+    'session_module_name': 'function'
+    'session_save_path': 'function'
+    'session_id': 'function'
+    'session_regenerate_id': 'function'
+    'session_decode': 'function'
+    'session_encode': 'function'
+    'session_start': 'function'
+    'session_destroy': 'function'
+    'session_unset': 'function'
+    'session_set_save_handler': 'function'
+    'session_cache_limiter': 'function'
+    'session_cache_expire': 'function'
+    'session_set_cookie_params': 'function'
+    'session_get_cookie_params': 'function'
+    'session_write_close': 'function'
+    'session_status': 'function'
+    'session_register_shutdown': 'function'
+    'session_commit': 'function'
 }
