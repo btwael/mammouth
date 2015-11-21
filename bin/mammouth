@@ -5,7 +5,10 @@ var program = require('commander'),
     Path = require('path');
 
 var mammouth = new Mammouth();
-
+console.log('\n  Mammouth v' + Mammouth.VERSION)
+if (process.argv.length - 2 == 0) {
+    process.argv.push('--help')
+}
 // set up an arguments parser
 program
     .version(Mammouth.VERSION)
