@@ -5,6 +5,7 @@
 	<key>fileTypes</key>
 	<array>
 		<string>mammouth</string>
+		<string>mmt</string>
 	</array>
 	<key>name</key>
 	<string>Mammouth</string>
