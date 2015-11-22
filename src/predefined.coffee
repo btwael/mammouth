@@ -273,6 +273,15 @@ PHPPredefined = {
     'this': 'variable'
     'THIS': 'variable'
 
+    ### Magic consts ###
+    '__LINE__': 'const'
+    '__FILE__': 'const'
+    '__DIR__': 'const'
+    '__FUNCTION__': 'const'
+    '__CLASS__': 'const'
+    '__TRAIT__': 'const'
+    '__METHOD__': 'const'
+    '__NAMESPACE__': 'const'
 
     ### Variable and Type Related Extensions ###
 
