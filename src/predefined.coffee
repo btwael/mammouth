@@ -300,6 +300,7 @@ PHPPredefined = {
     'register_shutdown_function': 'function'
     'register_tick_function': 'function'
     'unregister_tick_function': 'function'
+    'eval': 'function'
 
     # Arrays
     # Array Constants
