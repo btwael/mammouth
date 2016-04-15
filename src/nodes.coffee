@@ -68,7 +68,7 @@ Block = class exports.Block extends Base
         for instruction, i in @body
             instruction.isStatement = on
             switch instruction.type
-                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Echo', 'Include', 'Namespace', 'NewExpression', 'Operation', 'Require', 'Return', 'Throw', 'typeCasting', 'Value'
+                when 'Assign', 'Call', 'Clone', 'Code', 'Goto', 'Break', 'Constant', 'Continue', 'Declare', 'Delete', 'GetKeyAssign', 'Global', 'Echo', 'Include', 'Namespace', 'NewExpression', 'Operation', 'Require', 'Return', 'Throw', 'typeCasting', 'Value'
                     if instruction.type is 'Code' and instruction.body isnt off
                         break
                     if instruction.type is 'Namespace' and instruction.body isnt off
@@ -467,6 +467,11 @@ Code = class exports.Code extends Base
         @body = body
         @asStatement = asStatement
         @name = name
+        @uses = false
+
+    setUses: (list) ->
+        @uses = list
+        @
 
     prepare: ->
         if @body isnt off
@@ -482,6 +487,14 @@ Code = class exports.Code extends Base
             if i isnt @parameters.length - 1
                 code += ', '
         code += ')'
+        # Check for use
+        if @uses isnt false
+            code += ' use ('
+            for parameter, i in @uses
+                code += parameter.prepare(system).compile(system)
+                if i isnt @uses.length - 1
+                    code += ', '
+            code += ')'
         if @body isnt false
             code += ' ' + @body.prepare(system).compile(system)
         system.context.scopeEnds()
@@ -1002,6 +1015,19 @@ Delete = class exports.Delete extends Base
     compile: (system) ->
         return 'delete ' + @value.prepare(system).compile(system)
 
+Global = class exports.Global extends Base
+    constructor: (vars) ->
+        @type = 'Delete'
+        @vars = vars
+
+    compile: (system) ->
+        res = 'global '
+        for vari, i in @vars
+            res += vari.prepare(system).compile(system)
+            if i isnt @vars.length - 1
+                res += ', '
+        return res
+
 # Class
 Class = class exports.Class extends Base
     constructor: (name, body, extendable = off, implement = off, modifier = off) ->
@@ -1121,6 +1147,15 @@ Include = class exports.Include extends Base
             code += 'include_once '
         else
             code += 'include '
+        if @path.type is 'Value' and @path.value.type is 'Literal'
+            literal = @path.value.value
+            if typeof literal is 'string' and system.config['import']
+                path = literal
+                system.Mammouth.contextify(path)
+                if literal[-9...] is '.mammouth'
+                    @path.value.raw = @path.value.raw[...-10] + '.php' + @path.value.raw[-1...]
+                if literal[-4...] is '.mmt'
+                    @path.value.raw = @path.value.raw[...-5] + '.php' + @path.value.raw[-1...]
         code += @path.prepare(system).compile(system)
         return code
 
@@ -1143,6 +1178,8 @@ Require = class exports.Require extends Base
                 system.Mammouth.contextify(path)
                 if literal[-9...] is '.mammouth'
                     @path.value.raw = @path.value.raw[...-10] + '.php' + @path.value.raw[-1...]
+                if literal[-4...] is '.mmt'
+                    @path.value.raw = @path.value.raw[...-5] + '.php' + @path.value.raw[-1...]
         code += @path.prepare(system).compile(system)
         return code
 

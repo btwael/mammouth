@@ -29,6 +29,7 @@ grammar =
         o '{{ }}', '$$ = new yy.Script(new yy.Block([]));'
         o '{{ Expression }}', '$$ = new yy.Script(new yy.Block([$2]));'
         o '{{ Block }}', '$$ = new yy.Script($2);'
+        o '{{> Expression }}', '$$ = new yy.Script(new yy.Block([new yy.Echo($2)]));'
     ]
 
     Block: [
@@ -246,6 +247,7 @@ grammar =
     Intrinsic: [
         o 'Echo'
         o 'Delete'
+        o 'Global'
     ]
 
     Echo: [
@@ -256,16 +258,22 @@ grammar =
         o 'DELETE Expression', '$$ = new yy.Delete($2)'
     ]
 
+    Global: [
+        o 'GLOBAL ArgList', '$$ = new yy.Global($2);'
+    ]
+
     # Functions
     Function: [
         o 'FUNC IDENTIFIER', '$$ = new yy.Code([], false, true, $2);'
         o 'FUNC IDENTIFIER FuncGlyph Block', '$$ = new yy.Code([], $4, true, $2);'
         o 'FUNC IDENTIFIER ( ParametersList )', '$$ = new yy.Code($4, false, true, $2);'
         o 'FUNC IDENTIFIER ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($4, $7, true, $2);'
+        o 'FUNC IDENTIFIER ( ParametersList ) CALL_START ParametersList CALL_END FuncGlyph Block', '$$ = (new yy.Code($4, $10, true, $2)).setUses($7);'
     ]
 
     Code: [
         o 'FUNC ( ParametersList ) FuncGlyph Block', '$$ = new yy.Code($3, $6);'
+        o 'FUNC ( ParametersList ) CALL_START ParametersList CALL_END FuncGlyph Block', '$$ = (new yy.Code($3, $9)).setUses($6);'
         o 'FUNC FuncGlyph Block', '$$ = new yy.Code([], $3);'
     ]
 

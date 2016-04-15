@@ -6,8 +6,9 @@ func mammouth() ->
             if (is_string(arguments[1]) and is_numeric(arguments[2])) or (is_string(arguments[1]) and is_numeric(arguments[1]))
                 arguments[1] ~~ arguments[2]
             else
-                # start the strict mode
-                arguments[1] + arguments[2]
+                'strict mode'
+                return arguments[1] + arguments[2]
+                'default mode'
         when 'length'
             if is_array(arguments[1])
                 count(arguments[1])

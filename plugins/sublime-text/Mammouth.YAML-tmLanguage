@@ -1,0 +1,73 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: Mammouth
+scopeName: source.mammouth
+fileTypes: [mammouth]
+uuid: 4341ee97-4eee-47f3-84c3-416c661e7096
+
+patterns:
+- begin: '{{'
+  end: '}}'
+  patterns:
+  - include: '#language'
+- include: 'text.html.basic'
+
+#######################################
+
+# mammouth language
+repository:
+  language:
+    patterns:
+    # comment
+    - match: "#.*"
+      name: comment.line.number-sign.mammouth
+    - match: "###[^#].*?(?:###[^\n]*|###$)"
+      name: comment.block.mammouth
+    # String
+    - name: string.quoted.double.mammouth
+      begin: '"'
+      end: '"'
+    - name: string.quoted.double.mammouth
+      begin: "'"
+      end: "'"
+    - name: string.interpolated.mammouth
+      begin: "`"
+      end: "`"
+    # boolean
+    - name: constant.language.mammouth
+      match: "true|false|null"
+    # numbers
+    - name: constant.numeric.mammouth
+      match: \b(\d|0b[01]+|0o[0-7]+|0(x|X)[\da-fA-F]+|\d+\.?\d+(?:(e|E)[+-]?\d+)?)\b
+    # function symbol
+    - match: ->
+      name: storage.type.mammouth
+    # Symbols
+    - name: keyword.operator.mammouth
+      match: ([-+*/%=^|~!&<>]|\.|\?)
+    # reserved names
+    - name: keyword.control.mammouth
+      match: \b(and|as|break|by|catch|case|continue|declare|delete|else|finally|for|goto|if|in|instanceof|include|isnt|loop|namespace|not|null|of|once|or|require|return|switch|then|throw|try|unless|until|use|when|while)\b
+    - name: support.function.construct.mammouth
+      match: \b(echo|print)\b
+    - name: storage.type.mammouth
+      match: \b(class|clone|interface|new)\b
+    - name: storage.modifier.mammouth
+      match: \b(abstract|const|cte|final|private|protected|public|static)\b
+    # function keyword
+    - match: (func)(\s+)(([^()>+\*/ -]+)?)((\([^()]*\))?)
+      captures:
+        '1':
+          name: storage.type.mammouth
+        '3':
+          name: entity.name.function.mammouth
+        '5':
+          name: variable.parameter.mammouth
+    # implements and extends
+    - match: (extends|implements)(\s+)(([^()>+\*/ -]+)?)
+      captures:
+        '1':
+          name: storage.modifier.mammouth
+        '3':
+          name: variable.parameter.mammouth
+...

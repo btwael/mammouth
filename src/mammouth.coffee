@@ -27,7 +27,7 @@ class System
         @config['import'] = off
 
 class Mammouth
-    @VERSION: '3.0.0'
+    @VERSION: '3.0.1'
 
     constructor: ->
         @_fs = require 'fs'
@@ -48,7 +48,7 @@ class Mammouth
         switch @_path.extname path
             when '.php'
                 type = 'php'
-            when '.mammouth'
+            when '.mammouth', '.mmt'
                 type = 'mammouth'
             else
                 return
