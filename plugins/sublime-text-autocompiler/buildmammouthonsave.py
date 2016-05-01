@@ -9,7 +9,7 @@ class BuildMammouthOnSave(sublime_plugin.EventListener):
   def on_post_save(self, view):
     mammouthFile = view.file_name()
     filename, file_extension = os.path.splitext(mammouthFile)
-    if file_extension == ".mammouth":
+    if file_extension == ".mammouth" or file_extension == ".mmt":
       print("Compiling: " + mammouthFile)
       view.window().run_command('exec',{'cmd': ["/usr/local/bin/mammouth", "-c", mammouthFile] })
 
