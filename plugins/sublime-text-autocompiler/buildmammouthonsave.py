@@ -1,5 +1,5 @@
 # REQUIREMENTS: npm install -g mammouth
-# USAGE: Files must have a .mammouth suffix
+# USAGE: Files must have a .mammouth or .mmt suffix
 
 import sublime, sublime_plugin,os
 from os.path import dirname, realpath
