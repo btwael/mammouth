@@ -1894,7 +1894,7 @@ require["./context"] = (function() {var exports = {}, module = {exports: exports
   exports.IndexGenerator = IndexGenerator = (function() {
     function IndexGenerator() {}
 
-    IndexGenerator.prototype.letter = ['i', 'j', 'k', 'c', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'a', 'b', 'c', 'd', 'e', 'f', 'j', 'h'];
+    IndexGenerator.prototype.letter = ['i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'a', 'b', 'c', 'd', 'e', 'f', 'j', 'h'];
 
     IndexGenerator.prototype._level = 0;
 
@@ -1960,6 +1960,16 @@ require["./predefined"] = (function() {var exports = {}, module = {exports: expo
     'this': 'variable',
     'THIS': 'variable',
 
+    /* Magic consts */
+    '__LINE__': 'const',
+    '__FILE__': 'const',
+    '__DIR__': 'const',
+    '__FUNCTION__': 'const',
+    '__CLASS__': 'const',
+    '__TRAIT__': 'const',
+    '__METHOD__': 'const',
+    '__NAMESPACE__': 'const',
+
     /* Variable and Type Related Extensions */
     'call_​user_​func_​array': 'function',
     'call_user_func': 'function',
@@ -1974,6 +1984,7 @@ require["./predefined"] = (function() {var exports = {}, module = {exports: expo
     'register_shutdown_function': 'function',
     'register_tick_function': 'function',
     'unregister_tick_function': 'function',
+    'eval': 'function',
     'CASE_LOWER': 'const',
     'CASE_UPPER': 'const',
     'SORT_ASC': 'const',
@@ -5223,7 +5234,26 @@ require["./predefined"] = (function() {var exports = {}, module = {exports: expo
     'calcul_hmac': 'function',
     'calculhmac': 'function',
     'nthmac': 'function',
-    'signeurlpaiement': 'function'
+    'signeurlpaiement': 'function',
+    'session_name': 'function',
+    'session_module_name': 'function',
+    'session_save_path': 'function',
+    'session_id': 'function',
+    'session_regenerate_id': 'function',
+    'session_decode': 'function',
+    'session_encode': 'function',
+    'session_start': 'function',
+    'session_destroy': 'function',
+    'session_unset': 'function',
+    'session_set_save_handler': 'function',
+    'session_cache_limiter': 'function',
+    'session_cache_expire': 'function',
+    'session_set_cookie_params': 'function',
+    'session_get_cookie_params': 'function',
+    'session_write_close': 'function',
+    'session_status': 'function',
+    'session_register_shutdown': 'function',
+    'session_commit': 'function'
   };
 
 }).call(this);
