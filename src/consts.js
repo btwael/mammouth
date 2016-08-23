@@ -7,6 +7,8 @@ var RegularExpressions = {
 
     'INDENTATION': /(^[ \t]*)/,
 
+    'COMMENT': /^###([^#][\s\S]*?)###|^(?:\s*#(?!##[^#]).*)+/,
+
     'START_TAG': /^{{/,
     'END_TAG': /^}}/,
     'INTERPOLATION_START_TAG': /^{{>/
@@ -58,6 +60,7 @@ var CALLABLE = ['CALL_END', 'IDENTIFIER', 'INDEX_END', 'QUALIFIEDSTRING', ')', '
 var INDEXABLE = ['SLICE_END', 'RANGE_END'].concat(CALLABLE);
 
 var tokenInterpretation = {
+    importantComment: ['INDENT', 'MINDENT', 'OUTDENT'],
     callable: CALLABLE,
     indexable: INDEXABLE,
     notExpression: ['INDENT', 'MINDENT', 'OUTDENT'].concat(Keywords.compare).concat(Keywords.logic).concat(Keywords.reserved),

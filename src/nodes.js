@@ -576,6 +576,14 @@ var Use = function() {
 
 Use = utils.extends(Use, Statement);
 
+// Comment statement node
+var Comment = function() {
+    this.type = 'Comment';
+    this.value = "";
+    this.location = new Location();
+};
+
+Comment = utils.extends(Comment, Statement);
 
 // exports
 exports.Base = Base;
@@ -642,3 +650,5 @@ exports.Class = Class;
 exports.ClassMember = ClassMember;
 exports.Interface = Interface;
 exports.Use = Use;
+
+exports.Comment = Comment

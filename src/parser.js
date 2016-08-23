@@ -184,6 +184,7 @@ Parser.prototype.parseBlock = function(allowInline) {
 //                 | Class
 //                 | Interface
 //                 | Use
+//                 | Comment
 //      SimpleStatement := ExpressionStatement
 //                       | Include
 //                       | Require
@@ -240,6 +241,8 @@ Parser.prototype.parseStatement = function() {
             return this.parseInterface();
         case 'USE':
             return this.parseUse();
+        case 'COMMENT':
+            return this.parseComment();
         default:
             statement = this.parseExpressionStatement();
     }
@@ -274,6 +277,16 @@ Parser.prototype.parseStatement = function() {
             break;
     }
     return statement;
+};
+
+// Parse comment
+//      Comment := COMMENT
+Parser.prototype.parseComment = function() {
+    var node = new Nodes.Comment();
+    var token = this.consume('COMMENT');
+    node.value = token.value;
+    node.location = token.location.clone();
+    return node;
 };
 
 // Parse include statement

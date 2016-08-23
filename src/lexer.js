@@ -107,6 +107,11 @@ Lexer.prototype.nextToken = function() {
         return this.lexIndent();
     }
 
+    // Comment
+    if(this.isA('COMMENT')) {
+        return this.lexComment();
+    }
+
     // look for qualified string
     if(this.isA('QUALIFIEDSTRING')) {
         return this.lexQualifiedString();
@@ -206,6 +211,28 @@ Lexer.prototype.lexInterpolationStartTag = function() {
     });
     this.tracker.addIndentLevel();
     return true;
+};
+
+// lex comment
+Lexer.prototype.lexComment = function() {
+    var token = (new Token('COMMENT')).setStart(this.position.clone());
+    var value = this.matchA('COMMENT');
+    token.setValue(value);
+    for(var i = 0; i < value.length; i++) {
+        var charCode = value.charCodeAt(i);
+        if(charCode == 10 || charCode == 13) {
+            this.position.rowAdvance();
+        } else {
+            this.position.colAdvance();
+        }
+    }
+    token.setEnd(this.position.clone());
+    if(value.startsWith('###') && consts.tokenInterpretation.importantComment.indexOf(this.lastToken().type) > -1) {
+        this.addToken(token);
+        return true;
+    } else {
+        return this.nextToken();
+    }
 };
 
 // lex qualified string
