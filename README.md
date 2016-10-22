@@ -14,4 +14,4 @@ Mammouth is a small language that compiles into PHP, inspired by CoffeeScript. I
   To suggest a feature, report a bug, or general discussion:
   http://github.com/btwael/mammouth/issues/
 
-  Please consider to support the developement of Mammouth 4.x on [Patreon](https://www.patreon.com/boutglay)
+  **Please consider to support the developement of Mammouth 4.x on [Patreon](https://www.patreon.com/boutglay)**
