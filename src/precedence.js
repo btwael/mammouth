@@ -3,7 +3,8 @@
  * Precedence defines the order in wihch tokens are
  * treated by the parser. 
  */
-function Precedence(/*String*/ name, /*int*/ ordinal) {
+function Precedence(/*String*/ name,
+                    /*int*/ ordinal) {
     this._name = name;
     this._ordinal = ordinal;
 }
@@ -12,7 +13,7 @@ function Precedence(/*String*/ name, /*int*/ ordinal) {
  * Returns the representative name of this Precedence. 
  */
 Precedence.prototype.getName = /*String*/ function() {
-    return this._name
+    return this._name;
 }
 
 /**
@@ -43,3 +44,6 @@ Precedence.prototype.compareTo = /*int*/ function(/*Precedence*/ other) {
 /*Precedence*/ Precedence.Shift = new Precedence("shift", 9);
 /*Precedence*/ Precedence.Additive = new Precedence("additive", 10);
 /*Precedence*/ Precedence.Multiplicative = new Precedence("multiplicative", 11);
+
+// export
+module.exports = Precedence;
