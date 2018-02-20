@@ -4,7 +4,7 @@
  * treated by the parser. 
  */
 function Precedence(/*String*/ name,
-                    /*int*/ ordinal) {
+                    /*int*/ ordinal) /*implements Comparable<Precedence>*/ {
     this._name = name;
     this._ordinal = ordinal;
 }
