@@ -17,7 +17,7 @@ Source.prototype.getPath = /*String*/ function() {
 /**
  * Returns the path of the source code.
  */
-Source.prototype.getContent() = /*String*/ function() {
+Source.prototype.getContent = /*String*/ function() {
     return this._content;
 };
 
