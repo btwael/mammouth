@@ -19,28 +19,28 @@ function TokenKind(/*String*/ name,
  */
 TokenKind.prototype.getName = /*String*/ function() {
     return this._name
-}
+};
 
 /**
  * Returns the representative name of this TokenKind. 
  */
 TokenKind.prototype.getParentKind = /*TokenKind?*/ function() {
     return this._parentKind;
-}
+};
 
 /**
  * Returns the representative name of this TokenKind. 
  */
 TokenKind.prototype.getLexeme = /*String?*/ function() {
     return this._lexeme;
-}
+};
 
 /**
  * Returns the representative name of this TokenKind. 
  */
 TokenKind.prototype.getPrecedence = /*Precedence*/ function() {
     return this._precedence;
-}
+};
 
 /**
  * Checks if this TokenKind is equal or subkind of given TokenKind.
@@ -54,7 +54,7 @@ TokenKind.prototype.is = /*boolean*/ function(/*TokenKind*/ givenKind) {
         kind = kind.getParentKind();
     }
     return false;
-}
+};
 
 // exports
 module.exports = TokenKind;

@@ -14,14 +14,14 @@ function Precedence(/*String*/ name,
  */
 Precedence.prototype.getName = /*String*/ function() {
     return this._name;
-}
+};
 
 /**
  * Returns the ordinal of this Precedence. 
  */
 Precedence.prototype.getOrdinal = /*int*/ function() {
     return this._ordinal;
-}
+};
 
 /**
  * Compares two Precedence.
