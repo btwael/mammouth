@@ -57,7 +57,10 @@ TokenKind.prototype.is = /*boolean*/ function(/*TokenKind*/ givenKind) {
 };
 
 TokenKind.Raw = new TokenKind("raw");
-TokenKind.DoubleOpeningBrace = new TokenKind("doubleopeningbrace");
+TokenKind.Indent = new TokenKind("indent");
+TokenKind.Outdent = new TokenKind("outdent");
+TokenKind.DoubleLeftBrace = new TokenKind("doubleleftbrace");
+TokenKind.DoubleRightBrace = new TokenKind("doublerightbrace");
 
 //*-- Token
 /**
@@ -107,6 +110,9 @@ Token.prototype.getOffset = /*int?*/ function() {
 };
 
 Token.prototype.getLength = /*int*/ function() {
+    if(this._length != null) {
+        return this._length;
+    }
     if(this._lexeme != null) {
         return this._lexeme.length;
     }
@@ -116,7 +122,7 @@ Token.prototype.getLength = /*int*/ function() {
     return 0;
 };
 
-Token.prototype.getOffset = /*int?*/ function() {
+Token.prototype.getEndOffset = /*int?*/ function() {
     if(this._offset == null) {
         return null
     }
