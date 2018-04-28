@@ -1,4 +1,4 @@
-import "./source.dart";
+import "../basic/source.dart" show Source;
 
 //*-- ErrorSeverity
 /**

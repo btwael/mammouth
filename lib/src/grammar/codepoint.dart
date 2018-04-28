@@ -5,7 +5,20 @@ class CodePoint {
     static const int LF = 0x000a; // '\n'
 
     static const int SP = 0x0020; // ' '
+    static const int BANG = 0x0021; // exclamation mark ('!')
+    static const int DOUBLEQUOTE = 0x0022; // double quote ('"')
 
+    static const int PERCENT = 0x0025; // percent ('%')
+    static const int AMPERSAND = 0x0026; // ampersand ('&')
+    static const int SINGLEQUOTE = 0x0027; // single quote ('\'')
+    static const int LPAREN = 0x0028; // left parenthesis ('(')
+    static const int RPAREN = 0x0029; // right parenthesis (')')
+    static const int ASTERISK = 0x002a; // asterisk ('*')
+    static const int PLUS = 0x002b; // plus ('+')
+    static const int COMMA = 0x002c; // comma (',')
+    static const int MINUS = 0x002d; // minus ('-')
+    static const int DOT = 0x002e; // dot ('.')
+    static const int SLASH = 0x002f; // slash ('/')
     static const int $0 = 0x0030; // 0 ('0')
     static const int $1 = 0x0031; // 1 ('1')
     static const int $2 = 0x0032; // 2 ('2')
@@ -16,6 +29,12 @@ class CodePoint {
     static const int $7 = 0x0037; // 7 ('7')
     static const int $8 = 0x0038; // 8 ('8')
     static const int $9 = 0x0039; // 9 ('9')
+    static const int COLON = 0x003a; // colon (':')
+    static const int SEMICOLON = 0x003b; // semicolon (';')
+    static const int LESSTHAN = 0x003c; // less than sign ('<')
+    static const int EQUAL = 0x003d; // equal sign ('=')
+    static const int GREATERTHAN = 0x003e; // greater than sign ('>')
+    static const int QUESTIONMARK = 0x003f; // question mark ('?')
 
     static const int $A = 0x0041; // A ('A')
     static const int $B = 0x0042; // B ('B')
@@ -43,6 +62,10 @@ class CodePoint {
     static const int $X = 0x0058; // X ('X')
     static const int $Y = 0x0059; // Y ('Y')
     static const int $Z = 0x005a; // Z ('Z')
+    static const int LBRACKET = 0x005b; // left bracket ('[')
+    static const int BACKSLASH = 0x005c; // backslash ('\\')
+    static const int RBRACKET = 0x005d; // right bracket (']')
+    static const int CARET = 0x005e; // caret ('^')
 
     static const int $a = 0x0061; // a ('a')
     static const int $b = 0x0062; // b ('b')
@@ -70,12 +93,34 @@ class CodePoint {
     static const int $x = 0x0078; // x ('x')
     static const int $y = 0x0079; // y ('y')
     static const int $z = 0x007a; // z ('z')
-    static const int LBRACE = 0x007b;
+    static const int LBRACE = 0x007b; // left brace ('{')
+    static const int BAR = 0x007c; // vertical bar ('|')
+    static const int RBRACE = 0x007d; // right brace ('}')
+    static const int TILDE = 0x007e; // tilde ('~')
 
-    static const int RBRACE = 0x007d;
+    static bool isBinary(int c) {
+        if(CodePoint.$0 <= c && c <= CodePoint.$1) {
+            return true;
+        }
+        return false;
+    }
+
+    static bool isOctal(int c) {
+        if(CodePoint.$0 <= c && c <= CodePoint.$7) {
+            return true;
+        }
+        return false;
+    }
 
     static bool isDigit(int c) {
         if(CodePoint.$0 <= c && c <= CodePoint.$9) {
+            return true;
+        }
+        return false;
+    }
+
+    static bool isHexadecimal(int c) {
+        if((CodePoint.$0 <= c && c <= CodePoint.$9) || (CodePoint.$A <= c && c <= CodePoint.$F) || (CodePoint.$a <= c && c <= CodePoint.$f)) {
             return true;
         }
         return false;
