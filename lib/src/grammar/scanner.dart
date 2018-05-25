@@ -38,7 +38,7 @@ class Scanner {
         while(this._scanNext());
         for(int i = 0, length = this._output.length; i < length; i++) {
             if(i != 0) this._output[i].previous = this._output[i - 1];
-            if(i != length)this._output[i].next = this._output[i + 1];
+            if(i != length - 1) this._output[i].next = this._output[i + 1];
         }
         return this._output;
     }
@@ -213,6 +213,9 @@ class Scanner {
     }
 
     void _closeIndentLevel(IndentationLevel indentationLevel) {
+        if(this._output.last.kind.kindOf(TokenKind.LINEFEED)) {
+            this._output.removeLast();
+        }
         while(indentationLevel._indenationtStack.isNotEmpty) {
             Indentation indentation = indentationLevel._indenationtStack.removeAt(0);
             Token openedIn = indentationLevel._openedToken.removeAt(0);
