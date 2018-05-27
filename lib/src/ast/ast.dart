@@ -7,9 +7,14 @@ abstract class AstVisitor<E> {
     E visitScript(Script node);
     E visitBlock(Block node);
     E visitVariableDeclarationStatement(VariableDeclarationStatement node);
-    E visitExpressionStatement(ExpressionStatement node);
-    E visitSimpleIdentifier(SimpleIdentifier node);
     E visitTypeName(TypeName node);
+    E visitExpressionStatement(ExpressionStatement node);
+    E visitAssignementExpression(AssignementExpression node);
+    E visitSimpleIdentifier(SimpleIdentifier node);
+    E visitBooleanLiteral(BooleanLiteral node);
+    E visitStringLiteral(StringLiteral node);
+    E visitIntegerLiteral(IntegerLiteral node);
+    E visitFloatLiteral(FloatLiteral node);
 }
 
 abstract class Node extends SyntacticEntity {
@@ -262,6 +267,40 @@ class TypeName extends TypeAnnotation {
 
 abstract class Expression extends Node {}
 
+class AssignementExpression extends Expression {
+    Token _operator;
+    Expression _left, _right;
+
+    AssignementExpression(this._left, this._operator, this._right);
+
+    Expression get leftHandSide {
+        return this._left;
+    }
+
+    Token get operat0r {
+        return this._operator;
+    }
+
+    Expression get rightHandSize {
+        return this._right;
+    }
+
+    @override
+    Token get beginToken {
+        return this.leftHandSide.beginToken;
+    }
+
+    @override
+    Token get endToken {
+        return this.rightHandSize.endToken;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitAssignementExpression(this);
+    }
+}
+
 abstract class Identifier extends Expression {
     String get name;
 }
@@ -271,6 +310,7 @@ class SimpleIdentifier extends Identifier {
 
     SimpleIdentifier(this._token);
 
+    @override
     String get name {
         return this.token.lexeme;
     }
@@ -294,3 +334,100 @@ class SimpleIdentifier extends Identifier {
         return visitor.visitSimpleIdentifier(this);
     }
 }
+
+abstract class Literal extends Expression {
+    Token get token;
+
+    @override
+    Token get beginToken {
+        return this.token;
+    }
+
+    @override
+    Token get endToken {
+        return this.token;
+    }
+}
+
+class BooleanLiteral extends Literal {
+    Token _token;
+
+    BooleanLiteral(this._token);
+
+    bool get value {
+        return this.token.lexeme == "true";
+    }
+
+    @override
+    Token get token {
+        return this._token;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitBooleanLiteral(this);
+    }
+}
+
+class StringLiteral extends Literal {
+    Token _token;
+
+    StringLiteral(this._token);
+
+    String get value {
+        return this.token.lexeme;
+    }
+
+    @override
+    Token get token {
+        return this._token;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitStringLiteral(this);
+    }
+}
+
+abstract class NumericLiteral extends Literal {}
+
+class IntegerLiteral extends NumericLiteral {
+    Token _token;
+
+    IntegerLiteral(this._token);
+
+    String get value {
+        return this.token.lexeme;
+    }
+
+    @override
+    Token get token {
+        return this._token;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitIntegerLiteral(this);
+    }
+}
+
+class FloatLiteral extends NumericLiteral {
+    Token _token;
+
+    FloatLiteral(this._token);
+
+    String get value {
+        return this.token.lexeme;
+    }
+
+    @override
+    Token get token {
+        return this._token;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitFloatLiteral(this);
+    }
+}
+
