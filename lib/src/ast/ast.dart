@@ -1,4 +1,5 @@
 import "../grammar/syntacticEntity.dart" show SyntacticEntity;
+import "../grammar/precedence.dart" show Precedence;
 import "../grammar/token.dart" show Token;
 
 abstract class AstVisitor<E> {
@@ -9,12 +10,17 @@ abstract class AstVisitor<E> {
     E visitVariableDeclarationStatement(VariableDeclarationStatement node);
     E visitTypeName(TypeName node);
     E visitExpressionStatement(ExpressionStatement node);
-    E visitAssignementExpression(AssignementExpression node);
+    E visitAssignmentExpression(AssignmentExpression node);
+    E visitBinaryExpression(BinaryExpression node);
+    E visitUpdateExpression(UpdateExpression node);
     E visitSimpleIdentifier(SimpleIdentifier node);
     E visitBooleanLiteral(BooleanLiteral node);
     E visitStringLiteral(StringLiteral node);
     E visitIntegerLiteral(IntegerLiteral node);
     E visitFloatLiteral(FloatLiteral node);
+    E visitAssignmentOperator(AssignmentOperator node);
+    E visitBinaryOperator(BinaryOperator node);
+    E visitUpdateOperator(UpdateOperator node);
 }
 
 abstract class Node extends SyntacticEntity {
@@ -267,37 +273,108 @@ class TypeName extends TypeAnnotation {
 
 abstract class Expression extends Node {}
 
-class AssignementExpression extends Expression {
-    Token _operator;
+class AssignmentExpression extends Expression {
     Expression _left, _right;
+    AssignmentOperator _operator;
 
-    AssignementExpression(this._left, this._operator, this._right);
+    AssignmentExpression(this._left, this._operator, this._right);
 
-    Expression get leftHandSide {
+    Expression get left {
         return this._left;
     }
 
-    Token get operat0r {
+    AssignmentOperator get operat0r {
         return this._operator;
     }
 
-    Expression get rightHandSize {
+    Expression get right {
         return this._right;
     }
 
     @override
     Token get beginToken {
-        return this.leftHandSide.beginToken;
+        return this.left.beginToken;
     }
 
     @override
     Token get endToken {
-        return this.rightHandSize.endToken;
+        return this.right.endToken;
     }
 
     @override
     E accept<E>(AstVisitor<E> visitor) {
-        return visitor.visitAssignementExpression(this);
+        return visitor.visitAssignmentExpression(this);
+    }
+}
+
+class BinaryExpression extends Expression {
+    Expression _left, _right;
+    BinaryOperator _operator;
+
+    BinaryExpression(this._left, this._operator, this._right);
+
+    Expression get left {
+        return this._left;
+    }
+
+    BinaryOperator get operat0r {
+        return this._operator;
+    }
+
+    Expression get right {
+        return this._right;
+    }
+
+    @override
+    Token get beginToken {
+        return this.left.beginToken;
+    }
+
+    @override
+    Token get endToken {
+        return this.right.endToken;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitBinaryExpression(this);
+    }
+}
+
+class UpdateExpression extends Expression {
+    bool _prefix;
+    Expression _argument;
+    UpdateOperator _operator;
+
+    UpdateExpression(this._argument, this._operator, this._prefix);
+
+    bool get prefix {
+        return this._prefix;
+    }
+
+    UpdateOperator get operat0r {
+        return this._operator;
+    }
+
+    Expression get argument {
+        return this._argument;
+    }
+
+    @override
+    Token get beginToken {
+        if(this.prefix) return this.operat0r.beginToken;
+        return this.argument.beginToken;
+    }
+
+    @override
+    Token get endToken {
+        if(this.prefix) return this.argument.endToken;
+        return this.operat0r.endToken;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitUpdateExpression(this);
     }
 }
 
@@ -431,3 +508,72 @@ class FloatLiteral extends NumericLiteral {
     }
 }
 
+abstract class Operator extends Node {
+    Token get token;
+
+    String get lexeme {
+        return this.token.lexeme;
+    }
+
+    Precedence get precedence {
+        return this.token.precedence;
+    }
+
+    @override
+    Token get beginToken {
+        return this.token;
+    }
+
+    @override
+    Token get endToken {
+        return this.token;
+    }
+}
+
+class AssignmentOperator extends Operator {
+    Token _token;
+
+    AssignmentOperator(this._token);
+
+    @override
+    Token get token {
+        return this._token;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitAssignmentOperator(this);
+    }
+}
+
+class BinaryOperator extends Operator {
+    Token _token;
+
+    BinaryOperator(this._token);
+
+    @override
+    Token get token {
+        return this._token;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitBinaryOperator(this);
+    }
+}
+
+class UpdateOperator extends Operator {
+    Token _token;
+
+    UpdateOperator(this._token);
+
+    @override
+    Token get token {
+        return this._token;
+    }
+
+    @override
+    E accept<E>(AstVisitor<E> visitor) {
+        return visitor.visitUpdateOperator(this);
+    }
+}

@@ -2,6 +2,7 @@ import "../basic/option.dart" show Option;
 import "../diagnostic/diagnosticEngine.dart" show DiagnosticEngine;
 import "../ast/ast.dart" as ast;
 import "./token.dart" show TokenKind, Token;
+import "./precedence.dart" show Precedence;
 
 class Parser {
     Token _current;
@@ -236,16 +237,15 @@ class Parser {
      *                  | Literal
      */
     Option<ast.Expression> parseExpression({bool reportError = true}) {
-        return this.parseAssignementExpression(reportError: reportError);
+        return this.parseAssignmentExpression(reportError: reportError);
     }
 
     /**
-     *      AssignementExpression := SimpleIdentifier ASSIGN Expression
+     *      AssignmentExpression := SimpleIdentifier ASSIGN Expression
      */
-    Option<ast.Expression> parseAssignementExpression({bool reportError = true}) {
-        Token operat0r;
+    Option<ast.Expression> parseAssignmentExpression({bool reportError = true}) {
         ast.Expression left, right;
-        Option<ast.Expression> result = this.parsePrimaryExpression(reportError: reportError); // TODO: to parseBinaryExpression
+        Option<ast.Expression> result = this.parseBinaryExpression(reportError: reportError);
         if(result.isNone()) {
             if(reportError) {
                 // TODO: report error
@@ -253,12 +253,10 @@ class Parser {
             return new Option<ast.Expression>();
         }
         left = result.some;
-        if(!this._current.kind.kindOf(TokenKind.ASSIGN)) {
+        if(!this.isAssignementOperator()) {
             return result;
         }
-        operat0r = this._current;
-        // MARK(MOVE TOKEN)
-        this._current = this._current.next;
+        Option<ast.AssignmentOperator> operat0r = this.parseAssignementOperator();
         result = this.parseExpression(reportError: reportError); // TODO: to parseBinaryExpression
         if(result.isNone()) {
             if(reportError) {
@@ -268,7 +266,66 @@ class Parser {
         }
         right = result.some;
         // MARK(MAKE NODE)
-        return new Option<ast.Expression>()..some = new ast.AssignementExpression(left, operat0r, right);
+        return new Option<ast.Expression>()..some = new ast.AssignmentExpression(left, operat0r.some, right);
+    }
+
+    /**
+     *      BinaryExpression := PrefixExpression BINARY Expression
+     */
+    Option<ast.Expression> parseBinaryExpression({Precedence minPrecedence = Precedence.Zero, bool reportError = true}) {
+        ast.Expression node;
+        Option<ast.Expression> result = this.parsePrefixExpression(reportError: reportError);
+        if(result.isNone()) {
+            if(reportError) {
+                // TODO: report error
+            }
+            return new Option<ast.Expression>();
+        }
+        node = result.some;
+        // TODO: test precedence
+        while(this._current.kind.kindOf(TokenKind.BINARY) && this._current.precedence >= minPrecedence) {
+            Option<ast.BinaryOperator> operat0rResult = this.parseBinaryOperator(reportError: reportError);
+            if(operat0rResult.isNone()) {
+                if(reportError) {
+                    // TODO: report error
+                }
+                return new Option<ast.Expression>();
+            }
+            ast.BinaryOperator operat0r = operat0rResult.some;
+            result = this.parseBinaryExpression(minPrecedence: operat0rResult.some.precedence + 1);
+            if(result.isNone()) {
+                if(reportError) {
+                    // TODO: report error 
+                }
+                return new Option<ast.Expression>();
+            }
+            // MARK(MAKE NODE)
+            node = new ast.BinaryExpression(node, operat0r, result.some);
+        }
+        return new Option<ast.Expression>()..some = node;
+    }
+
+    Option<ast.Expression> parsePrefixExpression({bool reportError = true}) {
+        ast.Expression node;
+        if(this.isUpdateOperator()) {
+            Option<ast.UpdateOperator> operat0rResult = this.parseUpdateOperator(reportError: reportError);
+            if(operat0rResult.isNone()) {
+                if(reportError) {
+                    // TODO: report error
+                }
+                return new Option<ast.Expression>();
+            }
+            Option<ast.Expression> result = this.parsePrefixExpression(reportError: reportError);
+            if(result.isNone()) {
+                if(reportError) {
+                    // TODO: report error 
+                }
+                return new Option<ast.Expression>();
+            }
+            // MARK(MAKE NODE)
+            return new Option<ast.Expression>()..some = new ast.UpdateExpression(result.some, operat0rResult.some, true);
+        }
+        return this.parsePrimaryExpression(reportError: reportError);
     }
 
     /**
@@ -390,5 +447,73 @@ class Parser {
         this._current = this._current.next;
         // MARK(MAKE NODE)
         return new Option<ast.FloatLiteral>()..some = new ast.FloatLiteral(token);
+    }
+
+    //*-- Operators
+
+    bool isAssignementOperator() {
+        if(this._current != null && this._current.kind.kindOf(TokenKind.ASSIGN)) {
+            return true;
+        }
+        return false;
+    }
+
+    bool isBinaryOperator() {
+        if(this._current != null && this._current.kind.kindOf(TokenKind.BINARY)) {
+            return true;
+        }
+        return false;
+    }
+
+    bool isUpdateOperator() {
+        if(this._current != null && this._current.kind.kindOf(TokenKind.UPDATE)) {
+            return true;
+        }
+        return false;
+    }
+
+    Option<ast.AssignmentOperator> parseAssignementOperator({bool reportError = true}) {
+        Token token;
+        if(!this.isAssignementOperator()) {
+            if(reportError) {
+                // TODO: report error
+            }
+            return new Option<ast.AssignmentOperator>();
+        }
+        token = this._current;
+        // MARK(MOVE TOKEN)
+        this._current = this._current.next;
+        // MARK(MAKE NODE)
+        return new Option<ast.AssignmentOperator>()..some = new ast.AssignmentOperator(token);
+    }
+
+    Option<ast.BinaryOperator> parseBinaryOperator({bool reportError = true}) {
+        Token token;
+        if(!this.isBinaryOperator()) {
+            if(reportError) {
+                // TODO: report error
+            }
+            return new Option<ast.BinaryOperator>();
+        }
+        token = this._current;
+        // MARK(MOVE TOKEN)
+        this._current = this._current.next;
+        // MARK(MAKE NODE)
+        return new Option<ast.BinaryOperator>()..some = new ast.BinaryOperator(token);
+    }
+
+    Option<ast.UpdateOperator> parseUpdateOperator({bool reportError = true}) {
+        Token token;
+        if(!this.isUpdateOperator()) {
+            if(reportError) {
+                // TODO: report error
+            }
+            return new Option<ast.UpdateOperator>();
+        }
+        token = this._current;
+        // MARK(MOVE TOKEN)
+        this._current = this._current.next;
+        // MARK(MAKE NODE)
+        return new Option<ast.UpdateOperator>()..some = new ast.UpdateOperator(token);
     }
 }

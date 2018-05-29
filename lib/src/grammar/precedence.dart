@@ -37,6 +37,10 @@ class Precedence implements Comparable<Precedence> {
         return comp > 1 || comp == 0;
     }
 
+    Precedence operator+(int i) {
+        return Precedence.values[(Precedence.values.indexOf(this) + i) % Precedence.values.length];
+    }
+
     static const Precedence Zero = const Precedence(0);
     static const Precedence Assign = const Precedence(1);
     static const Precedence LogicalOr = const Precedence(2);
@@ -48,7 +52,7 @@ class Precedence implements Comparable<Precedence> {
     static const Precedence Relational = const Precedence(8);
     static const Precedence Shift = const Precedence(9);
     static const Precedence Additive = const Precedence(10);
-    static const Precedence Multiplicative = const Precedence(11); 
+    static const Precedence Multiplicative = const Precedence(11);
 
     static const List<Precedence> values = const <Precedence>[
         Zero,
