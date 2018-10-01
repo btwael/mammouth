@@ -1,0 +1,186 @@
+.support-link:hover {
+    text-decoration: none;
+    outline: none;
+}
+
+.support-link:active {
+    text-decoration: none;
+    outline: none;
+}
+
+.support-link:focus {
+    text-decoration: none;
+    outline: none;
+}
+
+.btn-outline-primary {
+    color: rgb(53, 22, 24);
+    border-color: rgb(53, 22, 24);
+}
+
+.btn-outline-primary:hover {
+    background-color: rgb(53, 22, 24);
+    border-color: rgb(53, 22, 24);
+    outline: none;
+}
+
+.btn-outline-primary:active {
+    background-color: rgb(53, 22, 24);
+    box-shadow: none;
+    outline: none;
+}
+
+.btn-outline-primary:focus {
+    background-color: rgb(53, 22, 24);
+    color: #ffff;
+    border-color: rgb(53, 22, 24);
+    box-shadow: none;
+    outline: none;
+}
+
+.btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):active, .show > .btn-outline-primary.dropdown-toggle {
+    color: #fff;
+    background-color: rgb(53, 22, 24);
+    border-color: rgb(53, 22, 24);
+    box-shadow: none;
+    outline: none;
+}
+
+.btn-outline-primary:not(:disabled):not(.disabled):active:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.mmt-navbar-ul-item:hover {
+    border-bottom: 4px solid rgb(53, 22, 24);
+    text-decoration: none;
+}
+
+#mmt-input {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background: transparent;
+    border: 0;
+    resize: none;
+    box-sizing:border-box;
+    padding-top: 18px;
+}
+
+.side-code {
+    background-color: #f8f9fa;
+}
+
+.features-code {
+  background-color: #f8f9fa;
+  padding: 10px 20px;
+  box-shadow: 0px 0px 1px rgba(0,0,0,0.23);
+}
+
+.side-code .mammouth {
+    padding: 10px 20px;
+    box-shadow: 0px 0px 1px rgba(0,0,0,0.23);
+}
+.side-code .php {
+    padding: 10px 20px;
+    box-shadow: 0px 0px 1px rgba(0,0,0,0.23);
+}
+
+.feature-btn-container {
+  padding: 0px 10px;
+}
+
+.feature-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+}
+
+.feature-button:hover {
+  cursor: pointer;
+  color: #212529;
+  background-color: #e2e6ea;
+}
+
+.feature-button-active {
+  color: #212529;
+  background-color: #dae0e5;
+  border-color: #d3d9df;
+  box-shadow: 0 0 0 .2rem rgba(248,249,250,.5);
+}
+
+.footer {
+  padding: 30px 0;
+  box-shadow: 1px .125rem .25rem 1px rgba(0,0,0,.075) !important;
+  text-align: center;
+}
+
+/*-- Highlight --*/
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original code:; http://softwaremaniacs.org/media/soft/highlight/styles/tomorrow.css */
+/* forked for Mammouth */
+.tomorrow-comment, pre .comment, pre .title {
+  color: #8e908c;
+}
+
+.tomorrow-red, pre .variable, pre .tag, pre .regexp, pre .ruby .constant, pre .xml .tag .title, pre .xml .pi, pre .xml .doctype, pre .html .doctype, pre .css .id, pre .css .class, pre .css .pseudo {
+  color: #c82829;
+}
+
+.tomorrow-orange, pre .number, pre .preprocessor, pre .built_in, pre .params, pre .constant {
+  color: #000000;
+}
+
+.tomorrow-yellow, pre .class, pre .ruby .class .title, pre .css .rules .attribute {
+  color: #eab700;
+}
+
+.tomorrow-green, pre .string, pre .value, pre .inheritance, pre .header, pre .ruby .symbol, pre .xml .cdata {
+  color: #718c00;
+}
+
+.tomorrow-aqua, pre .css .hexcolor {
+  color: #3e999f;
+}
+
+.tomorrow-blue, pre .function, pre .function .title, pre .python .decorator, pre .python .title, pre .ruby .function .title, pre .ruby .title .keyword, pre .perl .sub, pre .javascript .title, pre .coffeescript .title {
+  color: #21439C;
+}
+
+.tomorrow-purple, pre .keyword, pre .reserved, pre .javascript .function {
+  color: #FF5600;
+}
+
+pre .subst {
+  color: #A535AE;
+}
+
+pre .literal {
+  color: #A535AE;
+}
+
+pre .property {
+  color: #A535AE;
+}
+
+pre .class .title {
+  color: #21439C;
+}
+
+pre code {
+  display: block;
+  background: white;
+  color: #000000;
+}
+
+pre .coffeescript .javascript,
+pre .javascript .xml,
+pre .tex .formula,
+pre .xml .javascript,
+pre .xml .vbscript,
+pre .xml .css,
+pre .xml .cdata {
+  opacity: 0.5;
+}

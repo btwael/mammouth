@@ -1,2 +1,8 @@
-node_modules/
-*.log
+.idea
+mammouth-dev.iml
+
+.packages
+pubspec.lock
+.DS_Store
+website/build
+website/.dart_tool

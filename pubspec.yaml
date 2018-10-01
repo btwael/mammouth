@@ -1,0 +1,11 @@
+name: mammouth
+version: 4.0.0-beta
+description: A programming language that compiles to PHP
+author: Wael-Amine Boutglay <btwael@gmail.com>
+homepage: https://mammouth.boutglay.com/beta
+dependencies:
+  args: ^1.5.0
+  path: ^1.6.2
+  yaml: ^2.1.15
+environment:
+  sdk: '>=2.0.0 <3.0.0'

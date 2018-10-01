@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+
+    <title>Mammouth</title>
+  </head>
+  <body>
+    <!-- header -->
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm"
+         id="navbar">
+      <h5 class="my-0 mr-md-auto font-weight-normal">
+        <img src="http://mammouth.boutglay.com/documentation/images/logo.png" width="225" height="39">
+      </h5>
+      <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark mmt-navbar-ul-item" href="#overview-section">Overview</a>
+        <div class="d-inline">
+          <a class="p-2 text-dark dropdown-toggle mmt-navbar-ul-item" href="#" id="dropdownMenuLink"
+             data-toggle="dropdown"
+             aria-haspopup="true" aria-expanded="false" style="outline:0;">Learn</a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="#">Get Started</a>
+            <a class="dropdown-item" href="#">Guide</a>
+            <a class="dropdown-item" href="#">API documentation</a>
+          </div>
+        </div>
+        <a class="p-2 text-dark mmt-navbar-ul-item" id="tryButton" style="cursor: pointer">Try it</a>
+        <a class="p-2 text-dark mmt-navbar-ul-item" href="#">Support Mammouth</a>
+      </nav>
+      <a class="btn btn-light" href="https://github.com/btwael/mammouth"><i class="fa fa-github" aria-hidden="true"></i> Github</a>
+    </div>
+    <div id="body-area">
+      <!-- body -->
+      <!---- Presentation -->
+      <div>
+        <div class="container mb-5">
+          <div class="row mt-5 justify-content-md-center">
+            <div class="col-3">
+              <img src="./logo.png"/>
+            </div>
+            <div class="col-6">
+              <div class="container pt-5">
+                <div class="row">
+                  <h1>The expressive language that compiles to PHP.</h1>
+                </div>
+                <div class="row mt-3">
+                  <a class="btn btn-outline-primary btn-lg mr-2" href="#">Get Started</a>
+                  <a class="btn btn-light btn-lg" href="https://github.com/btwael/mammouth"><i class="fa fa-github" aria-hidden="true"></i>
+                    Github</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!---- Support -->
+      <a class="support-link" href="https://www.patreon.com/btwael"><div style="padding: 50px 0; background-color: rgb(249, 104, 84);" class="mb-5">
+        <div class="container">
+          <div class="row justify-content-md-center">
+            <div class="col-1">
+              <svg width="48px" height="48px" viewBox="0 0 569 546" version="1.1" xmlns="http://www.w3.org/2000/svg"><title>Patreon logo</title><g><circle fill="white" data-color="1" id="Oval" cx="362.589996" cy="204.589996" r="204.589996"></circle><rect fill="rgb(5, 45, 73)" data-color="2" id="Rectangle" x="0" y="0" width="100" height="545.799988"></rect></g></svg>
+            </div>
+            <div class="col-5">
+              <div style="display: table-cell;height: 48px; vertical-align: middle; font-weight: bolder; color: white;">Support Mammouth or become a sponsor on Patreon</div>
+            </div>
+          </div>
+        </div>
+      </div></a>
+      <!---- Overview -->
+      <div>
+        <div class="container mb-5">
+          <h3 id="overview-section">Overview</h3>
+          <i style="font-size: 14px;">Mammouth on the left, compiled PHP output on the right.</i>
+          <div class="row side-code justify-content-md-center mt-1">
+            <div class="col-6 mammouth">
+<pre>
+{{
+<span class="comment"># Variables and parameters are optionally typed</span>
+number    <span class="keyword">=</span> <span class="literal">42</span>
+int typed <span class="keyword">=</span> number
+opposite  <span class="keyword">=</span> <span class="literal">true</span>
+
+<span class="comment"># Object-oriented style</span>
+Array&lt;String> strings <span class="keyword">=</span> &lt;String>[<span class="string">"mammouth"</span>]
+<span class="keyword">echo</span> strings[<span class="literal">0</span>].length
+
+<span class="comment"># Condition</span>
+number <span class="keyword">=</span> <span class="keyword">if</span> opposite <span class="keyword">then</span> <span class="keyword">-</span><span class="literal">42</span> <span class="keyword">else</span> <span class="literal">13</span>
+
+<span class="comment"># Existence</span>
+<span class="keyword">echo</span> <span class="string">"I knew it!"</span> <span class="keyword">if</span> opposite?
+
+<span class="comment"># No need for `$` whether it's a variable or a function</span>
+square <span class="keyword">=</span> int (int x) <span class="keyword">-></span> x <span class="keyword">*</span> x
+square(<span class="literal">2</span>)
+
+<span class="keyword">fn</span> Hello() <span class="keyword">-></span>
+    <span class="keyword">echo</span> <span class="string">'Hello Mammouth'</span>
+Hello()
+
+<span class="comment"># Array</span>
+num_list <span class="keyword">=</span> [<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>, <span class="literal">5</span>]
+
+<span class="comment"># Map</span>
+obj <span class="keyword">=</span> {
+    <span class="string">'square'</span><span class="keyword">:</span> square
+    <span class="string">'cube'</span><span class="keyword">:</span>   <span class="keyword">fn</span> (x) <span class="keyword">-></span> x <span class="keyword">*</span> square(x)
+}
+
+<span class="comment"># Array comprehensions</span>
+squares <span class="keyword">=</span> (square(num) <span class="keyword">for</span> num <span class="keyword">in</span> num_list)
+
+<span class="comment"># Typed array comprehensions</span>
+squares <span class="keyword">=</span> (square(num) <span class="keyword">for</span> int num <span class="keyword">in</span> num_list)
+}}</pre>
+            </div>
+            <div class="col-6 php">
+<pre>
+&lt;?php
+<span class="comment">// mammouth runtime and helper functions will be added here
+// PHP look generally saller and compressed</span>
+$number <span class="keyword">=</span> <span class="literal">42</span>;
+$typed <span class="keyword">=</span> $number;
+$opposite <span class="keyword">=</span> <span class="literal">TRUE</span>;
+
+$strings <span class="keyword">=</span> array(<span class="string">"mammouth"</span>);
+<span class="keyword">echo</span> strlen($strings[<span class="literal">0</span>]);
+
+$number <span class="keyword">=</span> $opposite <span class="keyword">?</span> <span class="keyword">-</span><span class="literal">42</span> <span class="keyword">:</span> <span class="literal">13</span>;
+
+<span class="keyword">if</span>(isset($opposite)) {
+  <span class="keyword">echo</span> <span class="string">"I knew it!"</span>;
+}
+
+$square <span class="keyword">=</span> <span class="keyword">function</span>($x) {
+  <span class="keyword">return</span> $x <span class="keyword">*</span> $x;
+};
+$square(<span class="literal">2</span>);
+
+<span class="keyword">function</span> Hello() {
+  <span class="keyword">echo</span> <span class="string">'Hello Mammouth'</span>;
+}
+Hello();
+
+$num_list <span class="keyword">=</span> array(<span class="literal">1</span>, <span class="literal">2</span>, <span class="literal">3</span>, <span class="literal">4</span>, <span class="literal">5</span>);
+
+$obj <span class="keyword">=</span> array(<span class="string">'square'</span> <span class="keyword">=></span> square, <span class="string">'cube'</span> <span class="keyword">=></span> <span class="keyword">function</span>($x) {
+  <span class="keyword">return</span> mammouth_call_method($x, <span class="keyword">"operator*"</span>, square($x));
+});
+
+$squares <span class="keyword">=</span> call_user_func(<span class="keyword">function</span>() {
+  <span class="keyword">global</span> $num, $num_list;
+  $result = array();
+  <span class="keyword">for</span>($i <span class="keyword">=</span> <span class="literal">0</span>; $i <span class="keyword">&lt;</span> count($num_list); $i<span class="keyword">++</span>) {
+    array_push($result, $square($num_list[$i]));
+  }
+  <span class="keyword">return</span> $result;
+});
+
+$squares <span class="keyword">=</span> call_user_func(<span class="keyword">function</span>() {
+  <span class="keyword">global</span> $num, $num_list;
+  $result = array();
+  <span class="keyword">for</span>($i <span class="keyword">=</span> <span class="literal">0</span>; $i <span class="keyword">&lt;</span> count($num_list); $i<span class="keyword">++</span>) {
+    array_push($result, $square($num_list[$i]));
+  }
+  <span class="keyword">return</span> $result;
+});
+?></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!---- Features -->
+      <!--<div>
+        <div class="container mb-5">
+          <h3 id="features-section">All features</h3>
+          <div class="row">
+            <pre class="col-6 features-code" id="feature-code"></pre>
+            <div class="col-6" id="feature-table"></div>
+          </div>
+        </div>
+      </div>-->
+      <!-- Footer -->
+      <div class="footer">
+        Copyright © 2013 - 2018 Wael-Amine Boutglay
+      </div>
+    </div>
+    <!-- Try area -->
+    <div id="body-area-try">
+      <div class="container"
+           style="position:relative; height: 100%;font-size: 12px; font-family: Monaco, Consolas, 'Lucida Console', monospace;">
+        <div class="row" style="position:relative; height: 100%">
+          <div class="col-6" style="position:relative; height: 100%;">
+            <textarea class="" id="mmt-input" spellcheck="false">&lt;p&gt;{{
+echo "mammouth"
+
+Array&lt;String> str = &lt;String>["Mammouth"]
+echo str[0].length
+}}&lt;/p&gt;</textarea>
+          </div>
+          <div class="col-6">
+            <pre id="php-output" style="padding-top: 18px;">&lt;p&gt;&lt;?php
+echo "mammouth";
+$str = array("Mammouth");
+echo strlen($str[0]);
+?>&lt;/p&gt;</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Late scripting -->
+    <script src="./script.dart.js"></script>
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-77708030-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{{
+class String
+  public bool get isEmpty inline ->
+    this.length == 0
+  public bool get isNotEmpty inline ->
+    this.length != 0
+  public int get length inline ->
+    native("strlen($1)", this)
+  public String operator+(String other) inline ->
+    native("$1.$2", this, other)
+  public bool operator==(String other) inline ->
+    native("$1 == $2", this, other)
+  public bool operator!=(String other) inline ->
+    native("$1 != $2", this, other)
+}}

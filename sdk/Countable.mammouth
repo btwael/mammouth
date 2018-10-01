@@ -1,0 +1,6 @@
+{{
+import "int.mammouth"
+
+interface Countable
+  int count() inline
+}}

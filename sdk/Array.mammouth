@@ -1,0 +1,29 @@
+{{
+import "int.mammouth"
+import "Countable.mammouth"
+import "Sliceable.mammouth"
+
+class Array<T>
+  constructor() inline ->
+    native("array()")
+  public fn add(T element) inline ->
+    native("array_push($1, $2)", this, element)
+  public fn addAll(Array<T> elements) inline ->
+    this.add(element) for T element in elements
+  public bool contains(T element) inline ->
+    native("in_array($1, $2)", element, this)
+  public fn removeLast() inline ->
+    native("array_pop($1)", this)
+  public int get length inline ->
+    native("count($1)", this)
+  public bool get isEmpty inline ->
+    this.length == 0
+  public bool get isNotEmpty inline ->
+    this.length > 0
+  public Array<T> get reverse inline ->
+    native("array_reverse($1)", this)
+  public Array<T> slice(int start, [int end]) inline ->
+    native("array_slice($1, $2, $3)", this, start, end - start)
+  public T operator[](int index) inline ->
+    native("$1[$2]", this, index)
+}}

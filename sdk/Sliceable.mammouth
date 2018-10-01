@@ -1,0 +1,6 @@
+{{
+import "int.mammouth"
+
+interface Sliceable
+  Sliceable slice(int start, [int end = 12]) inline
+}}

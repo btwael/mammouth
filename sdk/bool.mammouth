@@ -1,0 +1,7 @@
+{{
+class bool
+  public bool prefix! inline ->
+    native("!$1", this)
+  public bool operator||(other) inline ->
+    native("$1 || $2", this, other)
+}}
