@@ -70,7 +70,7 @@ class Array<T>
   public Array<T> get reverse inline ->
     native("array_reverse($1)", this)
   public Array<T> slice(int start, [int end]) inline ->
-    native("array_slice($1, $2, $3)", this, start, end - start)
+    native("array_slice($1, $2, $3)", this, start, end - start if end? else null)
   public T operator[](int index) inline ->
     native("$1[$2]", this, index)
 }}
@@ -78,11 +78,15 @@ class Array<T>
 class String
   public bool get isEmpty inline ->
     this.length == 0
+  public bool get isNotEmpty inline ->
+    this.length != 0
   public int get length inline ->
     native("strlen($1)", this)
   public String operator+(String other) inline ->
     native("$1.$2", this, other)
   public bool operator==(String other) inline ->
     native("$1 == $2", this, other)
+  public bool operator!=(String other) inline ->
+    native("$1 != $2", this, other)
 }}
 """;

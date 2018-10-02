@@ -144,11 +144,67 @@ break;
 if(isset($result)) {
 $start = 2;
 $end = count($arguments) + 1;
+return call_user_func_array(array($object, $result), array_slice($arguments, $start, call_user_func(function() {
+global $end, $start;
+if(isset($end)) {
 $other = $start;
-return call_user_func_array(array($object, $result), array_slice($arguments, $start, $end - $other));
+return $end - $other;
+} else return NULL;
+})));
 } else throw "error";
 } else {
 switch(mammouth_get_type($object)) {
+case "array":
+switch($methodName) {
+case "add":
+$index = 2;
+$element = $arguments[$index];
+return array_push(((array) $object), $element);
+case "addAll":
+$index = 2;
+$elements = $arguments[$index];
+for($i = 0; $i < count($elements); $i++) {
+$element = $elements[$i];
+$elementi = $element;
+array_push(((array) $object), $elementi);
+}
+return;
+case "contains":
+$index = 2;
+$element = $arguments[$index];
+return in_array($element, ((array) $object));
+case "removeLast":
+return array_pop(((array) $object));
+case "slice":
+$other = 4;
+if(count($arguments) == $other) {
+$index = 2;
+$indexi = 3;
+$start = $arguments[$index];
+$end = $arguments[$indexi];
+return array_slice(((array) $object), $start, call_user_func(function() {
+global $end, $start;
+if(isset($end)) {
+$other = $start;
+return $end - $other;
+} else return 0;
+}));
+} else {
+$index = 2;
+$start = $arguments[$index];
+return array_slice(((array) $object), $start, call_user_func(function() {
+global $end, $start;
+if(isset($end)) {
+$other = $start;
+return $end - $other;
+} else return 0;
+}));
+}
+case "operator[]":
+$index = 2;
+$indexi = $arguments[$index];
+return ((array) $object)[$indexi];
+}
 case "string":
 switch($methodName) {
 case "operator+":
@@ -190,6 +246,19 @@ if(isset($result)) call_user_func_array(array($object, $result), array());
 throw "error";
 } else {
 switch(mammouth_get_type($object)) {
+case "array":
+switch($getterName) {
+case "length":
+return count(((array) $object));
+case "isEmpty":
+$other = 0;
+return count(((array) $object)) == $other;
+case "isNotEmpty":
+$other = 0;
+return count(((array) $object)) > $other;
+case "reverse":
+return array_reverse(((array) $object));
+}
 case "string":
 switch($getterName) {
 case "length":

@@ -23,7 +23,7 @@ class Array<T>
   public Array<T> get reverse inline ->
     native("array_reverse($1)", this)
   public Array<T> slice(int start, [int end]) inline ->
-    native("array_slice($1, $2, $3)", this, start, end - start)
+    native("array_slice($1, $2, $3)", this, start, end - start if end? else null)
   public T operator[](int index) inline ->
     native("$1[$2]", this, index)
 }}

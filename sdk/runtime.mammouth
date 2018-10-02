@@ -26,6 +26,23 @@ fn mammouth_call_method(object, String methodName) ->
         throw "error"
     else
       switch mammouth_get_type(object)
+        when "array"
+          switch methodName
+            when "add"
+              return (object as Array).add(arguments[2])
+            when "addAll"
+              return (object as Array).addAll(arguments[2])
+            when "contains"
+              return (object as Array).contains(arguments[2])
+            when "removeLast"
+              return (object as Array).removeLast()
+            when "slice"
+              if arguments.length == 4
+                return (object as Array).slice(arguments[2], arguments[3])
+              else
+                return (object as Array).slice(arguments[2])
+            when "operator[]"
+              return (object as Array)[arguments[2]]
         when "string"
           switch methodName
             when "operator+"
@@ -59,6 +76,16 @@ fn mammouth_call_getter(object, String getterName) ->
       throw "error"
     else
       switch mammouth_get_type(object)
+        when "array"
+          switch getterName
+            when "length"
+              return (object as Array).length
+            when "isEmpty"
+              return (object as Array).isEmpty
+            when "isNotEmpty"
+              return (object as Array).isNotEmpty
+            when "reverse"
+              return (object as Array).reverse
         when "string"
           switch getterName
             when "length"
