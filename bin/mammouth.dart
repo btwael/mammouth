@@ -10,7 +10,6 @@ import "package:mammouth/src/platform/vm/fileSystem.dart";
 import "package:mammouth/src/platform/vm/session.dart" show VMSession;
 
 void main(List<String> arguments) {
-  arguments = ["build", "./bin/test"];
   // Build the arguments parser
   ArgParser argParser = new ArgParser();
   argParser.addCommand("build")
