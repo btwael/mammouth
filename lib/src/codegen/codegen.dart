@@ -929,7 +929,8 @@ class CodeGenerator extends mammouth.Visitor<Object> {
 
   @override
   php.Expression visitIntegerLiteral(mammouth.IntegerLiteral node) {
-    return _finalizeExpression(new php.IntegerLiteralImpl(node.token), node);
+    return _finalizeExpression(new php.IntegerLiteralImpl(
+        new StringToken(null, node.raw, null)), node);
   }
 
   @override
@@ -1661,17 +1662,19 @@ class CodeGenerator extends mammouth.Visitor<Object> {
       List<php.Expression> arguments, Scope scope,
       {php.AstNode thisValue = null}) {
     for(int i = 0; i < executable.parameters.length; i++) {
-      mammouth.ParameterElement parameter = executable.parameters[i];
-      php.LateName paramElement = new php.LateName(parameter.name);
-      php.Variable paramVar = new php.VariableImpl(null)
-        ..element = paramElement;
-      this.beforeStatements.last.add(new php.ExpressionStatementImpl.build(
-          new php.AssignmentExpressionImpl(
-              paramVar,
-              new php.AssignmentOperatorImpl(
-                  new SimpleToken(TokenKind.ASSIGN_EQUAL, null)),
-              arguments.elementAt(i))));
-      parameter.effectiveValue = paramVar;
+      if(!executable.parameters[i].isOptional || arguments.length - 1 >= i) {
+        mammouth.ParameterElement parameter = executable.parameters[i];
+        php.LateName paramElement = new php.LateName(parameter.name);
+        php.Variable paramVar = new php.VariableImpl(null)
+          ..element = paramElement;
+        this.beforeStatements.last.add(new php.ExpressionStatementImpl.build(
+            new php.AssignmentExpressionImpl(
+                paramVar,
+                new php.AssignmentOperatorImpl(
+                    new SimpleToken(TokenKind.ASSIGN_EQUAL, null)),
+                arguments.elementAt(i))));
+        parameter.effectiveValue = paramVar;
+      }
     }
     if(thisValue != null) {
       if(executable is mammouth.ExecutableClassMemberElement) {

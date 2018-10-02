@@ -1883,14 +1883,15 @@ abstract class IfSource extends AstNode {
    */
   Token get ifKeyword;
 
+  String get keywordLexeme;
+
   /**
    * The condition to be satisfied.
    */
   Expression get condition;
 
   bool get isUnless {
-    return this.ifKeyword.kind == TokenKind.UNLESS;
-    // TODO: reformate always use kind when comparing
+    return this.keywordLexeme == "unless";
   }
 
   @override

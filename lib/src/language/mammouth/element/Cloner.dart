@@ -247,7 +247,7 @@ class Cloner extends Visitor<mammouth.AstNode> {
   @override
   mammouth.IfSource visitIfSource(mammouth.IfSource node) {
     return new mammouth.IfSourceImpl(
-        node.condition.accept(this) as mammouth.Expression);
+        node.keywordLexeme, node.condition.accept(this) as mammouth.Expression);
   }
 
   @override

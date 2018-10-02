@@ -100,7 +100,6 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
     node.scope = this.scopeStack.last;
     node.argument.accept(this);
     node.type.accept(this);
-    print(node.type.annotatedType);
     return node.type.accept(this);
   }
 
@@ -445,6 +444,7 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
   MammouthType visitExistenceExpression(mammouth.ExistenceExpression node) {
     node.scope = this.scopeStack.last;
     node.argument.accept<MammouthType>(this);
+    node.usedElements.addAll(node.argument.usedElements);
     // TODO: check is argument can be checked
     // TODO: allow undefined argument if argument is a variable
     return this._boolType;
@@ -452,7 +452,9 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
 
   @override
   MammouthType visitExpressionStatement(mammouth.ExpressionStatement node) {
-    return node.expression.accept<MammouthType>(this);
+    MammouthType type = node.expression.accept<MammouthType>(this);
+    node.usedElements.addAll(node.expression.usedElements);
+    return type;
   }
 
   @override
@@ -584,8 +586,7 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
     mammouth.Statement consequent = node.consequent,
         alternate = node.alternate;
     MammouthType conditionType = condition.accept<MammouthType>(this);
-    if(!conditionType.isAssignableTo(
-        (this.scopeStack.last.lookup("bool") as TypeDefiningElement).type)) {
+    if(!conditionType.isAssignableTo(_boolType)) {
       // TODO: report error
       throw "condition must be bool";
     }
@@ -737,27 +738,18 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
     if(calleeType is FunctionType) {
       // TODO: check if function accepts given arguments
       for(int i = 0; i < node.arguments.arguments.length; i++) {
-        if(!node.arguments.arguments
-            .elementAt(i)
-            .accept<MammouthType>(this)
-            .isAssignableTo(calleeType.parametersType[i])) {
+        ExecutableElement executableElement = node.callee
+            .referredElement as ExecutableElement;
+        MammouthType argType = node.arguments.arguments.elementAt(i).accept<
+            MammouthType>(this);
+        if(!argType.isAssignableTo(calleeType.parametersType[i])) {
           // TODO: report error
           throw "invalid argument type";
         }
-        for(int i = 0;
-        i <
-            (node.callee.referredElement as ExecutableElement)
-                .parameters
-                .length;
-        i++) {
-          // TODO: this bellow may possibly return a dynamic type
-          MammouthType argType =
-          node.arguments.arguments.elementAt(i).accept<MammouthType>(this);
+        if(!executableElement.parameters[i].isOptional) {
           if(argType is InterfaceType) {
             Option<ConverterElement> converterResult = argType.getConverterTo(
-                (node.callee.referredElement as ExecutableElement)
-                    .parameters[i]
-                    .type);
+                executableElement.parameters[i].type);
             if(converterResult.isSome) {
               node.arguments.arguments
                   .elementAt(i)

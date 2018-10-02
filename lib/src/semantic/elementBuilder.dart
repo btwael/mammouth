@@ -116,7 +116,8 @@ class ElementBuilder extends mammouth.Visitor {
 
   @override
   void visitClosureParameter(mammouth.ClosureParameter node) {
-    node.element = new mammouth.ParameterElementImpl(node.name.name);
+    node.element =
+    new mammouth.ParameterElementImpl(node.name.name, node.isOptional);
   }
 
   @override
@@ -443,7 +444,8 @@ class ElementBuilder extends mammouth.Visitor {
 
   @override
   void visitSimpleParameter(mammouth.SimpleParameter node) {
-    node.element = new mammouth.ParameterElementImpl(node.name.name);
+    node.element =
+    new mammouth.ParameterElementImpl(node.name.name, node.isOptional);
   }
 
   @override
@@ -500,7 +502,7 @@ class ElementBuilder extends mammouth.Visitor {
     node.tryStatement.accept(this);
     if(node.hasCatch) {
       node.catchVariable.element =
-      new mammouth.ParameterElementImpl(node.catchVariable.name.name);
+      new mammouth.ParameterElementImpl(node.catchVariable.name.name, false);
       node.catchStatement.accept(this);
     }
     if(node.hasFinally) {

@@ -268,7 +268,9 @@ abstract class ConverterElement extends ExecutableClassMemberElement {
 }
 
 //*-- ParameterElement
-abstract class ParameterElement implements VariableElement {}
+abstract class ParameterElement implements VariableElement {
+  bool get isOptional;
+}
 
 //*-- TypeDefiningElement
 abstract class TypeDefiningElement implements Element {

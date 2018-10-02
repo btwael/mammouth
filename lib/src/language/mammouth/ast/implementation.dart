@@ -1300,14 +1300,19 @@ class IfSourceImpl extends IfSource {
   final Token ifKeyword;
 
   @override
+  final String keywordLexeme;
+
+  @override
   final Expression condition;
 
   IfExpression _parentNode;
 
-  IfSourceImpl(this.condition)
+  IfSourceImpl(this.keywordLexeme, this.condition)
       : this.ifKeyword = null;
 
-  IfSourceImpl.syntactic(this.ifKeyword, this.condition);
+  IfSourceImpl.syntactic(Token ifKeyword, this.condition)
+      : this.ifKeyword = ifKeyword,
+        this.keywordLexeme = ifKeyword.lexeme;
 
   @override
   IfExpression get parentNode => _parentNode;

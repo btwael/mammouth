@@ -513,8 +513,9 @@ class ParameterElementImpl extends ParameterElement {
   String name;
   MammouthType type;
   php.AstNode effectiveValue;
+  bool isOptional;
 
-  ParameterElementImpl(this.name);
+  ParameterElementImpl(this.name, this.isOptional);
 }
 
 class TypeDefiningElementImpl extends TypeDefiningElement {

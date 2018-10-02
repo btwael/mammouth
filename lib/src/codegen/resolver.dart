@@ -230,7 +230,7 @@ class PHPResultResolver extends php.Visitor {
 
   @override
   void visitPHPReturnStatement(php.ReturnStatement node) {
-    node.argument.accept(this);
+    node.argument?.accept(this);
   }
 
   @override
@@ -245,13 +245,32 @@ class PHPResultResolver extends php.Visitor {
   void visitPHPStringLiteral(php.StringLiteral node) {}
 
   @override
-  void visitPHPSwitchCase(php.SwitchCase node) {}
+  void visitPHPSwitchCase(php.SwitchCase node) {
+    node.test.accept(this);
+    pushScope();
+    node.consequent.forEach((php.Statement statement) {
+      statement.accept(this);
+    });
+    popScope();
+  }
 
   @override
-  void visitPHPSwitchDefault(php.SwitchDefault node) {}
+  void visitPHPSwitchDefault(php.SwitchDefault node) {
+    pushScope();
+    node.consequent.forEach((php.Statement statement) {
+      statement.accept(this);
+    });
+    popScope();
+  }
 
   @override
-  void visitPHPSwitchStatement(php.SwitchStatement node) {}
+  void visitPHPSwitchStatement(php.SwitchStatement node) {
+    node.discriminant.accept(this);
+    node.cases.forEach((php.SwitchCase scase) {
+      scase.accept(this);
+    });
+    node.defaultCase?.accept(this);
+  }
 
   @override
   void visitPHPThrowStatement(php.ThrowStatement node) {}
