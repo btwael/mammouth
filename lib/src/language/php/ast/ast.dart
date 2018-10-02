@@ -1228,6 +1228,21 @@ abstract class NewExpression extends Expression {
   }
 }
 
+//*-- NullLiteral
+abstract class NullLiteral extends Literal {
+  dynamic get value {
+    return null;
+  }
+
+  @override
+  Token get token;
+
+  @override
+  E accept<E>(Visitor<E> visitor) {
+    return visitor.visitPHPNullLiteral(this);
+  }
+}
+
 //*-- Operator
 /**
  * An operator.

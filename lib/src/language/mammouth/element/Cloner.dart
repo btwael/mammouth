@@ -357,6 +357,11 @@ class Cloner extends Visitor<mammouth.AstNode> {
   }
 
   @override
+  mammouth.NullLiteral visitNullLiteral(mammouth.NullLiteral node) {
+    return new mammouth.NullLiteralImpl();
+  }
+
+  @override
   mammouth.OperatorDeclaration visitOperatorDeclaration(
       mammouth.OperatorDeclaration node) {
     return new mammouth.OperatorDeclarationImpl(

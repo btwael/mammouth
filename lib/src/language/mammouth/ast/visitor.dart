@@ -160,6 +160,11 @@ abstract class Visitor<E> extends common.Visitor<E> {
   }
 
   @override
+  E visitPHPNullLiteral(php.NullLiteral node) {
+    return null;
+  }
+
+  @override
   E visitPHPParameter(php.Parameter node) {
     return null;
   }

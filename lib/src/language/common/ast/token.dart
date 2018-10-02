@@ -307,6 +307,7 @@ class TokenKind {
   static const TokenKind LOOP = const TokenKind("LOOP", lexeme: "loop");
   static const TokenKind NATIVE = const TokenKind("NATIVE", lexeme: "native");
   static const TokenKind NEW = const TokenKind("NEW", lexeme: "new");
+  static const TokenKind NULL = const TokenKind("NULL", lexeme: "null");
   static const TokenKind OF = const TokenKind("OF", lexeme: "of");
   static const TokenKind PRIVATE = const TokenKind(
       "PRIVATE", lexeme: "private");

@@ -3223,6 +3223,7 @@ class Parser {
    *               | StringLiteral
    *               | IntegerLiteral
    *               | FloatLiteral
+   *               | NullLiteral
    */
   Option<mammouth.Literal> parseLiteral({bool reportError = true}) {
     if(_isCurrentOfKind(TokenKind.BOOLEAN)) {
@@ -3233,6 +3234,8 @@ class Parser {
       return this.parseIntegerLiteral(reportError: reportError);
     } else if(_isCurrentOfKind(TokenKind.FLOAT)) {
       return this.parseFloatLiteral(reportError: reportError);
+    } else if(_isCurrentOfKind(TokenKind.NULL)) {
+      return this.parseNullLiteral(reportError: reportError);
     }
     // TODO: report error
     return new Option<mammouth.Literal>();
@@ -3319,6 +3322,26 @@ class Parser {
     // MARK(MAKE NODE)
     return new Option<mammouth.FloatLiteral>.Some(
         new mammouth.FloatLiteralImpl.syntactic(token));
+  }
+
+  /**
+   *      NullLiteral := NULL
+   */
+  Option<mammouth.NullLiteral> parseNullLiteral({bool reportError = true}) {
+    Token token;
+    if(!_isCurrentOfKind(TokenKind.NULL)) {
+      if(reportError) {
+        // TODO: report error
+      }
+      return new Option<mammouth.NullLiteral>();
+      // MARK(STOP PARSING)
+    }
+    token = _current;
+    // MARK(MOVE TOKEN)
+    _current = _current.next;
+    // MARK(MAKE NODE)
+    return new Option<mammouth.NullLiteral>.Some(
+        new mammouth.NullLiteralImpl.syntactic(token));
   }
 
   /**

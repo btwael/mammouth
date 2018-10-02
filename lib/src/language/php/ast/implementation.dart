@@ -500,6 +500,15 @@ class NewExpressionImpl extends NewExpression {
         this.rightParen = null;
 }
 
+class NullLiteralImpl extends NullLiteral {
+  final Token token;
+
+  NullLiteralImpl(this.token);
+
+  NullLiteralImpl.build()
+      : this.token = null;
+}
+
 class ParameterImpl extends Parameter {
   final Variable variable;
 

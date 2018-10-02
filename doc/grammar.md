@@ -207,6 +207,7 @@
              | StringLiteral
              | IntegerLiteral
              | FloatLiteral
+             | NullLiteral
 
     BooleanLiteral := BOOLEAN
 
@@ -215,6 +216,8 @@
     IntegerLiteral := INTEGER
 
     FloatLiteral := FLOAT
+    
+    NullLiteral := NULL
 
     SimpleIdentifier := NAME
 

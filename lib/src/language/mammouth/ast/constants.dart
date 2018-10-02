@@ -27,6 +27,7 @@ const Map<String, TokenKind> keywords = const <String, TokenKind>{
   "loop": TokenKind.LOOP,
   "native": TokenKind.NATIVE,
   "new": TokenKind.NEW,
+  "null": TokenKind.NULL,
   "of": TokenKind.OF,
   "private": TokenKind.PRIVATE,
   "protected": TokenKind.PROTECTED,

@@ -1175,6 +1175,11 @@ class CodeGenerator extends mammouth.Visitor<Object> {
   }
 
   @override
+  php.NullLiteral visitNullLiteral(mammouth.NullLiteral node) {
+    return new php.NullLiteralImpl.build();
+  }
+
+  @override
   List<php.Parameter> visitParameterList(mammouth.ParameterList node) {
     return node.parameters.map((mammouth.Parameter parameter) {
       return parameter.accept<Object>(this) as php.Parameter;

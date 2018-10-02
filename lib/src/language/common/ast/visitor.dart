@@ -92,11 +92,13 @@ abstract class Visitor<E> {
 
   E visitMemberExpression(mammouth.MemberExpression node);
 
+  E visitNativeExpression(mammouth.NativeExpression node);
+
   E visitMethodDeclaration(mammouth.MethodDeclaration node);
 
   E visitNewExpression(mammouth.NewExpression node);
 
-  E visitNativeExpression(mammouth.NativeExpression node);
+  E visitNullLiteral(mammouth.NullLiteral node);
 
   E visitOperatorDeclaration(mammouth.OperatorDeclaration node);
 
@@ -216,6 +218,8 @@ abstract class Visitor<E> {
   E visitPHPName(php.Name node);
 
   E visitPHPNewExpression(php.NewExpression node);
+
+  E visitPHPNullLiteral(php.NullLiteral node);
 
   E visitPHPParameter(php.Parameter node);
 

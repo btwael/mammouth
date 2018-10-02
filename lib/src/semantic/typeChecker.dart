@@ -997,6 +997,11 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
   }
 
   @override
+  MammouthType visitNullLiteral(mammouth.NullLiteral node) {
+    return typeProvider.dynamicType;
+  }
+
+  @override
   MammouthType visitOperatorDeclaration(mammouth.OperatorDeclaration node) {
     // TODO: some code as visitMethodDeclaration
     this.pushScope();

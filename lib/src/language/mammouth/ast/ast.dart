@@ -2683,6 +2683,35 @@ abstract class NewExpression extends Expression {
   }
 }
 
+//*-- NullLiteral
+abstract class NullLiteral extends SingleTokenLiteral {
+  @override
+  Token get token;
+
+  @override
+  dynamic get value => null;
+
+  @override
+  String get raw => "null";
+
+  @override
+  bool get asStatement;
+
+  @override
+  void set asStatement(bool value);
+
+  @override
+  AstNode get parentNode;
+
+  @override
+  void set parentNode(common.AstNode node);
+
+  @override
+  E accept<E>(Visitor<E> visitor) {
+    return visitor.visitNullLiteral(this);
+  }
+}
+
 //*-- Operator
 /**
  * An operator.

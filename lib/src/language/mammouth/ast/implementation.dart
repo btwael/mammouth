@@ -1966,6 +1966,42 @@ class NewExpressionImpl extends NewExpression {
   }
 }
 
+//*-- NullLiteralImpl
+class NullLiteralImpl extends NullLiteral {
+  @override
+  Token token;
+
+  @override
+  bool asStatement = false;
+
+  @override
+  Scope scope;
+
+  @override
+  ConverterElement converterElement;
+
+  AstNode _parentNode;
+
+  NullLiteralImpl()
+      : this.token= null;
+
+  NullLiteralImpl.syntactic(this.token);
+
+  @override
+  AstNode get parentNode => _parentNode;
+
+  @override
+  void set parentNode(common.AstNode node) {
+    if(node is AstNode) {
+      _parentNode = node;
+    } else {
+      // MARK(UNREACHABLE ZONE)
+      throw "Unreachable Zone!";
+      // MARK(STOP PROCESSING)
+    }
+  }
+}
+
 //*-- OperatorDeclarationImpl
 class OperatorDeclarationImpl extends OperatorDeclaration {
   @override

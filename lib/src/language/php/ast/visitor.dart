@@ -212,12 +212,17 @@ abstract class Visitor<E> extends common.Visitor<E> {
   }
 
   @override
+  E visitNativeExpression(mammouth.NativeExpression node) {
+    return null;
+  }
+
+  @override
   E visitNewExpression(mammouth.NewExpression node) {
     return null;
   }
 
   @override
-  E visitNativeExpression(mammouth.NativeExpression node) {
+  E visitNullLiteral(mammouth.NullLiteral node) {
     return null;
   }
 

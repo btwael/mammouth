@@ -370,6 +370,11 @@ class ElementBuilder extends mammouth.Visitor {
   }
 
   @override
+  void visitNullLiteral(mammouth.NullLiteral node) {
+    // MARK(DO NOTHING)
+  }
+
+  @override
   void visitOperatorDeclaration(mammouth.OperatorDeclaration node) {
     if(node.hasParameters) {
       node.parameters.accept(this);

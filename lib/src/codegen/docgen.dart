@@ -344,6 +344,11 @@ class DocumentGenerator extends php.Visitor<String> {
   }
 
   @override
+  String visitPHPNullLiteral(php.NullLiteral node) {
+    return "NULL";
+  }
+
+  @override
   String visitPHPParameter(php.Parameter node) {
     return node.variable.accept<String>(this);
   }

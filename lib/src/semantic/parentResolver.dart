@@ -424,6 +424,11 @@ class ParentResolver extends mammouth.Visitor {
   }
 
   @override
+  void visitNullLiteral(mammouth.NullLiteral node) {
+    // MARK(DO NOTHING)
+  }
+
+  @override
   void visitOperatorDeclaration(mammouth.OperatorDeclaration node) {
     if(node.hasReturnType) {
       node.returnType.parentNode = node;

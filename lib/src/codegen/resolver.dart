@@ -217,6 +217,9 @@ class PHPResultResolver extends php.Visitor {
   void visitPHPNewExpression(php.NewExpression node) {}
 
   @override
+  void visitPHPNullLiteral(php.NullLiteral node) {}
+
+  @override
   void visitPHPParameter(php.Parameter node) {}
 
   @override
