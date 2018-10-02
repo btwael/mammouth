@@ -35,13 +35,16 @@ class int
     native("$1 / $2", this, other)
   public bool operator==(int other) inline ->
     native("$1 == $2", this, other)
+  public bool operator!=(int other) inline ->
+      native("$1 != $2", this, other)
   public int prefix- inline ->
     native("-$1", this)
   public float to inline ->
     native("((float) $1)", this)
   public String to inline ->
     native("((string) $1)", this)
-}}{{
+}}
+{{
 interface Countable
   int count() inline
 }}
