@@ -1294,6 +1294,7 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
   @override
   MammouthType visitTypeParameter(mammouth.TypeParameter node) {
     this.scopeStack.last.define(node.element);
+    node.element.type = typeProvider.dynamicType;
     return null;
   }
 

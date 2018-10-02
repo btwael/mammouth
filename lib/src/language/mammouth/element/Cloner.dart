@@ -173,7 +173,7 @@ class Cloner extends Visitor<mammouth.AstNode> {
   mammouth.FieldDeclaration visitFieldDeclaration(
       mammouth.FieldDeclaration node) {
     return new mammouth.FieldDeclarationImpl(node.visibility, node.isStatic,
-        node.type.accept(this) as mammouth.TypeAnnotation,
+        node.type?.accept(this) as mammouth.TypeAnnotation,
         node.name.accept(this) as mammouth.SimpleIdentifier,
         node.initializer?.accept(this) as mammouth.Expression);
   }
