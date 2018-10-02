@@ -35,20 +35,16 @@ import "package:mammouth/src/codegen/resolver.dart";
  * TODO: inline method must not have access to protected and private data / call the non-inlined version
  * TODO: improve visibility
  * TODO: Unused main method Converter
- * TODO: improve runtime functions
  */
 String code = r"""
 {{
-number = 12
-float var = 12.3
-
-addVar = fn (x) -> x + x
-fn multVar(int x) -> x * x
-
-class RGB
-  r
-  g
-  b
+echo "mammouth"
+class RGB<T>
+ T p
+ int get l ->
+  this.p
+RGB<int> k = new RGB<int>()
+k.l
 }}
 """;
 
