@@ -129,8 +129,9 @@ $isValid = TRUE;
 for($i = 1; $i < count($types); $i++) {
 $index = $i;
 $type = $types[$index];
-$index = $i;
-if(!mammouth_is_assignableTo($argumentTypes[$index - 1], $type)) {
+$other = 1;
+$indexi = $i - $other;
+if(!mammouth_is_assignableTo($argumentTypes[$indexi], $type)) {
 $isValid = FALSE;
 break;
 }
@@ -146,7 +147,26 @@ $end = count($arguments) + 1;
 $other = $start;
 return call_user_func_array(array($object, $result), array_slice($arguments, $start, $end - $other));
 } else throw "error";
-} else throw "error";
+} else {
+switch(mammouth_get_type($object)) {
+case "string":
+switch($methodName) {
+case "operator+":
+$index = 2;
+$other = $arguments[$index];
+return ((string) $object).$other;
+case "operator==":
+$index = 2;
+$other = $arguments[$index];
+return ((string) $object) == $other;
+case "operator!=":
+$index = 2;
+$other = $arguments[$index];
+return ((string) $object) != $other;
+}
+}
+throw "error";
+}
 }
 function mammouth_call_converter($object, $targetType) {
 if(property_exists($object, "__mmt_runtime_map")) {
@@ -166,8 +186,24 @@ foreach($object::$__mmt_runtime_map[$getterName][0] as $method => $types) {
 $result = $method;
 break;
 }
-if(isset($result)) return call_user_func_array(array($object, $result), array()); else throw "error";
-} else throw "error";
+if(isset($result)) call_user_func_array(array($object, $result), array());
+throw "error";
+} else {
+switch(mammouth_get_type($object)) {
+case "string":
+switch($getterName) {
+case "length":
+return strlen(((string) $object));
+case "isEmpty":
+$other = 0;
+return strlen(((string) $object)) == $other;
+case "isNotEmpty":
+$other = 0;
+return strlen(((string) $object)) != $other;
+}
+}
+throw "error";
+}
 }
 function mammouth_call_setter($object, $setterName, $value) {
 if(property_exists($object, "__mmt_runtime_map")) {

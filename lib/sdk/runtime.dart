@@ -2,10 +2,8 @@ const String content = r"""
 {{
 String mammouth_get_type(object) ->
     return native("gettype($1)", object)
-
 bool mammouth_is_assignableTo(String type1, String type2) ->
     type1 == type2 || native("is_subclass_of($1, $2)", type1, type2)
-
 fn mammouth_call_method(object, String methodName) ->
     Array arguments = native("func_get_args()")
     Array argumentTypes = []
@@ -28,7 +26,16 @@ fn mammouth_call_method(object, String methodName) ->
       else
         throw "error"
     else
-        throw "error"
+      switch mammouth_get_type(object)
+        when "string"
+          switch methodName
+            when "operator+"
+              return (object as String) + arguments[2]
+            when "operator=="
+              return (object as String) == arguments[2]
+            when "operator!="
+              return (object as String) != arguments[2]
+      throw "error"
 fn mammouth_call_converter(object, String targetType) ->
     if native('property_exists($1, "__mmt_runtime_map")', object)
       String result
@@ -50,10 +57,18 @@ fn mammouth_call_getter(object, String getterName) ->
           break
       if result?
         native("call_user_func_array(array($1, $2), $3)", object, result, [])
-      else
-        throw "error"
+      throw "error"
     else
-        throw "error"
+      switch mammouth_get_type(object)
+        when "string"
+          switch getterName
+            when "length"
+              return (object as String).length
+            when "isEmpty"
+              return (object as String).isEmpty
+            when "isNotEmpty"
+              return (object as String).isNotEmpty
+      throw "error"
 fn mammouth_call_setter(object, String setterName, value) ->
     if native('property_exists($1, "__mmt_runtime_map")', object)
       String result
