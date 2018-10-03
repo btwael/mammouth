@@ -1,13 +1,8 @@
 {{
-class float
-  public float operator+(float other) inline ->
-    native("$1 + $2", this, other)
-  public float operator-(float other) inline ->
-    native("$1 - $2", this, other)
-  public float operator*(float other) inline ->
-    native("$1 * $2", this, other)
-  public float operator/(float other) inline ->
-    native("$1 / $2", this, other)
-  public float prefix- inline ->
-    native("-$1", this)
+import "bool.mammouth"
+import "num.mammouth"
+
+class float extends num
+  public bool get sign inline ->
+    native("$1 == 0 ? 0 : $1 > 0 ? 1 : -1")
 }}
