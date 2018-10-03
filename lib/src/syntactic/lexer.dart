@@ -687,8 +687,15 @@ class Lexer {
         }
         break;
       case CodePoint.GREATERTHAN: // '>'
-        _nextChar();
-        kind = TokenKind.GREATER_THAN;
+        c = _nextChar();
+        if(c == CodePoint.EQUAL) {
+          // it's ">="
+          _nextChar();
+          kind = TokenKind.GREATER_THAN_OR_EQUAL;
+        } else {
+          // it's ">"
+          kind = TokenKind.GREATER_THAN;
+        }
         // TODO: >= >>
         break;
       case CodePoint.QUESTIONMARK: // '?'
