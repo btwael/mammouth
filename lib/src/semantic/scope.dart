@@ -42,11 +42,19 @@ class Scope {
 
   Element lookup(String name) {
     Scope scope = this;
+    bool checkThis = true;
     while(scope != null) {
       if(scope.definedElements.containsKey(name)) {
         return scope.definedElements[name];
       }
       scope = scope.parentScope;
+    }
+    if(thisType is InterfaceType) {
+      List<ClassMemberElement> elements = (thisType as InterfaceType).lookup(
+          name);
+      if(elements.length == 1) {
+        return elements.first;
+      }
     }
     return null;
   }

@@ -340,6 +340,12 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
       if(node.name.name == "String") {
         node.element.type = typeProvider.stringType;
         node.element.type.members.addAll(memberElements);
+      } else if(node.name.name == "float") {
+        node.element.type = typeProvider.floatType;
+        node.element.type.members.addAll(memberElements);
+      } else if(node.name.name == "int") {
+        node.element.type = typeProvider.intType;
+        node.element.type.members.addAll(memberElements);
       } else {
         node.element.type = new InterfaceTypeImpl(memberElements);
       }
@@ -368,6 +374,7 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
           element.overrided?.isOverrided = true;
         }
       });
+
     }
     if(node.implementsClause != null) {
       node.implementsClause.interfaces.forEach((
@@ -733,6 +740,8 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
         // TODO: report error
         return typeProvider.dynamicType;
       }
+    } else if(node.callee.referredElement is MethodElement) {
+      calleeType = (node.callee.referredElement as MethodElement).type;
     }
 
     if(calleeType is FunctionType) {
@@ -771,8 +780,7 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
   @override
   MammouthType visitIntegerLiteral(mammouth.IntegerLiteral node) {
     node.scope = this.scopeStack.last;
-    TypeDefiningElement element = this.scopeStack.last.lookup("int");
-    return element.type;
+    return _intType;
   }
 
   @override
@@ -1380,6 +1388,11 @@ class TypeChecker extends mammouth.Visitor<MammouthType> {
     }
     node.usedElements.add(node.element);
     return node.element.type;
+  }
+
+  MammouthType get _intType {
+    TypeDefiningElement element = this.scopeStack.last.lookup("int");
+    return element.type;
   }
 
   MammouthType get _boolType {

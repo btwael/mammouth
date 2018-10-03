@@ -467,7 +467,7 @@ class OperatorElementImpl extends OperatorElement {
 
   @override
   void set overrided(Element element) {
-    if(element is OperatorElement) {
+    if(element == null || element is OperatorElement) {
       _overrided = element;
     } else {
       // MARK(UNREACHABLE ZONE)
@@ -499,7 +499,7 @@ class ConverterElementImpl extends ConverterElement {
 
   @override
   void set overrided(Element element) {
-    if(element is ConverterElement) {
+    if(element == null || element is ConverterElement) {
       _overrided = element;
     } else {
       // MARK(UNREACHABLE ZONE)

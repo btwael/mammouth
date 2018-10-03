@@ -16,8 +16,8 @@ class TypeProvider extends Scope {
   final NativeType arrayType = new NativeTypeImpl("Array");
   final NativeType boolType = new NativeTypeImpl("bool");
   final MammouthType stringType = new InterfaceTypeImpl([]);
-  final NativeType intType = new NativeTypeImpl("int");
-  final NativeType floatType = new NativeTypeImpl("float");
+  final MammouthType intType = new InterfaceTypeImpl([]);
+  final MammouthType floatType = new InterfaceTypeImpl([]);
   final NativeType mapType = new NativeTypeImpl("Map");
 
   final DynamicType dynamicType = new DynamicTypeImpl();
@@ -25,6 +25,10 @@ class TypeProvider extends Scope {
   TypeProvider() : super(null) {
     this.definedElements["String"] =
     new TypeDefiningElementImpl.native("String", this.stringType);
+    this.definedElements["float"] =
+    new TypeDefiningElementImpl.native("float", this.floatType);
+    this.definedElements["int"] =
+    new TypeDefiningElementImpl.native("int", this.intType);
 
     this.definedElements["dynamic"] =
     new TypeDefiningElementImpl.dynamic(this.dynamicType);
@@ -60,11 +64,10 @@ class StrongTypeSystem implements TypeSystem {
     }
     if(leftType is InterfaceType) {
       List<OperatorElement> valableMethods =
-      leftType.operators.where((OperatorElement method) {
-        return method.name == ("operator" + operator) &&
-            method.parameters.length == 1 &&
+      leftType.lookup("operator" + operator).where((ClassMemberElement method) {
+        return method is OperatorElement && method.parameters.length == 1 &&
             rightType.isAssignableTo(method.parameters.first.type);
-      }).toList();
+      }).whereType<OperatorElement>().toList();
       if(valableMethods.isNotEmpty) {
         // TODO: if > 1 report error
         return new Option<OperatorElement>.Some(valableMethods.first);
@@ -81,10 +84,10 @@ class StrongTypeSystem implements TypeSystem {
     }
     if(argumentType is InterfaceType) {
       List<OperatorElement> valableMethods =
-      argumentType.operators.where((OperatorElement method) {
-        return method.name == ((isPrefix ? "prefix" : "postfix") + operator) &&
-            method.parameters.length == 0;
-      }).toList();
+      argumentType.lookup(((isPrefix ? "prefix" : "postfix") + operator))
+          .where((ClassMemberElement method) {
+        return method is OperatorElement && method.parameters.length == 0;
+      }).whereType<OperatorElement>().toList();
       if(valableMethods.isNotEmpty) {
         // TODO: if > 1 report error
         return new Option<OperatorElement>.Some(valableMethods.first);
@@ -101,9 +104,8 @@ class StrongTypeSystem implements TypeSystem {
     }
     if(targetType is InterfaceType) {
       List<OperatorElement> valableMethods =
-      targetType.operators.where((OperatorElement method) {
-        return method.name == "operator[]" &&
-            method.parameters.length == 1 &&
+      targetType.lookup("operator[]").where((ClassMemberElement method) {
+        return method is OperatorElement && method.parameters.length == 1 &&
             indexType.isAssignableTo(method.parameters.first.type);
       }).toList();
       if(valableMethods.isNotEmpty) {
