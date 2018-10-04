@@ -52,7 +52,7 @@ fn mammouth_call_method(object, String methodName) ->
             when "floor"
               return (object as float).floor()
             when "remainder"
-              return (object as float).remainder()
+              return (object as float).remainder(arguments[2])
             when "operator>"
               return (object as float) > arguments[2]
             when "operator<"
@@ -88,7 +88,7 @@ fn mammouth_call_method(object, String methodName) ->
             when "floor"
               return (object as int).floor()
             when "remainder"
-              return (object as int).remainder()
+              return (object as int).remainder(arguments[2])
             when "operator>"
               return (object as int) > arguments[2]
             when "operator<"
@@ -160,10 +160,6 @@ fn mammouth_call_getter(object, String getterName) ->
               return (object as Array).reverse
         when "float"
           switch getterName
-            when "isEven"
-              return (object as float).isEven
-            when "isOdd"
-              return (object as float).isOdd
             when "isFinite"
               return (object as float).isFinite
             when "isInfinite"

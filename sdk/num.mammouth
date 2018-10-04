@@ -2,13 +2,13 @@
 import "bool.mammouth"
 
 class num
-  public num abs() inline ->
+  public int abs() inline ->
     native("abs($1)", this)
-  public num ceil() inline ->
+  public int ceil() inline ->
     native("ceil($1)", this)
-  public num floor() inline ->
+  public int floor() inline ->
     native("floor($1)", this)
-  public num remainder(num other) inline ->
+  public float remainder(num other) inline ->
     native("$1 % $2", this, other)
   public bool get isFinite inline ->
     native("is_finite($1)", this)
@@ -40,6 +40,8 @@ class num
     native("$1 == $2", this, other)
   public bool operator!=(num other) inline ->
     native("$1 != $2", this, other)
+  public num prefix+ inline ->
+    native("$1", this)
   public num prefix- inline ->
     native("-$1", this)
   public float to inline ->

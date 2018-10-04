@@ -103,9 +103,9 @@ class StrongTypeSystem implements TypeSystem {
       return new Option<OperatorElement>.Some(null);
     }
     if(targetType is InterfaceType) {
-      List<OperatorElement> valableMethods =
-      targetType.lookup("operator[]").where((ClassMemberElement method) {
-        return method is OperatorElement && method.parameters.length == 1 &&
+      List<OperatorElement> valableMethods = targetType.operators.where((
+          OperatorElement method) {
+        return method.name == "operator[]" && method.parameters.length == 1 &&
             indexType.isAssignableTo(method.parameters.first.type);
       }).toList();
       if(valableMethods.isNotEmpty) {

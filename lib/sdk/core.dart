@@ -8,13 +8,13 @@ class bool
 }}
 {{
 class num
-  public num abs() inline ->
+  public int abs() inline ->
     native("abs($1)", this)
-  public num ceil() inline ->
+  public int ceil() inline ->
     native("ceil($1)", this)
-  public num floor() inline ->
+  public int floor() inline ->
     native("floor($1)", this)
-  public num remainder(num other) inline ->
+  public float remainder(num other) inline ->
     native("$1 % $2", this, other)
   public bool get isFinite inline ->
     native("is_finite($1)", this)
@@ -46,6 +46,8 @@ class num
     native("$1 == $2", this, other)
   public bool operator!=(num other) inline ->
     native("$1 != $2", this, other)
+  public num prefix+ inline ->
+    native("$1", this)
   public num prefix- inline ->
     native("-$1", this)
   public float to inline ->
@@ -57,6 +59,28 @@ class num
 class float extends num
   public bool get sign inline ->
     native("$1 == 0 ? 0 : $1 > 0 ? 1 : -1")
+  public float abs() inline ->
+    native("abs($1)", this)
+  public float ceil() inline ->
+    native("ceil($1)", this)
+  public float floor() inline ->
+    native("floor($1)", this)
+  public float remainder(num other) inline ->
+    native("$1 % $2", this, other)
+  public float operator+(num other) inline ->
+    native("$1 + $2", this, other)
+  public float operator-(num other) inline ->
+    native("$1 - $2", this, other)
+  public float operator*(num other) inline ->
+    native("$1 * $2", this, other)
+  public float operator/(num other) inline ->
+    native("$1 / $2", this, other)
+  public float operator%(num other) inline ->
+    native("$1 % $2", this, other)
+  public float prefix+ inline ->
+    native("$1", this)
+  public float prefix- inline ->
+    native("-$1", this)
 }}
 {{
 class int extends num
@@ -66,6 +90,24 @@ class int extends num
     native("$1 % $2 == 1", this, 2)
   public bool get sign inline ->
     native("$1 == 0 ? 0 : $1 > 0 ? 1 : -1")
+  public int operator+(num other) inline ->
+    native("$1 + $2", this, other)
+  public int operator-(num other) inline ->
+    native("$1 - $2", this, other)
+  public num operator*(num other) inline ->
+    native("$1 * $2", this, other)
+  public num operator/(num other) inline ->
+    native("$1 / $2", this, other)
+  public int operator%(num other) inline ->
+    native("$1 % $2", this, other)
+  public bool operator==(num other) inline ->
+    native("$1 == $2", this, other)
+  public bool operator!=(num other) inline ->
+    native("$1 != $2", this, other)
+  public int prefix+ inline ->
+    native("$1", this)
+  public int prefix- inline ->
+    native("-$1", this)
 }}
 {{
 interface Countable

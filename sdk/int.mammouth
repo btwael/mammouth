@@ -9,4 +9,22 @@ class int extends num
     native("$1 % $2 == 1", this, 2)
   public bool get sign inline ->
     native("$1 == 0 ? 0 : $1 > 0 ? 1 : -1")
+  public int operator+(num other) inline ->
+    native("$1 + $2", this, other)
+  public int operator-(num other) inline ->
+    native("$1 - $2", this, other)
+  public num operator*(num other) inline ->
+    native("$1 * $2", this, other)
+  public num operator/(num other) inline ->
+    native("$1 / $2", this, other)
+  public int operator%(num other) inline ->
+    native("$1 % $2", this, other)
+  public bool operator==(num other) inline ->
+    native("$1 == $2", this, other)
+  public bool operator!=(num other) inline ->
+    native("$1 != $2", this, other)
+  public int prefix+ inline ->
+    native("$1", this)
+  public int prefix- inline ->
+    native("-$1", this)
 }}

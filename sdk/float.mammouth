@@ -5,4 +5,26 @@ import "num.mammouth"
 class float extends num
   public bool get sign inline ->
     native("$1 == 0 ? 0 : $1 > 0 ? 1 : -1")
+  public float abs() inline ->
+    native("abs($1)", this)
+  public float ceil() inline ->
+    native("ceil($1)", this)
+  public float floor() inline ->
+    native("floor($1)", this)
+  public float remainder(num other) inline ->
+    native("$1 % $2", this, other)
+  public float operator+(num other) inline ->
+    native("$1 + $2", this, other)
+  public float operator-(num other) inline ->
+    native("$1 - $2", this, other)
+  public float operator*(num other) inline ->
+    native("$1 * $2", this, other)
+  public float operator/(num other) inline ->
+    native("$1 / $2", this, other)
+  public float operator%(num other) inline ->
+    native("$1 % $2", this, other)
+  public float prefix+ inline ->
+    native("$1", this)
+  public float prefix- inline ->
+    native("-$1", this)
 }}

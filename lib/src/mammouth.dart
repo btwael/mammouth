@@ -187,7 +187,7 @@ global $end, $start;
 if(isset($end)) {
 $other = $start;
 return $end - $other;
-} else return 0;
+} else return NULL;
 }));
 } else {
 $index = 2;
@@ -197,13 +197,135 @@ global $end, $start;
 if(isset($end)) {
 $other = $start;
 return $end - $other;
-} else return 0;
+} else return NULL;
 }));
 }
 case "operator[]":
 $index = 2;
 $indexi = $arguments[$index];
 return ((array) $object)[$indexi];
+}
+case "float":
+switch($methodName) {
+case "abs":
+return abs(((double) $object));
+case "ceil":
+return ceil(((double) $object));
+case "floor":
+return floor(((double) $object));
+case "remainder":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) % $other;
+case "operator>":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) > $other;
+case "operator<":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) < $other;
+case "operator>=":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) >= $other;
+case "operator<=":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) <= $other;
+case "operator+":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) + $other;
+case "operator-":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) - $other;
+case "operator*":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) * $other;
+case "operator/":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) / $other;
+case "operator%":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) % $other;
+case "operator==":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) == $other;
+case "operator!=":
+$index = 2;
+$other = $arguments[$index];
+return ((double) $object) != $other;
+case "prefix+":
+return ((double) $object);
+case "prefix-":
+return -((double) $object);
+}
+case "int":
+switch($methodName) {
+case "abs":
+return abs(((integer) $object));
+case "ceil":
+return ceil(((integer) $object));
+case "floor":
+return floor(((integer) $object));
+case "remainder":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) % $other;
+case "operator>":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) > $other;
+case "operator<":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) < $other;
+case "operator>=":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) >= $other;
+case "operator<=":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) <= $other;
+case "operator+":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) + $other;
+case "operator-":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) - $other;
+case "operator*":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) * $other;
+case "operator/":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) / $other;
+case "operator%":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) % $other;
+case "operator==":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) == $other;
+case "operator!=":
+$index = 2;
+$other = $arguments[$index];
+return ((integer) $object) != $other;
+case "prefix+":
+return ((integer) $object);
+case "prefix-":
+return -((integer) $object);
 }
 case "string":
 switch($methodName) {
@@ -258,6 +380,28 @@ $other = 0;
 return count(((array) $object)) > $other;
 case "reverse":
 return array_reverse(((array) $object));
+}
+case "float":
+switch($getterName) {
+case "isFinite":
+return is_finite(((double) $object));
+case "isInfinite":
+return is_infinite(((double) $object));
+case "isNaN":
+return is_nan(((double) $object));
+case "isNegative":
+return ((double) $object) < 0;
+}
+case "int":
+switch($getterName) {
+case "isFinite":
+return is_finite(((integer) $object));
+case "isInfinite":
+return is_infinite(((integer) $object));
+case "isNaN":
+return is_nan(((integer) $object));
+case "isNegative":
+return ((integer) $object) < 0;
 }
 case "string":
 switch($getterName) {

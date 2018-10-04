@@ -44,6 +44,78 @@ fn mammouth_call_method(object, String methodName) ->
                 return (object as Array).slice(arguments[2])
             when "operator[]"
               return (object as Array)[arguments[2]]
+        when "float"
+          switch methodName
+            when "abs"
+              return (object as float).abs()
+            when "ceil"
+              return (object as float).ceil()
+            when "floor"
+              return (object as float).floor()
+            when "remainder"
+              return (object as float).remainder(arguments[2])
+            when "operator>"
+              return (object as float) > arguments[2]
+            when "operator<"
+              return (object as float) < arguments[2]
+            when "operator>="
+              return (object as float) >= arguments[2]
+            when "operator<="
+              return (object as float) <= arguments[2]
+            when "operator+"
+              return (object as float) + arguments[2]
+            when "operator-"
+              return (object as float) - arguments[2]
+            when "operator*"
+              return (object as float) * arguments[2]
+            when "operator/"
+              return (object as float) / arguments[2]
+            when "operator%"
+              return (object as float) % arguments[2]
+            when "operator=="
+              return (object as float) == arguments[2]
+            when "operator!="
+              return (object as float) != arguments[2]
+            when "prefix+"
+              return +(object as float)
+            when "prefix-"
+              return -(object as float)
+        when "int"
+          switch methodName
+            when "abs"
+              return (object as int).abs()
+            when "ceil"
+              return (object as int).ceil()
+            when "floor"
+              return (object as int).floor()
+            when "remainder"
+              return (object as int).remainder(arguments[2])
+            when "operator>"
+              return (object as int) > arguments[2]
+            when "operator<"
+              return (object as int) < arguments[2]
+            when "operator>="
+              return (object as int) >= arguments[2]
+            when "operator<="
+              return (object as int) <= arguments[2]
+            when "operator+"
+              return (object as int) + arguments[2]
+            when "operator-"
+              return (object as int) - arguments[2]
+            when "operator*"
+              return (object as int) * arguments[2]
+            when "operator/"
+              return (object as int) / arguments[2]
+            when "operator%"
+              return (object as int) % arguments[2]
+            when "operator=="
+              return (object as int) == arguments[2]
+            when "operator!="
+              return (object as int) != arguments[2]
+            when "prefix+"
+              return +(object as int)
+            when "prefix-"
+              return -(object as int)
         when "string"
           switch methodName
             when "operator+"
@@ -87,6 +159,26 @@ fn mammouth_call_getter(object, String getterName) ->
               return (object as Array).isNotEmpty
             when "reverse"
               return (object as Array).reverse
+        when "float"
+          switch getterName
+            when "isFinite"
+              return (object as float).isFinite
+            when "isInfinite"
+              return (object as float).isInfinite
+            when "isNaN"
+              return (object as float).isNaN
+            when "isNegative"
+              return (object as float).isNegative
+        when "int"
+          switch getterName
+            when "isFinite"
+              return (object as int).isFinite
+            when "isInfinite"
+              return (object as int).isInfinite
+            when "isNaN"
+              return (object as int).isNaN
+            when "isNegative"
+              return (object as int).isNegative
         when "string"
           switch getterName
             when "length"
